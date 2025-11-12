@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 800 600" fill="none" role="img" aria-label="Minimalist Leather Backpack">
+  <rect width="800" height="600" fill="#EFF6FF"/>
+  <path d="M330 175 C330 120, 470 120, 470 175" stroke="#1E40AF" stroke-width="20" fill="none"/>
+  <rect x="280" y="175" width="240" height="260" rx="44" fill="#2563EB"/>
+  <rect x="320" y="275" width="160" height="115" rx="20" fill="#1E40AF"/>
+  <text x="400" y="510" text-anchor="middle" fill="#1E293B" font-family="system-ui, sans-serif" font-size="30" font-weight="700">Minimalist Leather Backpack</text>
+  <text x="400" y="548" text-anchor="middle" fill="#475569" font-family="system-ui, sans-serif" font-size="20">Water-Resistant • 16" Laptop Sleeve</text>
+</svg>
