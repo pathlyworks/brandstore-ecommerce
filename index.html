@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="BrandStore — Shop curated electronics, apparel, home living, and accessories with seasonal deals and side-by-side product comparisons.">
+    <title>BrandStore — Curated Electronics, Apparel &amp; Modern Essentials</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+
+    <header class="site-header">
+        <div class="container header-container">
+            <a href="index.html" class="logo">BrandStore</a>
+            <nav class="main-nav" aria-label="Main Navigation">
+                <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="nav-menu" aria-label="Toggle navigation menu">☰</button>
+                <ul id="nav-menu" class="nav-list">
+                    <li><a href="index.html" class="active" aria-current="page">Home</a></li>
+                    <li><a href="#categories">Categories</a></li>
+                    <li><a href="#featured">Featured</a></li>
+                    <li><a href="#deals">Deals</a></li>
+                    <li><a href="#testimonials">Testimonials</a></li>
+                    <li><a href="comparison.html">Compare Products</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main id="main-content">
+        <section class="hero" aria-labelledby="hero-heading">
+            <div class="container hero-layout">
+                <div class="hero-content">
+                    <span class="hero-eyebrow">2026 Launch Collection</span>
+                    <h1 id="hero-heading">Discover Exceptional Quality &amp; Style</h1>
+                    <p>Explore our curated collection designed for modern living. Unbeatable seasonal deals and everyday craftsmanship built to last.</p>
+                    <div class="hero-actions">
+                        <a href="#featured" class="btn btn-primary">Shop Featured</a>
+                        <a href="comparison.html" class="btn btn-outline">Compare Models</a>
+                    </div>
+                </div>
+                <figure class="hero-media">
+                    <span class="hero-overlay-badge">Up to 20% Off</span>
+                    <img
+                        src="assets/hero-showcase-600.svg"
+                        srcset="assets/hero-showcase-600.svg 600w, assets/hero-showcase-1200.svg 1200w"
+                        sizes="(max-width: 767px) 92vw, (max-width: 1023px) 80vw, 480px"
+                        width="600"
+                        height="450"
+                        alt="BrandStore modern essentials product showcase illustration"
+                        class="hero-image">
+                </figure>
+            </div>
+        </section>
+
+        <section id="categories" class="categories-section" aria-labelledby="categories-heading">
+            <div class="container">
+                <h2 id="categories-heading">Shop by Category</h2>
+                <div class="category-grid">
+                    <article class="category-card" data-category="Electronics">
+                        <h3>Electronics</h3>
+                        <p>Studio audio, smartwatches, and everyday tech essentials.</p>
+                    </article>
+                    <article class="category-card" data-category="Apparel">
+                        <h3>Apparel</h3>
+                        <p>Minimalist outerwear and breathable daily staples.</p>
+                    </article>
+                    <article class="category-card" data-category="Home & Living">
+                        <h3>Home &amp; Living</h3>
+                        <p>Thoughtful desk organizers and ambient lighting.</p>
+                    </article>
+                    <article class="category-card" data-category="Accessories">
+                        <h3>Accessories</h3>
+                        <p>Weatherproof backpacks, sleeves, and modular carry.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section id="featured" class="featured-section" aria-labelledby="featured-heading">
+            <div class="container">
+                <h2 id="featured-heading">Featured Products</h2>
+                <div class="filter-bar" role="group" aria-label="Filter featured products by category">
+                    <button type="button" class="filter-btn active" data-filter="all" aria-pressed="true">All Products</button>
+                    <button type="button" class="filter-btn" data-filter="Electronics" aria-pressed="false">Electronics</button>
+                    <button type="button" class="filter-btn" data-filter="Accessories" aria-pressed="false">Accessories</button>
+                </div>
+                <div class="product-grid">
+                    <article class="product-card" data-category="Electronics">
+                        <div class="product-media">
+                            <span class="product-badge badge-bestseller">Best Seller</span>
+                            <img
+                                src="assets/headphones-400.svg"
+                                srcset="assets/headphones-400.svg 400w, assets/headphones-800.svg 800w"
+                                sizes="(max-width: 767px) 90vw, (max-width: 1023px) 44vw, 380px"
+                                width="400"
+                                height="300"
+                                alt="Wireless Headphones Pro with cobalt earcups"
+                                class="product-image">
+                        </div>
+                        <div class="product-body">
+                            <span class="category-tag">Electronics</span>
+                            <h3>Wireless Headphones Pro</h3>
+                            <p>Active noise cancellation with 40-hour battery life and studio-grade drivers.</p>
+                            <p class="price">$199.99</p>
+                            <a href="comparison.html" class="btn btn-secondary">Compare Specs</a>
+                        </div>
+                    </article>
+
+                    <article class="product-card" data-category="Electronics">
+                        <div class="product-media">
+                            <span class="product-badge badge-new">New Arrival</span>
+                            <img
+                                src="assets/smartwatch-400.svg"
+                                srcset="assets/smartwatch-400.svg 400w, assets/smartwatch-800.svg 800w"
+                                sizes="(max-width: 767px) 90vw, (max-width: 1023px) 44vw, 380px"
+                                width="400"
+                                height="300"
+                                alt="Ergonomic Smartwatch with blue strap and crisp display"
+                                class="product-image">
+                        </div>
+                        <div class="product-body">
+                            <span class="category-tag">Electronics</span>
+                            <h3>Ergonomic Smartwatch</h3>
+                            <p>7-day battery, IP68 swimproof rating, and continuous wellness tracking.</p>
+                            <p class="price">$149.99</p>
+                            <a href="comparison.html" class="btn btn-secondary">Compare Specs</a>
+                        </div>
+                    </article>
+
+                    <article class="product-card" data-category="Accessories">
+                        <div class="product-media">
+                            <span class="product-badge badge-deal">Save 15%</span>
+                            <img
+                                src="assets/backpack-400.svg"
+                                srcset="assets/backpack-400.svg 400w, assets/backpack-800.svg 800w"
+                                sizes="(max-width: 767px) 90vw, (max-width: 1023px) 44vw, 380px"
+                                width="400"
+                                height="300"
+                                alt="Minimalist Leather Backpack in deep blue"
+                                class="product-image">
+                        </div>
+                        <div class="product-body">
+                            <span class="category-tag">Accessories</span>
+                            <h3>Minimalist Leather Backpack</h3>
+                            <p>Water-resistant full-grain finish with padded 16-inch laptop compartment.</p>
+                            <p class="price">$89.99</p>
+                            <a href="comparison.html" class="btn btn-secondary">Compare Specs</a>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section id="deals" class="deals-strip" aria-labelledby="deals-heading">
+            <div class="container deals-content">
+                <div class="deals-text">
+                    <h2 id="deals-heading">Limited Time Launch Offer</h2>
+                    <p>Take an extra 20% off orders over $150 at checkout.</p>
+                </div>
+                <span class="promo-pill">Code: <strong>LAUNCH20</strong></span>
+            </div>
+        </section>
+
+        <section id="testimonials" class="testimonials-section" aria-labelledby="testimonials-heading">
+            <div class="container">
+                <h2 id="testimonials-heading">What Our Customers Say</h2>
+                <div class="testimonial-grid">
+                    <article class="testimonial-card">
+                        <blockquote>
+                            <p>&ldquo;The build quality exceeded my expectations. Shipping was fast and the headphones last all week on a single charge.&rdquo;</p>
+                        </blockquote>
+                        <p class="testimonial-author">&mdash; <cite>Sarah M.</cite>, Verified Buyer</p>
+                    </article>
+                    <article class="testimonial-card">
+                        <blockquote>
+                            <p>&ldquo;Clean design, zero clutter, and reliable everyday performance. The side-by-side comparison made choosing effortless.&rdquo;</p>
+                        </blockquote>
+                        <p class="testimonial-author">&mdash; <cite>David K.</cite>, Verified Buyer</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section id="newsletter" class="newsletter-section" aria-labelledby="newsletter-heading">
+            <div class="container newsletter-container">
+                <h2 id="newsletter-heading">Stay Updated</h2>
+                <p>Subscribe to our newsletter for exclusive product drops and early-access discount codes.</p>
+                <form class="newsletter-form" action="#" method="POST">
+                    <div class="form-field">
+                        <label for="newsletter-email" class="visually-hidden">Email address</label>
+                        <input
+                            id="newsletter-email"
+                            name="email"
+                            type="email"
+                            placeholder="you@example.com"
+                            required
+                            minlength="5"
+                            maxlength="120"
+                            autocomplete="email"
+                            aria-describedby="newsletter-hint newsletter-feedback">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Subscribe</button>
+                </form>
+                <p id="newsletter-hint" class="newsletter-hint">Enter a valid email address. Unsubscribe anytime.</p>
+                <p id="newsletter-feedback" class="newsletter-feedback" role="status" aria-live="polite"></p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container footer-container">
+            <p>&copy; 2026 BrandStore. All rights reserved.</p>
+            <nav aria-label="Footer Navigation">
+                <ul class="footer-links">
+                    <li><a href="#main-content">Back to Top</a></li>
+                    <li><a href="comparison.html">Product Comparison</a></li>
+                    <li><a href="#newsletter">Newsletter</a></li>
+                </ul>
+            </nav>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
