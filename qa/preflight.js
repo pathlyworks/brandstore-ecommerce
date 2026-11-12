@@ -80,17 +80,20 @@ const read = (f) => fs.existsSync(path.join(root, f)) ? fs.readFileSync(path.joi
 
   // ---- SEO / sharing (static) ----
   const titles = [], descs = [];
-  for (const pg of pages) {
+  for (const pg of allPages) { // title, description, Open Graph and h1 rules apply to every page, 404 included
+    const is404 = pg === '404.html';
     const h = read(pg); const t = (h.match(/<title>([^<]*)<\/title>/) || [])[1] || ''; const dsc = (h.match(/<meta name="description" content="([^"]*)"/) || [])[1] || '';
     titles.push(t); descs.push(dsc);
+    check((h.match(/<h1[\s>]/g) || []).length === 1, 'single h1 per page (source HTML)', pg);
     check(t.length >= 10 && t.length <= 70, 'document-title length 10-70 (SEO best practice)', `${pg} ${t.length} chars`);
     check(dsc.length >= 50 && dsc.length <= 160, 'meta-description (Lighthouse SEO): present, 50-160 chars', `${pg} ${dsc.length} chars`);
     const og = (p2) => (h.match(new RegExp(`<meta property="${p2}" content="([^"]*)"`)) || [])[1];
     for (const k of ['og:title', 'og:description', 'og:type', 'og:url', 'og:image', 'og:image:alt', 'og:site_name']) check(!!og(k), `open-graph ${k}`, pg);
     check(/<meta name="twitter:card" content="summary_large_image"/.test(h), 'twitter:card', pg);
-    const can = (h.match(/<link rel="canonical" href="([^"]*)"/) || [])[1]; check(!!can && /^https:\/\//.test(can), 'canonical (Lighthouse SEO): absolute https URL', `${pg} ${can}`);
+    if (is404) check(/<meta name="robots" content="noindex"/.test(h), '404 page is noindex (kept out of search results)', pg);
+    else { const can = (h.match(/<link rel="canonical" href="([^"]*)"/) || [])[1]; check(!!can && /^https:\/\//.test(can), 'canonical (Lighthouse SEO): absolute https URL', `${pg} ${can}`);
     check(/<link rel="icon"/.test(h), 'favicon link', pg);
-    check(!/noindex/i.test(h), 'is-crawlable (Lighthouse SEO): no noindex', pg);
+    check(!/noindex/i.test(h), 'is-crawlable (Lighthouse SEO): no noindex', pg); }
     // og:image sits in the site root, whatever the URL prefix (GitHub Pages adds /repo/)
     const ogi = og('og:image'); if (ogi) { const f = path.basename(new URL(ogi).pathname); const buf = fs.existsSync(path.join(root, f)) ? fs.readFileSync(path.join(root, f)) : null; const okp = buf && buf.slice(1, 4).toString() === 'PNG' && buf.readUInt32BE(16) === 1200 && buf.readUInt32BE(20) === 630; check(okp, 'og:image file exists and is a 1200x630 PNG', `${pg} ${f}`); }
     if (release) check(!h.includes(PLACEHOLDER_HOST), 'release: placeholder site URL replaced', pg);
