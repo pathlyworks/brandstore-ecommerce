@@ -6,6 +6,7 @@
 // --release additionally fails while the placeholder site URL is still in the files.
 // Needs: playwright + a Chromium build.
 const { chromium } = require('playwright'); const fs = require('fs'), path = require('path');
+const { siteBase } = require('./serve');
 const root = process.argv.find((a, i) => i >= 2 && !a.startsWith('--')) || path.resolve(__dirname, '..');
 const release = process.argv.includes('--release');
 const PLACEHOLDER_HOST = 'https://brandstore.example';
@@ -21,7 +22,7 @@ const read = (f) => fs.existsSync(path.join(root, f)) ? fs.readFileSync(path.joi
     const tag = pg;
     for (const w of [375, 1280]) {
       const p = await b.newPage({ viewport: { width: w, height: 900 } });
-      await p.goto('file://' + root + '/' + pg); await p.waitForTimeout(500);
+      await p.goto((await siteBase(root)) + '/' + pg); await p.waitForTimeout(500);
       const d = await p.evaluate(() => {
         const q = (s) => [...document.querySelectorAll(s)];
         const named = (el) => (el.getAttribute('aria-label') || '').trim() || (el.getAttribute('aria-labelledby') ? el.getAttribute('aria-labelledby').split(/\s+/).map(i => (document.getElementById(i) || {}).textContent || '').join(' ').trim() : '') || (el.id && document.querySelector(`label[for="${CSS.escape(el.id)}"]`) ? document.querySelector(`label[for="${CSS.escape(el.id)}"]`).textContent.trim() : '') || (el.closest('label') ? el.closest('label').textContent.trim() : '') || (el.textContent || '').trim() || (el.querySelector('img[alt]') ? el.querySelector('img[alt]').alt.trim() : '') || (el.getAttribute('title') || '').trim();
@@ -69,7 +70,7 @@ const read = (f) => fs.existsSync(path.join(root, f)) ? fs.readFileSync(path.joi
     }
     // reflow at 320px and text enlarged to 200%
     for (const [label, vw, fs] of [['320px reflow', 320, null], ['200% text', 1280, '200%']]) {
-      const p = await b.newPage({ viewport: { width: vw, height: 900 } }); await p.goto('file://' + root + '/' + pg); await p.waitForTimeout(400);
+      const p = await b.newPage({ viewport: { width: vw, height: 900 } }); await p.goto((await siteBase(root)) + '/' + pg); await p.waitForTimeout(400);
       if (fs) await p.addStyleTag({ content: `html{font-size:${fs} !important}` });
       await p.waitForTimeout(200);
       const o = await p.evaluate(() => ({ over: document.documentElement.scrollWidth - document.documentElement.clientWidth, clipped: [...document.querySelectorAll('h1,h2,h3,p,a,button,label')].filter(e => { const r = e.getBoundingClientRect(); return r.width && (r.right > innerWidth + 1) && !e.closest('[data-scroll-region], .table-scroll, .deals__viewport'); }).map(e => e.className || e.tagName).slice(0, 3) }));

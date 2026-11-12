@@ -1,10 +1,11 @@
 // Text contrast audit from the rendered DOM (WCAG 1.4.3). Skips visually-hidden
 // text and disabled controls (exempt). Usage: node qa/contrast.js [projectRoot]
 const { chromium } = require('playwright'); const root = process.argv[2] || require('path').resolve(__dirname, '..');
+const { siteBase } = require('./serve');
 (async () => { const b = await chromium.launch(); const all = [];
  for (const pg of ['index', 'comparison']) for (const w of [375, 1280]) {
   const p = await b.newPage({ viewport: { width: w, height: 900 }, reducedMotion: 'reduce' });
-  await p.goto('file://' + root + '/' + pg + '.html'); await p.waitForTimeout(500);
+  await p.goto((await siteBase(root)) + '/' + pg + '.html'); await p.waitForTimeout(500);
   if (w === 375) { await p.click('.nav__toggle'); await p.waitForTimeout(100); }
   const res = await p.evaluate(() => {
     const parse = (s) => { const m = s.match(/rgba?\(([^)]+)\)/); if (!m) return [0,0,0,0]; const a = m[1].split(/[ ,/]+/).map(Number); return [a[0], a[1], a[2], a[3] === undefined ? 1 : a[3]]; };
