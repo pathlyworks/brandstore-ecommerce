@@ -78,7 +78,7 @@ export function validateQuantity(requested, stock) {
   const most = Math.min(stock, MAX_PER_LINE);
   if (stock <= 0) return { quantity: 0, status: 'out', message: 'Out of stock.' };
   const wanted = Number(requested);
-  if (!Number.isFinite(wanted) || String(requested).trim() === '') {
+  if (requested === null || !Number.isFinite(wanted) || String(requested).trim() === '') {
     return { quantity: 1, status: 'invalid', message: 'Enter a whole number of items.' };
   }
   const whole = Math.floor(wanted);

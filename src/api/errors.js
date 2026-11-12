@@ -2,7 +2,7 @@
  * src/api/errors.js
  *
  * The single error type every api/ function rejects with, and the shopper-facing message for each
- * status (400, 404, 429, 500, network).
+ * status (400, 401, 404, 429, 500, network).
  */
 
 /**
@@ -38,6 +38,12 @@ const MESSAGES = {
       action: 'reset',
     };
   },
+  401: () => ({
+    title: 'Please sign in again',
+    message:
+      'The store did not accept this request because you are not signed in, or your session has ended. Sign in, then try again.',
+    action: 'retry',
+  }),
   404: () => ({
     title: 'Not found',
     message: 'We could not find what you were looking for. It may have been removed.',
@@ -63,7 +69,7 @@ const MESSAGES = {
 };
 
 /**
- * What to tell the shopper for a failed request (400, 404, 429, 5xx, or no connection).
+ * What to tell the shopper for a failed request (400, 401, 404, 429, 5xx, or no connection).
  * @param {unknown} error
  * @returns {{ status: number, title: string, message: string, action: 'retry' | 'reset' }}
  */
