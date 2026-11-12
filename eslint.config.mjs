@@ -36,6 +36,10 @@ const browser = Object.fromEntries(
     'requestAnimationFrame',
     'HTMLElement',
     'AbortSignal',
+    'atob',
+    'btoa',
+    'TextDecoder',
+    'TextEncoder',
     'DOMException',
     'HTMLInputElement',
     'KeyboardEvent',
@@ -102,6 +106,8 @@ export default [
     files: ['src/**/*.js'],
     languageOptions: { sourceType: 'module', globals: browser },
     rules: {
+      // Nothing is logged except a feature that fails to start (main.js): no tokens or passwords in logs.
+      'no-console': ['error', { allow: ['error'] }],
       // Only api/http.js talks to the network; only utils/storage.js touches Web Storage.
       'no-restricted-globals': [
         'error',
@@ -118,6 +124,8 @@ export default [
       'src/state/cart.js',
       'src/state/saved.js',
       'src/state/recent.js',
+      'src/state/session.js',
+      'src/utils/jwt.js',
       'src/utils/cart-math.js',
       'src/utils/money.js',
     ],
