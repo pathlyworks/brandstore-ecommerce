@@ -13,9 +13,10 @@
  * searches), and the catalog needs nothing Axios adds. See task_3_cart.md section 6.
  */
 import axios from '../vendor/axios.js';
-import { API_BASE_URL } from '../config.js';
+import { API_BASE_URL, API_DIALECT } from '../config.js';
 import { ApiError } from './errors.js';
 import { ENDPOINTS } from './endpoints.js';
+import { fromTechsphere, toAppError } from './techsphere.js';
 
 /** Identifies this browser tab to the API (used for rate limiting on the server). */
 const CLIENT_ID = `web-${Math.random().toString(36).slice(2, 10)}`;
@@ -46,7 +47,11 @@ export function toApiError(error) {
       new ApiError(0, timedOut ? 'TIMEOUT' : 'NETWORK', 'Network request failed.'),
     );
   }
-  const body = response.data?.error || {};
+  const data =
+    response.config?.dialect === 'techsphere'
+      ? toAppError(response.status, response.config.url || '', response.data)
+      : response.data;
+  const body = data?.error || {};
   return Promise.reject(
     new ApiError(
       response.status,
@@ -63,8 +68,22 @@ export function toApiError(error) {
  * @param {{ baseURL?: string, adapter?: Function, timeout?: number }} [options] adapter is for tests
  * @returns {import('../vendor/axios.js').AxiosInstance}
  */
-export function createProductApi({ baseURL = API_BASE_URL, adapter, timeout = 10000 } = {}) {
-  const instance = axios.create({ baseURL, timeout, ...(adapter ? { adapter } : {}) });
+export function createProductApi({
+  baseURL = API_BASE_URL,
+  adapter,
+  timeout = 10000,
+  dialect = API_DIALECT,
+} = {}) {
+  const instance = axios.create({ baseURL, timeout, dialect, ...(adapter ? { adapter } : {}) });
+  if (dialect === 'techsphere') {
+    // Registered first, so it runs after addRequestDefaults (Axios runs request interceptors last-in first-out):
+    // the TechSphere API allows only Authorization and Content-Type in CORS requests, so the browser would block
+    // a request carrying X-Client-Id.
+    instance.interceptors.request.use((config) => {
+      config.headers.delete('X-Client-Id');
+      return config;
+    });
+  }
   instance.interceptors.request.use(addRequestDefaults);
   instance.interceptors.response.use((response) => {
     response.durationMs = Date.now() - response.config.metadata.startedAt;
@@ -81,6 +100,9 @@ export function createProductApi({ baseURL = API_BASE_URL, adapter, timeout = 10
  * @returns {Promise<object>}
  */
 export async function fetchProduct(api, id, { signal, headers } = {}) {
-  const response = await api.get(ENDPOINTS.product(id), { signal, headers });
-  return response.data.data;
+  const path = ENDPOINTS.product(id);
+  const response = await api.get(path, { signal, headers });
+  const body =
+    api.defaults.dialect === 'techsphere' ? fromTechsphere(path, response.data) : response.data;
+  return body.data;
 }

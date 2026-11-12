@@ -90,6 +90,15 @@ stamps the start time; its **response interceptor** records the duration and con
 48 KB), native `AbortController` for the catalog's cancelled searches, and nothing Axios adds is needed there.
 Axios is copied as an ES module from the npm package (`npm run vendor`, version pinned) because there is no bundler.
 
+**Which API.** The API address is read from `VITE_API_BASE` (`src/config.js`): that is the official TechSphere API
+(the API kit's `python server.py`, and the API the app is graded against). Without it the app uses our own mock on
+`/api`. `src/api/techsphere.js` translates between the two formats in one place, so components are unchanged:
+query names (`q` to `search`, `minPrice` in cents to `min_price` in pounds, `rating_desc` to `rating`), list bodies
+(`{ items, page, total_pages, total }` to `{ data, meta }`), prices given as numbers or as strings like
+`"EGP 33,999"`, `stock_status` to a stock count (`out_of_stock` is 0, so the Add button is disabled), and
+`{ error: "text" }` to our error shape. Against the TechSphere API the `X-Client-Id` header is not sent, because its
+CORS rules allow only `Authorization` and `Content-Type`.
+
 ## 7. QA Matrix
 
 | Journey (`npm run e2e`)                                                             | Chrome desktop 1280      | Chrome phone 375 | Firefox | Safari / WebKit |
@@ -130,3 +139,4 @@ Total: **56 of 56 journey runs pass** in Chromium (and the run fails if any requ
 | 5   | Gallery images 2 and 3 are generic placeholders                                                    | The catalog has one photo per product                                                              |
 | 6   | Checkout button disabled                                                                           | Checkout is a later task                                                                           |
 | 7   | Firefox, Safari and real devices not tested                                                        | Not available in the build environment                                                             |
+| 8   | Against the TechSphere API, products show the placeholder image                                    | That API has no product photos                                                                     |
