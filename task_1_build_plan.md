@@ -4,9 +4,9 @@ This file is sections 1–6 of `README.md`, kept identical to it.
 
 ## 1. Scope & Overview
 - **Pages built:**
-  - `index.html` — skip link, header and navigation, hero with a positioned offer badge, four category cards (each links to the featured grid, pre-filtered when a matching filter exists), three featured products with positioned badges and a category filter, a deals strip of six promo offers with previous/next controls, two testimonials, a newsletter form with client-side validation, and the footer.
+  - `index.html` — skip link, header and navigation, hero with a positioned offer badge, four category cards (each links to the featured grid, pre-filtered when a matching filter exists), a category filter and three featured products (rendered from `js/data.js`), a deals strip of six promo offers with previous/next controls, two testimonials (rendered from `js/data.js`), a newsletter form with specific, announced client-side validation, and the footer.
   - `comparison.html` — header and navigation, page intro with a "Highlight Differences" toggle, a semantic comparison `<table>` (`<caption>`, `<thead>`, `<tbody>`, `<th scope="col|row">`; 6 specification rows x 3 products), and the footer.
-- **Explicit scope exclusion:** backend work (server APIs, database persistence, authentication, payments) is excluded. The newsletter form is validated and answered in the browser only; it makes no network request.
+- **Explicit scope exclusion:** backend work (server APIs, database persistence, authentication, payments) is excluded. The newsletter form is validated and answered in the browser only; it makes no network request. The data-driven sections come from JavaScript arrays, not from a server.
 
 ---
 
@@ -18,10 +18,10 @@ This file is sections 1–6 of `README.md`, kept identical to it.
 | **Both** | Header & Nav | `<header>`, `<nav>`, `<ul>`, `<button>` | Banner landmark; the nav wraps the link list and the menu toggle (`aria-expanded`, `aria-controls`). |
 | **Landing** | Hero | `<section>`, `<figure>` | Introductory banner with the page's single `<h1>`, two calls to action and a responsive illustration. |
 | **Landing** | Category cards | `<section>`, `<article>`, `<a>` | Four self-contained merchandising cards; each card is one block link. |
-| **Landing** | Featured products | `<section>`, `<article>`, `role="group"` | Product cards with `<img srcset sizes width height>`; the filter buttons are a labelled group using `aria-pressed`. |
+| **Landing** | Featured products | `<section>`, `<article>`, `role="group"` | Product cards (created by `js/render.js` from `js/data.js`) with `<img srcset sizes width height>`; the filter buttons are a labelled group using `aria-pressed`, and a `role="status"` line announces the result count. |
 | **Landing** | Deals strip | `<section>`, `<ul>`, `role="group"`, `role="region"` | Six offers are a list (`<ul>/<li>`). The scrolling area is a labelled, focusable region with previous/next buttons (`aria-controls`). |
-| **Landing** | Testimonials | `<section>`, `<article>`, `<blockquote>`, `<cite>` | Quotes with attribution. |
-| **Landing** | Newsletter | `<section>`, `<form>`, `<label>` | Email field with `required`, `minlength`, `maxlength`, `autocomplete`; hint and live feedback linked by `aria-describedby`. |
+| **Landing** | Testimonials | `<section>`, `<article>`, `<blockquote>`, `<cite>` | Quotes with attribution, created from `js/data.js`. |
+| **Landing** | Newsletter | `<section>`, `<form>`, `<label>` | Email field with `required`, `minlength`, `maxlength`, `autocomplete`; the hint and the error are linked by `aria-describedby`; an alert region carries errors and a status region carries success. |
 | **Comparison** | Table | `<main>`, `<table>`, `<caption>`, `<th scope>` | True two-dimensional data; scrolls horizontally inside a labelled region on narrow screens. |
 | **Both** | Footer | `<footer>`, `<nav>` | Contentinfo landmark with a second labelled navigation. |
 
@@ -66,4 +66,4 @@ This file is sections 1–6 of `README.md`, kept identical to it.
 
 ### Scope limitations
 1. **No backend:** no authentication, database, checkout or payment processing.
-2. **Static catalogue:** products, prices and the six promo codes (`LAUNCH20`, `SHIPFREE`, `BUNDLE10`, `WELCOME5`, `CARRY15`, `CARE3`) are static content; no code is validated.
+2. **Static catalogue:** products and testimonials live in `js/data.js`; the six promo codes (`LAUNCH20`, `SHIPFREE`, `BUNDLE10`, `WELCOME5`, `CARRY15`, `CARE3`) are static content in the HTML; no code is validated.

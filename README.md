@@ -1,12 +1,12 @@
-# BrandStore — E-Commerce Storefront (Tasks 1–3)
+# BrandStore — E-Commerce Storefront (Tasks 1–4)
 
-A static HTML5 / CSS3 / vanilla JavaScript storefront: the build plan and layout architecture (Tasks 1–2) plus the visual-polish, interaction-state and motion pass (Task 3). Sections 1–6 describe the pages and layout; sections 7–15 cover routes, CSS methodology, states, motion, keyboard operation, deviations, QA evidence and deliverables.
+A static HTML5 / CSS3 / vanilla JavaScript storefront: the build plan and layout architecture (Tasks 1–2) the visual-polish, interaction-state and motion pass (Task 3), and the JavaScript interactivity, data-driven sections and form validation (Task 4). Sections 1–6 describe the pages and layout; sections 7–15 cover routes, CSS methodology, states, motion, keyboard operation, deviations, QA evidence and deliverables; sections 16–19 cover the JavaScript.
 
 ## 1. Scope & Overview
 - **Pages built:**
-  - `index.html` — skip link, header and navigation, hero with a positioned offer badge, four category cards (each links to the featured grid, pre-filtered when a matching filter exists), three featured products with positioned badges and a category filter, a deals strip of six promo offers with previous/next controls, two testimonials, a newsletter form with client-side validation, and the footer.
+  - `index.html` — skip link, header and navigation, hero with a positioned offer badge, four category cards (each links to the featured grid, pre-filtered when a matching filter exists), a category filter and three featured products (rendered from `js/data.js`), a deals strip of six promo offers with previous/next controls, two testimonials (rendered from `js/data.js`), a newsletter form with specific, announced client-side validation, and the footer.
   - `comparison.html` — header and navigation, page intro with a "Highlight Differences" toggle, a semantic comparison `<table>` (`<caption>`, `<thead>`, `<tbody>`, `<th scope="col|row">`; 6 specification rows x 3 products), and the footer.
-- **Explicit scope exclusion:** backend work (server APIs, database persistence, authentication, payments) is excluded. The newsletter form is validated and answered in the browser only; it makes no network request.
+- **Explicit scope exclusion:** backend work (server APIs, database persistence, authentication, payments) is excluded. The newsletter form is validated and answered in the browser only; it makes no network request. The data-driven sections come from JavaScript arrays, not from a server.
 
 ---
 
@@ -18,10 +18,10 @@ A static HTML5 / CSS3 / vanilla JavaScript storefront: the build plan and layout
 | **Both** | Header & Nav | `<header>`, `<nav>`, `<ul>`, `<button>` | Banner landmark; the nav wraps the link list and the menu toggle (`aria-expanded`, `aria-controls`). |
 | **Landing** | Hero | `<section>`, `<figure>` | Introductory banner with the page's single `<h1>`, two calls to action and a responsive illustration. |
 | **Landing** | Category cards | `<section>`, `<article>`, `<a>` | Four self-contained merchandising cards; each card is one block link. |
-| **Landing** | Featured products | `<section>`, `<article>`, `role="group"` | Product cards with `<img srcset sizes width height>`; the filter buttons are a labelled group using `aria-pressed`. |
+| **Landing** | Featured products | `<section>`, `<article>`, `role="group"` | Product cards (created by `js/render.js` from `js/data.js`) with `<img srcset sizes width height>`; the filter buttons are a labelled group using `aria-pressed`, and a `role="status"` line announces the result count. |
 | **Landing** | Deals strip | `<section>`, `<ul>`, `role="group"`, `role="region"` | Six offers are a list (`<ul>/<li>`). The scrolling area is a labelled, focusable region with previous/next buttons (`aria-controls`). |
-| **Landing** | Testimonials | `<section>`, `<article>`, `<blockquote>`, `<cite>` | Quotes with attribution. |
-| **Landing** | Newsletter | `<section>`, `<form>`, `<label>` | Email field with `required`, `minlength`, `maxlength`, `autocomplete`; hint and live feedback linked by `aria-describedby`. |
+| **Landing** | Testimonials | `<section>`, `<article>`, `<blockquote>`, `<cite>` | Quotes with attribution, created from `js/data.js`. |
+| **Landing** | Newsletter | `<section>`, `<form>`, `<label>` | Email field with `required`, `minlength`, `maxlength`, `autocomplete`; the hint and the error are linked by `aria-describedby`; an alert region carries errors and a status region carries success. |
 | **Comparison** | Table | `<main>`, `<table>`, `<caption>`, `<th scope>` | True two-dimensional data; scrolls horizontally inside a labelled region on narrow screens. |
 | **Both** | Footer | `<footer>`, `<nav>` | Contentinfo landmark with a second labelled navigation. |
 
@@ -66,7 +66,7 @@ A static HTML5 / CSS3 / vanilla JavaScript storefront: the build plan and layout
 
 ### Scope limitations
 1. **No backend:** no authentication, database, checkout or payment processing.
-2. **Static catalogue:** products, prices and the six promo codes (`LAUNCH20`, `SHIPFREE`, `BUNDLE10`, `WELCOME5`, `CARRY15`, `CARE3`) are static content; no code is validated.
+2. **Static catalogue:** products and testimonials live in `js/data.js`; the six promo codes (`LAUNCH20`, `SHIPFREE`, `BUNDLE10`, `WELCOME5`, `CARRY15`, `CARE3`) are static content in the HTML; no code is validated.
 
 ---
 
@@ -83,7 +83,7 @@ This is a static front end, so there are no API endpoints. The table lists every
 | `/index.html#testimonials` | `<section id="testimonials">` | Anchor | Nav link (landing page only). |
 | `/index.html#newsletter` | `<section id="newsletter">` | Anchor | Footer link. |
 | `#main-content` | `<main id="main-content" tabindex="-1">` | Anchor | Skip link and "Back to Top" on both pages. |
-| Newsletter form | `action="#" method="POST"` | Form | `submit` is intercepted by `js/main.js` (`preventDefault`); no request is sent. |
+| Newsletter form | `action="#" method="POST"` | Form | `submit` is intercepted by `js/newsletter.js` (`preventDefault`); no request is sent. |
 | API / backend endpoints | none | n/a | Out of scope (section 6). |
 
 ---
@@ -92,7 +92,7 @@ This is a static front end, so there are no API endpoints. The table lists every
 
 ### 8.1 Stated methodology
 - **Naming: BEM** (`.block`, `.block__element`, `.block--modifier`). One block per component; selectors are single classes, so specificity stays flat.
-- **State is expressed with the attribute that already describes it to assistive technology** and never with a free-floating class: `aria-expanded` (menu), `aria-pressed` (filter, diff toggle), `aria-current` (+ `.nav__link--current`), `aria-invalid` (email), `aria-disabled` / `disabled`, the `hidden` attribute (filtered cards, deals controls before JS runs). JavaScript only flips those attributes; CSS owns every visual change.
+- **State is expressed with the attribute that already describes it to assistive technology** and never with a free-floating class: `aria-expanded` (menu), `aria-pressed` (filter, diff toggle), `aria-current` (+ `.nav__link--current`), `aria-invalid` (email), `aria-disabled` / `disabled`, the `hidden` attribute (filtered cards, deals controls before JS runs). JavaScript flips those attributes (and renders the data-driven cards); CSS owns every visual change.
 - **Utilities** carry a `u-` prefix (`.u-visually-hidden`).
 - **Files are split by responsibility and loaded in cascade order:**
 
@@ -176,10 +176,10 @@ Order inside every block: default, `:hover`, `:focus-visible`, `:active`, then `
 | `.btn--secondary` | darker blue + shadow | ring | deepest blue, press | `aria-pressed="true"`, `:disabled` |
 | Category card (one block link) | lift, blue border, blue title | ring drawn around the whole card | lift released | — |
 | Filter button | soft fill, blue border | ring | tint, press | `aria-pressed="true"` filled, `:disabled` |
-| Product card | lift + shadow + blue border | border turns blue when a control inside has focus | — | `hidden` when filtered out |
+| Product card | lift + shadow + blue border | border turns blue when a control inside has focus | — | `hidden` when filtered out; result count announced in `#filter-status` |
 | Deals previous/next | stronger border and fill | white ring | darker fill, press | `aria-disabled="true"` at either end (stays focusable) |
 | Deals scroll region | — | white ring | — | arrow keys scroll it natively |
-| Email field | blue border | ring + blue border | deeper border | invalid: red border + outer ring + text message; `:disabled` grey; styled placeholder |
+| Email field | blue border | ring + blue border | deeper border | invalid (`aria-invalid`): red border + outer ring + specific message in the alert region; styled placeholder |
 | Footer link | blue + underline | ring | deeper blue | — |
 | Comparison row | row tint | ring on the scroll region | — | `--diff` highlights differing rows |
 
@@ -218,7 +218,7 @@ Tab order follows DOM order, which matches visual order. Tab stops, measured in 
 - **Mobile menu:** Enter/Space on the toggle opens it; closed links are `visibility: hidden`, so they are not focusable; Escape closes it and returns focus to the toggle; choosing a link closes it.
 - **No traps:** Tab leaves the document after the last stop and Shift+Tab returns to it.
 - **Scroll regions** (`tabindex="0"`) are focusable only while their content overflows, so wide screens get no empty tab stop.
-- **Without JavaScript:** navigation stays visible as a wrapping row (the collapsed menu applies only when the inline `js` class script ran).
+- **Without JavaScript:** navigation stays visible as a wrapping row (the collapsed menu applies only when `js/boot.js` added the `js` class), and the data-driven sections show a `<noscript>` note.
 
 ---
 
@@ -241,6 +241,8 @@ The Figma file and brand guideline were not available to this workspace, so "the
 | 12 | Entrance animation only on the hero; no scroll-triggered reveals. | Motion is kept for moments that help; content that animates on every scroll delays reading. |
 | 13 | Navigation shows as a wrapping row when JavaScript is unavailable. | The menu must stay reachable if the script fails. |
 | 14 | Hero illustration SVGs had an unescaped `&` (invalid XML), so the browser showed alt text; fixed. | A broken hero image is the most visible defect on the page. |
+| 15 | Featured products and testimonials need JavaScript; a `<noscript>` note replaces them. | The Task 4 brief requires data-driven rendering; the note keeps the page honest and points to the comparison page. |
+| 16 | Newsletter errors are written sentences instead of the browser's validation bubble. | Bubble wording differs per browser and language and is not announced consistently; the sentences say what to do and go through a live region. |
 
 ---
 
@@ -257,29 +259,37 @@ The Figma file and brand guideline were not available to this workspace, so "the
 | 6 | Mobile menu by keyboard | Opens with Enter; closed links not focusable; Escape closes and returns focus to the toggle | *Measured* — `node qa/keyboard.js` |
 | 7 | Reduced motion | Hero `animation-name: none`, transitions `0s`, `scroll-behavior: auto` | *Measured* — `node qa/layout.js` |
 | 8 | Text contrast, rendered DOM | 260 text nodes, lowest 5.02:1, 0 below threshold (4.5:1, or 3:1 for large text). Excludes visually-hidden text and disabled controls (exempt). Gradient text is checked against both gradient ends. | *Measured* — `node qa/contrast.js` |
-| 9 | Non-text contrast | Control border 4.83:1 on white; focus ring 5.17:1 (blue on white), 5.02:1 (white on `#b45309`), 17.74:1 (white on `#111827`) | *Measured* — computed from the token values |
+| 9 | Non-text and message contrast | Control border 4.83:1 on white; focus ring 5.17:1 (blue on white), 5.02:1 (white on `#b45309`), 17.74:1 (white on `#111827`); newsletter error text 9.35:1 and success text 12.63:1 on `#111827` | *Measured* — computed from the token values |
 | 10 | Stylesheet tokens | 110 custom properties; every `var()` resolves; 0 colour/length/time literals outside `:root` | *Measured* — `node qa/tokens.js` |
-| 11 | Category and filter behaviour | Choosing Accessories shows 1 of 3 products | *Measured* — scripted click, headless Chromium |
-| 12 | Newsletter validation | Invalid address shows the red state and an inline message; valid address shows success and disables the button | *Measured* — scripted, headless Chromium |
-| 13 | Firefox, Safari, real phones and tablets | — | *Not measured* |
-| 14 | Screen reader pass (NVDA, VoiceOver, TalkBack) | — | *Not measured*; semantics are *reasoned* from the markup |
-| 15 | axe DevTools and Lighthouse runs | — | *Not measured* |
-| 16 | Pixel comparison with the Figma design | — | *Not measured* (design file not available here) |
-| 17 | Live deployment | — | *Not measured*; the site is static, no build step, and deploys as is to GitHub Pages or Netlify |
+| 11 | Data-driven rendering | Product names, prices, categories and testimonials in the DOM equal `js/data.js`; filter buttons derived from the categories; the HTML source contains no product or testimonial text; no console errors on either page | *Measured* — `node qa/behaviour.js` |
+| 12 | Text safety | Markup-looking strings in the data (`<img onerror>`, `<script>`) are shown as literal text with 0 child elements and nothing runs (checked on a temporary copy with hostile data) | *Measured* — `node qa/behaviour.js` |
+| 13 | JavaScript source rules | 0 inline handlers, `javascript:` URLs or inline script bodies in both pages; 0 uses of `innerHTML`, `outerHTML`, `insertAdjacentHTML`, `document.write`; 46 named functions all commented; 12 files all with a header comment | *Measured* — `node qa/js-rules.js` |
+| 14 | Filter | Accessories 1 of 3, Electronics 2 of 3, All 3, with the matching `aria-pressed` and status sentence; operable with Enter; category cards pre-filter, and a category with no products shows all | *Measured* — `node qa/behaviour.js` |
+| 15 | Mobile menu `aria-expanded` | Enter and Space open (true); Escape closes (false) and refocuses the button; click outside closes; growing to desktop resets to false | *Measured* — `node qa/behaviour.js` |
+| 16 | Email validator | 13 input cases return the expected message (section 16.3) | *Measured* — `node qa/behaviour.js` |
+| 17 | Newsletter form behaviour | Invalid: specific message visible in a `role="alert"` region, `aria-invalid`, `aria-describedby`, focus on the field. Fixing clears it at once. Valid: `role="status"` success, field cleared, button "Subscribed" and disabled; typing re-enables. The same error twice causes new live-region mutations. | *Measured* — `node qa/behaviour.js` |
+| 18 | Regression for the debugged bug | No stale error after a success or after a correction inside the 50ms window | *Measured* — `node qa/behaviour.js`; session in `node qa/debug-newsletter.js` |
+| 19 | Layout shift from script rendering | Cumulative Layout Shift 0 at 375px and 1280px, at normal speed and with the CPU slowed 6x | *Measured* — `node qa/cls.js` |
+| 20 | Comparison table toggle | "Highlight Differences" marks 6 rows and sets `aria-pressed` | *Measured* — `node qa/behaviour.js` |
+| 21 | Firefox, Safari, real phones and tablets | — | *Not measured* |
+| 22 | Screen reader pass (NVDA, VoiceOver, TalkBack): what is actually spoken for the alert, status and filter regions | — | *Not measured*; the roles and ids are *measured*, the announcements are *reasoned* from them |
+| 23 | axe DevTools and Lighthouse runs | — | *Not measured* |
+| 24 | Pixel comparison with the Figma design | — | *Not measured* (design file not available here) |
+| 25 | Live deployment | — | *Not measured*; the site is static, no build step, and deploys as is to GitHub Pages or Netlify |
 
-Run the checks: `npm i -D playwright`, then `node qa/layout.js && node qa/keyboard.js && node qa/contrast.js && node qa/tokens.js` from the project root.
+Run the checks: `npm i -D playwright`, then `node qa/js-rules.js && node qa/tokens.js && node qa/layout.js && node qa/keyboard.js && node qa/contrast.js && node qa/behaviour.js && node qa/cls.js` from the project root (`node qa/debug-newsletter.js` prints the debugger session). Results above are from 2026-11-12 in headless Chromium.
 
 ---
 
 ## 14. Deliverables & Consistency
 | Deliverable | Where | Notes |
 | :--- | :--- | :--- |
-| Repository | this folder, `.git` included | Task 1–3 history; Task 3 commits restructure the CSS, markup and JS and add `qa/`. |
+| Repository | this folder, `.git` included | Task 1–3 history; the Task 4 commits split the JavaScript into modules, add data-driven rendering and form validation, and extend `qa/`. |
 | Report | `README.md` (this file) and `task_1_build_plan.md` | `task_1_build_plan.md` is sections 1–6 of this file, word for word. |
 | Demo | static site, deployable as is | Submit the deployed URL in the assessment form. |
 | Deck | not part of this task | — |
 
-Figures used across the files and kept in sync: 2 pages, 4 categories, 3 products, 6 offers, 2 testimonials, 6 comparison rows, 4 breakpoints, 3 animations, 4 CSS files.
+Figures used across the files and kept in sync: 2 pages, 4 categories, 3 products, 6 offers, 2 testimonials, 6 comparison rows, 4 breakpoints, 3 animations, 4 CSS files, 12 JS files, 46 commented functions, 8 QA scripts.
 
 ## 15. Project Structure
 ```text
@@ -289,7 +299,206 @@ css/base.css          tokens, reset, element defaults, focus, motion policy
 css/layout.css        container, header/footer bars, sections, grid
 css/components.css    BEM components and their states
 css/utilities.css     u- helpers
-js/main.js            progressive enhancement (ARIA state toggles, deals controls)
+js/boot.js            adds the `js` class in <head>
+js/app.js             BrandStore.register / start
+js/dom.js             el(), clear(), qs(), qsa() (textContent only)
+js/data.js            products and testimonials
+js/render.js          builds product cards, filter buttons, testimonials
+js/filter.js          category filter + announced result count
+js/nav.js             mobile menu, aria-expanded
+js/newsletter.js      validation and accessible messages
+js/deals.js           previous / next controls
+js/regions.js         focusable scroll regions
+js/table.js           comparison highlight
+js/main.js            starts the registered features
 assets/               responsive SVG illustrations
-qa/                   reproducible checks (layout, keyboard, contrast, tokens)
+qa/                   reproducible checks (js-rules, tokens, layout, keyboard, contrast, behaviour, cls, debug-newsletter)
 ```
+
+---
+
+## 16. Task 4 — JavaScript Interactivity, Data-Driven Sections & Form Validation
+
+### 16.1 Success criteria and where each is checked
+| Criterion | How it is met | Evidence |
+| :--- | :--- | :--- |
+| No inline `onclick` / `onchange` handlers in the markup | Every listener is attached with `addEventListener` in `js/`. The HTML has no `on*=` attribute, no `javascript:` link and no inline `<script>` body (the `js` class that an inline script used to add now comes from `js/boot.js`). | *Measured* — `node qa/js-rules.js` |
+| Featured products and testimonials render from data arrays via created elements | `js/data.js` holds `products` and `testimonials`; `js/render.js` builds the cards with `createElement` through the `dom.el()` helper. `index.html` holds only empty containers (`#product-filter`, `#product-grid`, `#testimonial-grid`). The filter buttons are derived from the product categories. | *Measured* — `node qa/behaviour.js` (the DOM equals the data; the HTML source contains no product or testimonial text) |
+| Form messages are visible, specific and announced (aria-live) | `js/newsletter.js` gives one specific sentence per problem (16.3). Errors go to a `role="alert"` region and success to a `role="status"` region, both present in the HTML from the start so announcements work. | Text, visibility, roles and focus *measured*. What a screen reader actually says is *reasoned*, not tested (section 13). |
+| Navigation toggle and strip controls work with the keyboard | Toggle: Enter and Space open it, Escape closes it and returns focus, and `aria-expanded` always matches. Deals strip: Previous/Next are real buttons. | *Measured* — `node qa/behaviour.js`, `node qa/keyboard.js` |
+| Code is organised into named functions with comments explaining intent | 12 files, 46 named functions, each with a comment directly above it, and a header comment per file (16.4). | *Measured* — `node qa/js-rules.js` |
+| **v1.1** Data-driven text inserted with `textContent`, never `innerHTML` | `dom.el()` sets text with `textContent` and text nodes only. No file in `js/` uses `innerHTML`, `outerHTML`, `insertAdjacentHTML` or `document.write`. A probe puts `<img onerror=...>` and `<script>` into the data and confirms they are shown as literal text and nothing runs. | *Measured* — `node qa/js-rules.js`, `node qa/behaviour.js` |
+| **v1.1** Debugger used to diagnose at least one bug, documented | Section 18. | *Measured* — `node qa/debug-newsletter.js` |
+
+### 16.2 Architecture
+No build tools and no ES modules, so the site also opens straight from the file system. Each file is a small IIFE (`'use strict'`) that plugs into one namespace, `window.BrandStore`:
+
+- `js/boot.js` runs in `<head>` and adds the `js` class before first paint.
+- `js/app.js` defines `BrandStore.register(name, init)` and `BrandStore.start()`.
+- Feature files register an `init` function. **Each page chooses its features by choosing its `<script defer>` tags**: `index.html` loads dom, data, render, filter, nav, newsletter, deals and regions; `comparison.html` loads dom, nav, regions and table.
+- `js/main.js` is loaded last and calls `BrandStore.start()`, which runs the `init` functions in load order. A feature that throws is logged and skipped, so it cannot stop the others.
+- Every `init` looks for its own elements first and returns quietly when the page does not have them.
+
+Data flow for the featured section: `data.products` -> `isProduct()` drops malformed entries -> `createProductCard()` builds `article > (media, body)` -> `renderProducts()` appends into `#product-grid`; `renderFilterButtons()` appends "All Products" plus one button per distinct category. Editing a product means editing an object in `js/data.js`; no HTML changes are needed.
+
+Without JavaScript the containers stay empty and a `<noscript>` note links to the comparison page, which still lists every product.
+
+### 16.3 Newsletter validation
+Validation runs on submit. The browser's own bubbles are switched off (`noValidate`, set by the script so the browser still validates normally if the script fails) because their wording differs per browser and language. `getEmailError()` returns the first problem as a sentence that says what to do:
+
+| Input | Message |
+| :--- | :--- |
+| empty or only spaces | Enter your email address. |
+| `abc` | Add an “@” to the email address, like name@example.com. |
+| `a@@b.com` | Use only one “@” in the email address. |
+| `a b@c.com` | Remove the spaces from the email address. |
+| `@b.com` | Add the part before the “@”, like name. |
+| `a<b@c.com` | The part before the “@” can only use letters, numbers and . _ % + ' - |
+| `a@` | Add the part after the “@”, like example.com. |
+| `a@b` | The part after the “@” needs a dot, like example.com. |
+| `a@b..com`, `a@b.com.` | Check the domain after the “@”: no empty parts between dots and no unusual characters. |
+| more than 120 characters | That address is too long. Use 120 characters or fewer. |
+| a valid address | Thanks for subscribing! We sent a confirmation to name@example.com. |
+
+Accessibility behaviour:
+- **Error:** the text goes into `#newsletter-error` (`role="alert"`), the field gets `aria-invalid="true"`, the field is already linked to the message by `aria-describedby="newsletter-hint newsletter-error"`, and focus returns to the field. The text is cleared and set again 50ms later so the same error submitted twice is announced twice.
+- **Fixing it:** as soon as the value becomes valid the error and `aria-invalid` are removed, without waiting for another submit.
+- **Success:** the text goes into `#newsletter-success` (`role="status"`), the field is emptied, and the button shows "Subscribed" and is disabled. Typing again re-enables it and clears the message.
+- **Visible:** the messages sit on the dark newsletter section in the Task 3 colour tokens: error `#fca5a5` on `#111827` is 9.35:1 and success `#86efac` is 12.63:1 (computed from the token values; the load-time contrast audit does not see them because the regions are empty until used). An invalid field also gets a red border and ring, and the sentence itself says what is wrong, so the state is not colour-only.
+- All message text is inserted with `textContent`; the address a visitor typed is shown back as text.
+
+### 16.4 Function index (generated from the source)
+Every function below has a comment directly above it. This list was produced by reading `js/*.js`, so it matches the code.
+
+**`js/boot.js`** — runs in <head>, before first paint.
+
+**`js/app.js`** — the tiny module system every other file plugs into.
+- `register()` — Add a feature's init function to the start-up list.
+- `start()` — Run every registered init function. One failing feature is reported and
+
+**`js/dom.js`** — small helpers for building and finding elements.
+- `el()` — Create an element without parsing any HTML.
+- `clear()` — Remove every child of a node (used before re-rendering a list).
+- `qs()` — Find one element, or null.
+- `qsa()` — Find all matching elements as a real array (so forEach/map/filter work).
+
+**`js/data.js`** — the content the data-driven sections are built from.
+
+**`js/render.js`** — builds the data-driven sections from the arrays in data.js.
+- `isProduct()` — Check that a data object has everything a product card needs, so one
+- `imagePath()` — Path of a product image at one of the generated widths.
+- `createBadge()` — The "Best Seller" / "New Arrival" pill positioned over the image.
+- `createImage()` — Responsive product image with intrinsic size (prevents layout shift).
+- `createProductMedia()` — Top half of a card: optional badge plus the image.
+- `createProductBody()` — Bottom half of a card: tag, title, description, price and the link.
+- `createProductCard()` — One complete product card.
+- `renderProducts()` — Fill #product-grid from data.products.
+- `uniqueCategories()` — The distinct categories in the order they first appear in the data.
+- `createFilterButton()` — One toggle button; its state is carried by aria-pressed.
+- `renderFilterButtons()` — Fill #product-filter with "All Products" plus one button per category.
+- `createTestimonialCard()` — One testimonial: quote in a blockquote, attribution with <cite>.
+- `renderTestimonials()` — Fill #testimonial-grid from data.testimonials.
+- `init()` — Render everything this page has a container for.
+
+**`js/filter.js`** — shows and hides product cards by category.
+- `announce()` — Update the visually announced result line.
+- `applyFilter()` — Apply one filter: press the matching button, hide the other cards.
+- `onFilterClick()` — Click on the filter group: find which button was used.
+- `onCategoryLinkClick()` — Click on a category card link: pre-filter the featured grid when that
+- `init()` — Attach the listeners (only on pages that have the filter).
+
+**`js/nav.js`** — mobile navigation toggle.
+- `isOpen()` — Is the menu open?
+- `setOpen()` — Set the state the button announces and CSS reads.
+- `init()` — Wire the toggle and the ways the menu closes again.
+
+**`js/newsletter.js`** — newsletter form validation with accessible messages.
+- `getEmailError()` — Return the first problem with an email address as a sentence that says
+- `findParts()` — Collect the elements the form needs, or null when the page has none.
+- `clearMessages()` — Empty both live regions, clear the invalid flag and cancel any error
+- `showError()` — Show an error, flag the field and move focus to it. The text is cleared
+- `showSuccess()` — Confirm the subscription, empty the field and lock the button until the
+- `resetButton()` — Put the submit button back to its normal state.
+- `onSubmit()` — Submit handler: validate, then show an error or the success message.
+- `onInput()` — Input handler: once the user fixes a flagged field the error goes away
+- `init()` — Attach the listeners.
+
+**`js/deals.js`** — previous / next controls for the deals strip.
+- `stepSize()` — Distance of one step: the width of an offer plus the gap between them.
+- `syncControls()` — Show the controls only when the strip overflows, and mark the button
+- `step()` — Scroll one offer in the button's direction (smooth unless the user
+- `init()` — Attach the listeners (only on pages with the strip).
+
+**`js/regions.js`** — keyboard access to scrollable areas.
+- `syncRegions()` — Add or remove the tab stop for each region.
+- `init()` — Sync now and whenever the window size changes.
+
+**`js/table.js`** — "Highlight Differences" toggle on the comparison table.
+- `rowIsUniform()` — Do all cells in a row show the same text?
+- `setHighlight()` — Turn the highlight on or off for every row.
+- `init()` — Attach the toggle (only on pages with the table).
+
+**`js/main.js`** — entry point. Loaded last, so every feature file has already
+
+---
+
+## 17. Other Interactive Behaviour (Task 4)
+- **Filter:** one click listener on `#product-filter` (event delegation) serves every button, including the generated ones. State is `aria-pressed` on the buttons and the `hidden` attribute on cards. Each change updates `#filter-status` (`aria-live="polite"`), e.g. "Showing 1 of 3 products in Accessories." It is empty on load, so nothing is announced until the user acts. Category cards pre-filter the grid when that category has products and show everything otherwise (Apparel and Home & Living have none).
+- **Mobile menu:** `aria-expanded` on the toggle is the only state; CSS shows the list from it. Enter and Space open it, Escape closes it and refocuses the button, choosing a link or clicking outside closes it, and growing to the desktop layout resets it to `false` so a hidden button never reports "expanded".
+- **Deals strip:** Previous/Next buttons scroll one offer (smooth, or instant under reduced motion), use `aria-disabled` at the ends so focus is never lost, and appear only when the strip overflows.
+- **Comparison table:** "Highlight Differences" toggles `aria-pressed` and marks the rows whose cells differ.
+- **Scroll regions:** focusable only while they overflow.
+
+---
+
+## 18. Debugging Log — Stale Error After a Successful Subscribe
+
+**Tool.** The Chrome DevTools `Debugger` interface: breakpoints, and watch expressions evaluated in the paused call frame. `qa/debug-newsletter.js` drives it through the DevTools Protocol (the interface behind the Sources panel) in headless Chromium and prints what the panel shows. The manual equivalent is at the end of this section.
+
+**Symptom.** After subscribing successfully, an error from an earlier failed attempt ("Add an “@” to the email address…") could appear *under* the success message about 50ms later, so the page, and a screen reader, showed an error and a success together.
+
+**Found by.** Probing the code path I considered most fragile. `showError()` writes its message through a 50ms timer (so that a repeated identical error is re-announced), and a timer can outlive the state that scheduled it. Reproduction, in the page's console:
+
+```js
+const f = document.querySelector('.newsletter__form'), i = document.querySelector('#newsletter-email');
+i.value = 'bad'; f.requestSubmit();            // invalid: the error is scheduled for +50ms
+i.value = 'ok@example.com'; f.requestSubmit(); // valid, inside the 50ms window
+setTimeout(() => console.log(document.querySelector('#newsletter-error').textContent), 200);
+// before the fix it prints the error text; expected: an empty string
+```
+
+**Breakpoints** (line numbers are from the code before the fix):
+
+| # | Where | Why |
+| :--- | :--- | :--- |
+| B1 | `showError()`, the `window.setTimeout(` line (107) | see the error being scheduled |
+| B2 | `showSuccess()`, the `parts.success.textContent =` line (123) | see the success being applied |
+| B3 | inside the timer callback, `parts.error.textContent = message;` (108) | see when the late write happens |
+
+**Watch expressions:** `message`, `parts.input.value`, `parts.error.textContent`, `parts.success.textContent`, `parts.input.getAttribute("aria-invalid")`.
+
+**Trace** (the debugger paused three times, in this order):
+
+| Pause | Function (call stack) | `message` | `input.value` | `error.textContent` | `success.textContent` | `aria-invalid` |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| 1 | `showError` <- `onSubmit` | "Add an “@”…" | "bad" | "" | "" | "true" |
+| 2 | `showSuccess` <- `onSubmit` | undefined | "" | "" | "" | null |
+| 3 | anonymous timer callback (no `onSubmit` in the stack) | "Add an “@”…" | "" | "" | "Thanks for subscribing!…" | null |
+
+**Diagnosis.** Pause 3 is the cause. The callback scheduled at pause 1 runs *after* `showSuccess` (pause 2) has already cleared the error flag and written the success text, yet it still holds the old `message` in its closure and writes it. Its call stack shows that no submit started it, so no later code could have decided to show an error. `clearMessages()` emptied the text but never cancelled the pending timer.
+
+**Fix** (`js/newsletter.js`):
+1. `showError()` stores the timer id in `parts.errorTimer`.
+2. `clearMessages()` calls `clearTimeout(parts.errorTimer)`, so every success, every new error and every corrected keystroke cancels a pending error.
+3. Defence in depth: the callback writes only while the field still has `aria-invalid="true"`.
+
+**Verification.** Re-running the debugger session on the fixed code, pause 3 never occurs and `error.textContent` stays `""`. Two regression checks in `qa/behaviour.js` cover the invalid-then-valid and the invalid-then-corrected sequences.
+
+**Same session in the DevTools UI.** Open Sources > `js/newsletter.js` and click the line numbers for B1–B3. Add the five watch expressions in the Watch pane, run the reproduction snippet in the Console, then press Resume (F8) after each pause and read the Watch pane; the Call Stack pane gives the "Function" column.
+
+---
+
+## 19. Known Limitations (JavaScript)
+- The address check is a readable approximation, not a full RFC 5322 parser. It accepts ASCII letters, numbers and `. _ % + ' -` before the “@” and rejects internationalised (non-ASCII) addresses. A real service would also confirm by sending a message.
+- The subscription is simulated in the browser: nothing is sent or stored.
+- The filter and the data-driven sections need JavaScript; without it the visitor sees a note and a link to the comparison page.
