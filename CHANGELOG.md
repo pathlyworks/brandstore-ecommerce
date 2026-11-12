@@ -1,5 +1,14 @@
 # Changelog
 
+## Unreleased — Phase 2, Task 1: API contract review and application plan (branch `feature/api-contract-and-app-plan`)
+### Added
+- `api/openapi.json` (8 operations) and a zero-dependency mock server (`npm run mock`).
+- `npm run contract`: 45 requests covering 200, 201, 400, 401, 404, 429; writes the endpoint table, request log and a Postman collection to `docs/api/`; 0 problems.
+- `src/` module layout (api, components, state, utils; 31 documented stubs) with ESLint-enforced boundaries.
+- Storage strategy, architecture, test plan and branch convention docs; `package.json` scripts; ESLint 10 and Prettier 3 config; GitHub Actions CI.
+### Fixed
+- Six lint findings in the Phase 1 QA scripts (dead variables, `let` -> `const`, needless escape).
+
 ## v1.0.1 — 2026-11-12 (Task 5 revision after review)
 ### Fixed
 - `404.html` was missing Open Graph and Twitter tags; every page now has a unique title, meta description, Open Graph tags and one `h1`.

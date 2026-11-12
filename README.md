@@ -1,5 +1,7 @@
 # BrandStore — E-Commerce Storefront (Tasks 1–5)
 
+**Phase 2, Task 1 (API contract and plan) — branch `feature/api-contract-and-app-plan`:** [`API_CONTRACT_AND_PLAN.md`](API_CONTRACT_AND_PLAN.md) (endpoint table, storage strategy, module layout, test plan, deviations list). Also `api/openapi.json`, `mock-server/`, `docs/ARCHITECTURE.md`, `docs/STORAGE.md`, `docs/TEST_PLAN.md`, `CONTRIBUTING.md`. Commands: `npm install`, `npm run mock`, `npm run contract`, `npm run lint`, `npm run format`, `npm test`.
+
 **Launch report (Task 5): [`LAUNCH_REPORT.md`](LAUNCH_REPORT.md) / `LAUNCH_REPORT.pdf`. Release: `v1.0.1` ([`CHANGELOG.md`](CHANGELOG.md)).**
 
 A static HTML5 / CSS3 / vanilla JavaScript storefront: the build plan and layout architecture (Tasks 1–2) the visual-polish, interaction-state and motion pass (Task 3), and the JavaScript interactivity, data-driven sections and form validation (Task 4). Sections 1–6 describe the pages and layout; sections 7–15 cover routes, CSS methodology, states, motion, keyboard operation, deviations, QA evidence and deliverables; sections 16–19 cover the JavaScript; sections 20–25 cover the accessibility, SEO, QA and deployment work of Task 5.
