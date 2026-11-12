@@ -14,8 +14,8 @@ import { pathToFileURL } from 'node:url';
 import {
   BRANDS,
   CATEGORIES,
-  DETAILS,
   PRODUCTS,
+  detailsFor,
   USERS,
   seedAddresses,
   seedOrders,
@@ -165,7 +165,7 @@ export function createApp({ rateLimitMax = 60 } = {}) {
       throw validation([{ field: 'id', message: 'must be lowercase letters, digits and dashes' }]);
     const p = PRODUCTS.find((x) => x.id === id);
     if (!p) throw new HttpError(404, 'NOT_FOUND', `Product "${id}" was not found.`);
-    return [200, { data: { ...p, ...DETAILS } }];
+    return [200, { data: { ...p, ...detailsFor(p) } }];
   }
 
   function login(body) {

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300" role="img" aria-label="What's in the box">
+  <rect width="400" height="300" fill="#fff7ed"/>
+  <path d="M120 120l80-40 80 40v80l-80 40-80-40z" fill="#fed7aa" stroke="#c2410c" stroke-width="6" stroke-linejoin="round"/>
+  <path d="M120 120l80 40 80-40M200 160v80" fill="none" stroke="#c2410c" stroke-width="6" stroke-linejoin="round"/>
+  <text x="200" y="275" text-anchor="middle" font-family="system-ui, sans-serif" font-size="18" fill="#7c2d12">What's in the box</text>
+</svg>

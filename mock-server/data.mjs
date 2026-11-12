@@ -100,11 +100,50 @@ export const PRODUCTS = [
   }),
 ];
 
-/** Extra fields only returned by GET /products/{id}. */
-export const DETAILS = {
-  description: 'See the product page for full details.',
-  specs: [{ label: 'Warranty', value: '2 years' }],
+/** Specs taken from the Phase 1 comparison table for the three original products. */
+const SPECS_BY_ID = {
+  'headphones-pro': [
+    ['Battery life', '40 hours'],
+    ['Water resistance', 'IPX4 splashproof'],
+    ['Weight', '250 g'],
+    ['Warranty', '2 years limited'],
+  ],
+  smartwatch: [
+    ['Battery life', '7 days'],
+    ['Water resistance', 'IP68 swimproof'],
+    ['Weight', '42 g'],
+    ['Warranty', '1 year limited'],
+  ],
+  'leather-backpack': [
+    ['Laptop sleeve', '16 inch, padded'],
+    ['Water resistance', 'Water-resistant coating'],
+    ['Weight', '890 g'],
+    ['Warranty', 'Lifetime guarantee'],
+  ],
 };
+
+/**
+ * Fields only returned by GET /products/{id}: description, a 3-image gallery and a specs table.
+ * @param {object} p product
+ * @returns {{ description: string, images: { url: string, alt: string }[], specs: { label: string, value: string }[] }}
+ */
+export function detailsFor(p) {
+  const specs = [
+    ['Brand', p.brand],
+    ['SKU', p.id.toUpperCase()],
+    ...(SPECS_BY_ID[p.id] || [['Warranty', '2 years']]),
+    ['Returns', '30 days, free'],
+  ];
+  return {
+    description: `${p.name} by ${p.brand}. Free returns within 30 days.`,
+    images: [
+      { ...p.image },
+      { url: '/assets/gallery-side.svg', alt: `${p.name}, side view` },
+      { url: '/assets/gallery-box.svg', alt: `${p.name}, what's in the box` },
+    ],
+    specs: specs.map(([label, value]) => ({ label, value })),
+  };
+}
 
 export const USERS = [
   { id: 'u-1', name: 'Demo Shopper', email: 'demo@brandstore.test', password: 'Passw0rd!' },
