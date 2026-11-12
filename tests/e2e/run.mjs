@@ -5,6 +5,7 @@
  *   E2E_BROWSERS=chromium,firefox,webkit npm run e2e
  *   E2E_DIST=1 npm run e2e                        # test the build output (run npm run build first)
  *   E2E_ONLY=catalog npm run e2e                  # only journeys whose name contains "catalog"
+ * The "auth:" journeys run against the official TechSphere API (api/techsphere/server.py; needs Python).
  *
  * Uses the Playwright library (first time: `npx playwright install chromium`). Each journey runs
  * in a fresh page; any console error or uncaught exception fails the journey.
@@ -15,12 +16,19 @@ import { serve } from '../../scripts/serve.mjs';
 import { registerCatalogJourneys } from './catalog-journeys.mjs';
 import { registerCartJourneys } from './cart-journeys.mjs';
 import { auditRequest } from './request-audit.mjs';
+import { registerAuthJourneys } from './auth-journeys.mjs';
+import { findPython, startTechsphere } from '../support/techsphere-server.mjs';
 
 const ENGINES = { chromium, firefox, webkit };
 const engines = (process.env.E2E_BROWSERS || 'chromium').split(',');
 const VIEWPORTS = { desktop: { width: 1280, height: 900 }, phone: { width: 375, height: 740 } };
 // High API rate limit: the journeys send far more than 60 requests a minute from one address.
-const site = await serve(process.env.E2E_DIST ? 'dist' : '.', 0, { apiRateLimit: 100000 });
+const dir = process.env.E2E_DIST ? 'dist' : '.';
+const site = await serve(dir, 0, { apiRateLimit: 100000, env: {} }); // our mock on /api
+// The official TechSphere API (api/techsphere/server.py) and a second copy of the site pointed at it
+// with VITE_API_BASE, for the sign-in and account journeys (skipped when Python is not installed).
+const techsphere = findPython() ? await startTechsphere() : null;
+const tsSite = techsphere ? await serve(dir, 0, { env: { VITE_API_BASE: techsphere.url } }) : null;
 const journeys = [];
 
 /**
@@ -164,6 +172,8 @@ journey('not found: unknown address gets the 404 page with one h1', async (page)
 
 registerCatalogJourneys({ journey, expect, url: site.url });
 registerCartJourneys({ journey, expect, url: site.url });
+if (techsphere) registerAuthJourneys({ journey, expect, url: tsSite.url, api: techsphere });
+else console.log('Python 3.9+ not found: the TechSphere sign-in journeys are skipped.');
 
 let failures = 0;
 let runs = 0;
@@ -211,6 +221,8 @@ for (const name of engines) {
   await browser.close();
 }
 site.close();
+tsSite?.close();
+techsphere?.stop();
 const audit = apiRequests.flatMap(auditRequest);
 const distinct = [...new Set(audit)];
 console.log(
