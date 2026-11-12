@@ -13,6 +13,7 @@ import { chromium, firefox, webkit } from 'playwright';
 import { existsSync } from 'node:fs';
 import { serve } from '../../scripts/serve.mjs';
 import { registerCatalogJourneys } from './catalog-journeys.mjs';
+import { registerCartJourneys } from './cart-journeys.mjs';
 
 const ENGINES = { chromium, firefox, webkit };
 const engines = (process.env.E2E_BROWSERS || 'chromium').split(',');
@@ -161,6 +162,7 @@ journey('not found: unknown address gets the 404 page with one h1', async (page)
 });
 
 registerCatalogJourneys({ journey, expect, url: site.url });
+registerCartJourneys({ journey, expect, url: site.url });
 
 let failures = 0;
 let runs = 0;
@@ -176,7 +178,8 @@ for (const name of engines) {
     for (const j of journeys.filter(
       (x) => (!x.size || x.size === sizeName) && x.name.includes(only),
     )) {
-      const page = await browser.newPage({ viewport });
+      const context = await browser.newContext({ viewport }); // fresh storage for every journey
+      const page = await context.newPage();
       const errors = [];
       page.on('pageerror', (e) => errors.push(String(e)));
       page.on('console', (m) => {
@@ -194,7 +197,7 @@ for (const name of engines) {
         failures += 1;
         console.log(`FAIL  ${name} ${sizeName.padEnd(7)} ${j.name}\n      ${error.message}`);
       }
-      await page.close();
+      await context.close();
     }
   }
   await browser.close();

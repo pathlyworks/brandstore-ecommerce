@@ -37,8 +37,8 @@ describe('module map', () => {
   }
 
   it('planned functions fail loudly until implemented', async () => {
-    const { subtotal } = await import('../../src/utils/cart-math.js');
-    expect(() => subtotal([])).toThrow(/not implemented/);
+    const { validateLogin } = await import('../../src/utils/validate.js');
+    expect(() => validateLogin({ email: '', password: '' })).toThrow(/not implemented/);
   });
 });
 
