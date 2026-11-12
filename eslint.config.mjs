@@ -140,11 +140,7 @@ export default [
     files: ['**/*.mjs', 'tests/**/*.js', 'vite.config.js', 'vitest.config.js'],
     languageOptions: { sourceType: 'module', globals: { ...node, ...browser } },
   },
-  {
-    // The one classic script: runs in <head> before first paint (adds the "js" class).
-    files: ['src/boot.js'],
-    languageOptions: { sourceType: 'script' },
-  },
+
 
   {
     // Phase 1 QA scripts and the URL setter: CommonJS Node scripts.

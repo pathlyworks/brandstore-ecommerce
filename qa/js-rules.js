@@ -1,8 +1,8 @@
 // Static code rules (no browser needed). Checks the "external ES modules, small named functions,
 // no inline script blobs, no global sprawl" requirement:
 //  1. HTML: no inline event handlers or javascript: URLs; every <script> has a src (no inline bodies);
-//     every script is type="module" except the one classic boot script (src/boot.js).
-//  2. src/: every file (except boot.js) is an ES module (has import or export) and starts with a header comment.
+//     every script is type="module" (there are no classic scripts).
+//  2. src/: every file is an ES module (has import or export) and starts with a header comment.
 //  3. src/: no globals created: no window.X = / globalThis.X = / top-level var.
 //  4. src/: no innerHTML / outerHTML / insertAdjacentHTML / document.write.
 //  5. src/: every named function has a comment directly above it and is at most MAX_FUNCTION_LINES long.
@@ -10,7 +10,7 @@
 const fs = require('fs'), path = require('path');
 const root = process.argv[2] || path.resolve(__dirname, '..');
 const MAX_FUNCTION_LINES = 40;
-const CLASSIC_SCRIPTS = ['src/boot.js'];
+const CLASSIC_SCRIPTS = []; // none: every script is an ES module
 let fails = 0; const fail = (m) => { fails++; console.log('  FAIL', m); };
 
 for (const f of fs.readdirSync(root).filter(f => f.endsWith('.html'))) {

@@ -1,8 +1,9 @@
 # Architecture: ES module layout (Phase 2)
 
 All JavaScript lives in `src/` as native ES modules. Each page loads exactly one external module
-entry (`<script type="module" src="src/pages/<page>.js">`) plus the tiny classic `src/boot.js`
-(adds the `js` class before first paint). There are no inline scripts, no `window.*` globals and no
+entry (`<script type="module" src="src/pages/<page>.js">`) and nothing else: no classic scripts
+(the mobile-menu styles use the CSS media query `@media (scripting: enabled)` instead of a
+"js" class set by a script). There are no inline scripts, no `window.*` globals and no
 `js/` folder any more: the Phase 1 scripts were converted to modules on 2026-11-12. Modules need
 http, so open the site with `npm run start` (or `npm run dev`), not by double-clicking the file.
 
@@ -30,7 +31,7 @@ Dependency direction: `pages -> main.js, components -> (api, state) -> utils`. N
 
 `qa/js-rules.js` adds the page-level rules: one module entry per page, no inline script bodies or
 handlers, no `window.x =` globals, no top-level `var`, every named function commented and at most
-40 lines (today: 43 files, 85 named functions, longest 38 lines).
+40 lines (today: 42 files, 85 named functions, longest 38 lines).
 
 Checked on 2026-11-12 by adding two probe files that break the rules: lint reported all 4 violations
 (restricted import x2, `localStorage`, `fetch`), then the probes were removed.
