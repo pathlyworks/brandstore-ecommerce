@@ -1,0 +1,118 @@
+/* ==========================================================================
+   LAYOUT — page skeleton only: container, header/footer bars, section
+   rhythm and the shared grid. No colours of individual components live here.
+   Sass equivalent: layout/_container.scss, layout/_site-header.scss, ...
+   Naming: BEM  .block  .block__element  .block--modifier
+   ========================================================================== */
+
+/* Container ---------------------------------------------------------------- */
+.container {
+    width: 100%;
+    max-width: var(--container-max);
+    margin-inline: auto;
+    padding-inline: var(--space-md);
+}
+
+/* Site header — Flexbox: one-dimensional bar ------------------------------- */
+.site-header {
+    position: sticky;
+    top: 0;
+    z-index: var(--z-header);
+    background: var(--color-surface);
+    border-bottom: var(--border-thin) solid var(--color-border);
+}
+
+.site-header__inner {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-height: var(--size-header);
+}
+
+/* Section rhythm ----------------------------------------------------------- */
+.section {
+    padding-block: var(--space-2xl);
+}
+
+.section--surface {
+    background: var(--color-surface);
+    border-block: var(--border-thin) solid var(--color-border);
+}
+
+.section--compact {
+    padding-block: var(--space-xl);
+}
+
+/* Dark and coloured sections re-point the focus ring so it stays visible. */
+.section--inverse {
+    --focus-ring-color: var(--color-white);
+    color: var(--color-white);
+}
+
+.section__title {
+    margin-bottom: var(--space-lg);
+    font-size: var(--text-h2);
+    text-align: center;
+}
+
+/* Grid — CSS Grid: two-dimensional card matrices ---------------------------
+   Column count is a custom property so each modifier only states intent. */
+.grid {
+    --grid-columns: 1;
+    display: grid;
+    grid-template-columns: repeat(var(--grid-columns), minmax(0, 1fr));
+    gap: var(--space-md);
+}
+
+.grid--products {
+    gap: var(--space-lg);
+}
+
+/* Site footer — Flexbox: one-dimensional bar ------------------------------- */
+.site-footer {
+    padding-block: var(--space-lg);
+    background: var(--color-surface);
+    border-top: var(--border-thin) solid var(--color-border);
+}
+
+.site-footer__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-sm);
+    text-align: center;
+}
+
+/* Tablet (768px) ----------------------------------------------------------- */
+@media (min-width: 48em) {
+    .grid--categories,
+    .grid--products,
+    .grid--testimonials {
+        --grid-columns: 2;
+    }
+
+    .site-footer__inner {
+        flex-direction: row;
+        justify-content: space-between;
+        text-align: left;
+    }
+}
+
+/* Desktop (1024px) --------------------------------------------------------- */
+@media (min-width: 64em) {
+    .grid--categories {
+        --grid-columns: 4;
+    }
+
+    .grid--products {
+        --grid-columns: 3;
+    }
+}
+
+/* Wide desktop (1440px) ---------------------------------------------------- */
+@media (min-width: 90em) {
+    .container {
+        padding-inline: var(--space-lg);
+    }
+}

@@ -1,0 +1,241 @@
+/* ==========================================================================
+   BASE — design tokens, reset, element defaults, focus and motion policy.
+   Load order: base.css -> layout.css -> components.css -> utilities.css
+   Sass equivalent: base/_tokens.scss, base/_reset.scss, base/_elements.scss
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Design tokens
+   Every colour, size, duration and layer used anywhere in the stylesheets is
+   declared here once. Rules in the other files only reference var(--token),
+   so no file contains an unexplained ("magic") number.
+
+   Breakpoints (custom properties cannot be read inside @media, so the three
+   values below are the only literals repeated in the other files):
+     48em = 768px  tablet
+     64em = 1024px desktop
+     90em = 1440px wide desktop
+   -------------------------------------------------------------------------- */
+:root {
+    /* Colour — brand */
+    --color-primary: #2563eb;
+    --color-primary-hover: #1d4ed8;
+    --color-primary-active: #1e40af;
+    --color-primary-deep: #1e3a8a;
+    --color-primary-soft: #eff6ff;
+    --color-primary-tint: #dbeafe;
+    --color-accent: #b45309;
+    --color-accent-soft: #fef3c7;
+
+    /* Colour — neutrals and surfaces */
+    --color-white: #ffffff;
+    --color-dark: #111827;
+    --color-text: #1f2937;
+    --color-text-muted: #4b5563;
+    --color-text-on-dark: #d1d5db;
+    --color-text-on-dark-muted: #9ca3af;
+    --color-bg: #f9fafb;
+    --color-surface: #ffffff;
+    --color-border: #e5e7eb;
+    --color-border-control: #6b7280;
+
+    /* Colour — feedback and states */
+    --color-success: #047857;
+    --color-success-on-dark: #86efac;
+    --color-danger: #dc2626;
+    --color-danger-on-dark: #fca5a5;
+    --color-disabled-bg: #e5e7eb;
+    --color-disabled-text: #6b7280;
+
+    /* Colour — translucent overlays used on coloured sections */
+    --overlay-light: rgba(255, 255, 255, 0.16);
+    --overlay-light-strong: rgba(255, 255, 255, 0.8);
+    --overlay-dark: rgba(17, 24, 39, 0.25);
+    --overlay-dark-strong: rgba(17, 24, 39, 0.4);
+
+    /* Spacing scale */
+    --space-3xs: 0.125rem;
+    --space-2xs: 0.25rem;
+    --space-xs: 0.5rem;
+    --space-sm: 0.75rem;
+    --space-md: 1.25rem;
+    --space-lg: 2rem;
+    --space-xl: 3rem;
+    --space-2xl: 4.5rem;
+
+    /* Typography — family, fluid size scale, weight, leading, tracking */
+    --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    --text-xs: 0.75rem;
+    --text-sm: 0.875rem;
+    --text-md: 1rem;
+    --text-base: clamp(1rem, 0.96rem + 0.18vw, 1.0625rem);
+    --text-lg: clamp(1.0625rem, 1rem + 0.3vw, 1.25rem);
+    --text-xl: 1.25rem;
+    --text-2xl: 1.375rem;
+    --text-h3: clamp(1.125rem, 1.05rem + 0.35vw, 1.35rem);
+    --text-h2: clamp(1.5rem, 1.22rem + 1.15vw, 2.125rem);
+    --text-h1: clamp(1.875rem, 1.35rem + 2.2vw, 3rem);
+    --weight-medium: 500;
+    --weight-semibold: 600;
+    --weight-bold: 700;
+    --weight-extrabold: 800;
+    --leading-tight: 1.15;
+    --leading-snug: 1.25;
+    --leading-normal: 1.6;
+    --tracking-tight: -0.02em;
+    --tracking-wide: 0.04em;
+    --tracking-wider: 0.08em;
+    --measure: 60ch;
+    --measure-narrow: 52ch;
+
+    /* Sizing */
+    --container-max: 1440px;
+    --size-tap-target: 2.75rem;
+    --size-header: 4.25rem;
+    --size-form-max: 32rem;
+    --size-table-min: 38rem;
+    --size-icon-bar: 1.25rem;
+    --size-icon-gap: 0.375rem;
+    --ratio-media: 4 / 3;
+    --hero-col-content: 1.15fr;
+    --hero-col-media: 0.85fr;
+
+    /* Borders, radii, elevation */
+    --border-thin: 1px;
+    --border-medium: 2px;
+    --border-thick: 4px;
+    --radius-sm: 0.375rem;
+    --radius-md: 0.625rem;
+    --radius-pill: 9999px;
+    --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.08);
+    --shadow-md: 0 8px 20px rgba(15, 23, 42, 0.1);
+    --shadow-lg: 0 16px 32px rgba(15, 23, 42, 0.16);
+
+    /* Focus ring (colour is re-pointed on dark sections, see layout.css) */
+    --focus-ring-width: 3px;
+    --focus-ring-offset: 2px;
+    --focus-ring-color: var(--color-primary);
+
+    /* Layers */
+    --z-raised: 1;
+    --z-badge: 2;
+    --z-header: 1000;
+    --z-skip-link: 2000;
+
+    /* Motion — durations, easing, distances. Zeroed under reduced motion. */
+    --duration-fast: 150ms;
+    --duration-base: 200ms;
+    --duration-slow: 500ms;
+    --stagger: 80ms;
+    --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    --lift: -0.25rem;
+    --press: 0.0625rem;
+    --enter-distance: 1rem;
+    --enter-scale: 0.97;
+    --angle-cross: 45deg;
+    --angle-hero-gradient: 135deg;
+    --transition-colors:
+        background-color var(--duration-base) var(--ease-standard),
+        color var(--duration-base) var(--ease-standard),
+        border-color var(--duration-base) var(--ease-standard);
+    --transition-lift:
+        transform var(--duration-base) var(--ease-out),
+        box-shadow var(--duration-base) var(--ease-out),
+        border-color var(--duration-base) var(--ease-standard);
+}
+
+/* Motion policy: users who ask for reduced motion get instant state changes
+   and no movement. Colour feedback still happens, it just is not animated. */
+@media (prefers-reduced-motion: reduce) {
+    :root {
+        --duration-fast: 0s;
+        --duration-base: 0s;
+        --duration-slow: 0s;
+        --stagger: 0s;
+        --lift: 0rem;
+        --press: 0rem;
+        --enter-distance: 0rem;
+        --enter-scale: 1;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   2. Reset
+   -------------------------------------------------------------------------- */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+[hidden] {
+    display: none !important;
+}
+
+/* --------------------------------------------------------------------------
+   3. Element defaults
+   -------------------------------------------------------------------------- */
+html {
+    overflow-x: clip;
+    scroll-padding-top: calc(var(--size-header) + var(--space-md));
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    html {
+        scroll-behavior: smooth;
+    }
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    overflow-x: clip;
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
+    line-height: var(--leading-normal);
+    color: var(--color-text);
+    background-color: var(--color-bg);
+}
+
+main {
+    flex: 1;
+}
+
+h1,
+h2,
+h3 {
+    line-height: var(--leading-snug);
+    text-wrap: balance;
+}
+
+img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
+
+button,
+input {
+    font: inherit;
+}
+
+/* --------------------------------------------------------------------------
+   4. Focus — one visible ring for every focusable element.
+   :focus-visible keeps the ring for keyboard users without flashing it on
+   mouse clicks. The fallback block serves browsers without :focus-visible.
+   -------------------------------------------------------------------------- */
+:focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: var(--focus-ring-offset);
+}
+
+@supports not selector(:focus-visible) {
+    :focus {
+        outline: var(--focus-ring-width) solid var(--focus-ring-color);
+        outline-offset: var(--focus-ring-offset);
+    }
+}
