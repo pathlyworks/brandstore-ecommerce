@@ -44,6 +44,7 @@ const validation = (details) =>
 export function createApp({ rateLimitMax = 60 } = {}) {
   let orders = seedOrders();
   let addresses = seedAddresses();
+  let users = USERS.map((u) => ({ ...u })); // accounts created with POST /auth/register are added here
   const sessions = new Map(); // token -> { userId, expiresAt }
   const buckets = new Map(); // client key -> { count, resetAt }
   const loginFailures = new Map(); // email -> { count, resetAt }
@@ -51,6 +52,7 @@ export function createApp({ rateLimitMax = 60 } = {}) {
   function reset() {
     orders = seedOrders();
     addresses = seedAddresses();
+    users = USERS.map((u) => ({ ...u }));
     sessions.clear();
     buckets.clear();
     loginFailures.clear();
@@ -84,7 +86,7 @@ export function createApp({ rateLimitMax = 60 } = {}) {
       sessions.delete(match[1]);
       throw new HttpError(401, 'INVALID_TOKEN', 'Your session has expired. Sign in again.');
     }
-    return USERS.find((u) => u.id === session.userId);
+    return users.find((u) => u.id === session.userId);
   }
 
   // ---- query helpers -------------------------------------------------------------------
@@ -185,7 +187,7 @@ export function createApp({ rateLimitMax = 60 } = {}) {
         { retryAfter: Math.ceil((f.resetAt - now) / 1000) },
       );
     }
-    const user = USERS.find((u) => u.email === email && u.password === body.password);
+    const user = users.find((u) => u.email === email && u.password === body.password);
     if (!user) {
       const next = f && f.resetAt > now ? f : { count: 0, resetAt: now + WINDOW_MS };
       next.count += 1;
@@ -206,6 +208,40 @@ export function createApp({ rateLimitMax = 60 } = {}) {
         },
       },
     ];
+  }
+
+  /** A new session for a user (token, expiry). */
+  function issueSession(user) {
+    const token = randomUUID();
+    sessions.set(token, { userId: user.id, expiresAt: Date.now() + TOKEN_TTL_SECONDS * 1000 });
+    return {
+      token,
+      tokenType: 'Bearer',
+      expiresIn: TOKEN_TTL_SECONDS,
+      user: { id: user.id, name: user.name, email: user.email },
+    };
+  }
+
+  function register(body) {
+    const errors = [];
+    const email = typeof body.email === 'string' ? body.email.trim().toLowerCase() : '';
+    const name = typeof body.name === 'string' ? body.name.trim() : '';
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
+      errors.push({ field: 'email', message: 'must be a valid email address' });
+    if (typeof body.password !== 'string' || body.password.length < 8)
+      errors.push({ field: 'password', message: 'must be at least 8 characters' });
+    if (name.length > 80) errors.push({ field: 'name', message: 'must be at most 80 characters' });
+    if (errors.length) throw validation(errors);
+    if (users.some((u) => u.email === email))
+      throw new HttpError(400, 'EMAIL_TAKEN', 'Email already registered.');
+    const user = {
+      id: `u-${users.length + 1}`,
+      name: name || email,
+      email,
+      password: body.password,
+    };
+    users.push(user);
+    return [201, { data: issueSession(user) }];
   }
 
   function listOrders(user, q) {
@@ -341,6 +377,7 @@ export function createApp({ rateLimitMax = 60 } = {}) {
     ['GET', /^\/products$/, false, (c) => listProducts(c.query)],
     ['GET', /^\/products\/([^/]+)$/, false, (c) => getProduct(c.params[0])],
     ['POST', /^\/auth\/login$/, false, (c) => login(c.body)],
+    ['POST', /^\/auth\/register$/, false, (c) => register(c.body)],
     ['GET', /^\/account\/orders$/, true, (c) => listOrders(c.user, c.query)],
     [
       'PATCH',

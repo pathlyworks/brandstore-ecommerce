@@ -638,6 +638,74 @@
         },
         "description": "Returns 200 with a body (not 204) so the client can confirm which id was removed. Deleting the default promotes the next address."
       }
+    },
+    "/auth/register": {
+      "post": {
+        "tags": ["Auth"],
+        "operationId": "register",
+        "summary": "Create a shopper account and sign in",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["email", "password"],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "maxLength": 80
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "password": {
+                    "type": "string",
+                    "minLength": 8
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Registered and signed in",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["data"],
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Session"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          }
+        },
+        "description": "400 VALIDATION_ERROR (details per field) or EMAIL_TAKEN (\"Email already registered.\"). Same token as /auth/login.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ClientId"
+          },
+          {
+            "$ref": "#/components/parameters/MockStatus"
+          },
+          {
+            "$ref": "#/components/parameters/MockDelay"
+          }
+        ]
+      }
     }
   },
   "components": {
