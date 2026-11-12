@@ -1,7 +1,7 @@
 /** src/pages/catalog.js — entry module for catalog.html (search, filter, sort and paginate). */
 import { start } from '../main.js';
 import * as storage from '../utils/storage.js';
-import { createCart } from '../state/cart.js';
+import { createCartStore } from '../state/stores.js';
 import { mountCartBadge } from '../components/cart-badge.js';
 import { API_BASE_URL, SEARCH_DEBOUNCE_MS } from '../config.js';
 import { createHttpClient } from '../api/http.js';
@@ -20,7 +20,7 @@ function catalog() {
 }
 
 start([
-  ['cart-badge', () => mountCartBadge(createCart(storage))],
+  ['cart-badge', () => mountCartBadge(createCartStore(storage))],
   ['nav', nav],
   ['catalog', catalog],
 ]);

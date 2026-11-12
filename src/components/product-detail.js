@@ -12,7 +12,6 @@ import { categoryLabel, ratingText } from '../utils/format.js';
 import { fetchProduct } from '../api/product-api.js';
 import { addToCart, canAdd, toLine } from '../state/cart.js';
 import { saveItem } from '../state/saved.js';
-import { recordView } from '../state/recent.js';
 import { createGallery } from './gallery.js';
 import { createStepper } from './quantity-stepper.js';
 import { renderRecent } from './recent-strip.js';
@@ -179,10 +178,10 @@ function createInfo(product, stores) {
 
 /**
  * @param {HTMLElement} root the product page's <main>
- * @param {{ api: object, id: string, cart: object, saved: object, storage: object }} deps
+ * @param {{ api: object, id: string, cart: object, saved: object, recent: object }} deps (stores from state/stores.js)
  * @returns {{ load: () => Promise<void> }}
  */
-export function mount(root, { api, id, cart, saved, storage }) {
+export function mount(root, { api, id, cart, saved, recent: recentStore }) {
   const heading = dom.qs('#product-heading', root);
   const body = dom.qs('#product-body', root);
   const recent = dom.qs('#recently-viewed', root);
@@ -204,7 +203,7 @@ export function mount(root, { api, id, cart, saved, storage }) {
       document.title = `${product.name} — BrandStore`;
       dom.clear(body);
       body.append(createGallery(product.images), createInfo(product, { cart, saved }));
-      renderRecent(recent, recordView(storage, product), { excludeId: product.id });
+      renderRecent(recent, recentStore.view(product), { excludeId: product.id });
     } catch (failure) {
       body.textContent = '';
       heading.textContent = failure.status === 404 ? 'Product not found' : 'Product';

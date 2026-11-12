@@ -8,28 +8,19 @@
  */
 import * as dom from '../utils/dom.js';
 import { formatMoney } from '../utils/money.js';
-import { totals } from '../utils/cart-math.js';
 import { fetchProduct } from '../api/product-api.js';
-import {
-  availableLines,
-  clearCart,
-  priceChanges,
-  syncLines,
-  syncWithCatalog,
-} from '../state/cart.js';
-import { readRecent } from '../state/recent.js';
+import { cartSummary, clearCart, priceChanges, syncLines, syncWithCatalog } from '../state/cart.js';
 import { renderCartLines } from './cart-panel.js';
 import { renderSavedItems } from './saved-list.js';
 import { renderRecent } from './recent-strip.js';
 
 /**
- * Write the totals panel.
+ * Write the totals panel from cartSummary (the same numbers the menu badge uses).
  * @param {HTMLElement} panel
- * @param {object[]} lines lines that count (in stock)
- * @param {string} currency
+ * @param {ReturnType<typeof cartSummary>} t
  */
-function renderTotals(panel, lines, currency = 'USD') {
-  const t = totals(lines);
+function renderTotals(panel, t) {
+  const { currency } = t;
   const money = (cents) => formatMoney(cents, currency);
   dom.qs('[data-total="items"]', panel).textContent = String(t.itemCount);
   dom.qs('[data-total="subtotal"]', panel).textContent = money(t.subtotal);
@@ -54,7 +45,7 @@ function render(root, ctx) {
   const { items } = ctx.saved.get();
   renderCartLines(dom.qs('#cart-lines', root), lines, ctx);
   renderSavedItems(dom.qs('#saved-items', root), items, ctx);
-  renderTotals(dom.qs('#cart-totals', root), availableLines(ctx.cart.get()), lines[0]?.currency);
+  renderTotals(dom.qs('#cart-totals', root), cartSummary(ctx.cart.get()));
   dom.qs('#cart-empty', root).hidden = lines.length > 0;
   dom.qs('#cart-clear', root).hidden = lines.length === 0;
   dom.qs('#saved-empty', root).hidden = items.length > 0;
@@ -95,9 +86,9 @@ async function refreshFromCatalog(api, { cart, saved, say }) {
 
 /**
  * @param {HTMLElement} root the cart page's <main>
- * @param {{ api: object, cart: object, saved: object, storage: object }} deps
+ * @param {{ api: object, cart: object, saved: object, recent: object }} deps (stores from state/stores.js)
  */
-export function mount(root, { api, cart, saved, storage }) {
+export function mount(root, { api, cart, saved, recent }) {
   const message = dom.qs('#cart-message', root);
   const ctx = { cart, saved, say: (text) => (message.textContent = text) };
   dom.qs('#cart-clear', root).addEventListener('click', () => {
@@ -107,6 +98,6 @@ export function mount(root, { api, cart, saved, storage }) {
   cart.subscribe(() => render(root, ctx));
   saved.subscribe(() => render(root, ctx));
   render(root, ctx);
-  renderRecent(dom.qs('#recently-viewed', root), readRecent(storage));
+  renderRecent(dom.qs('#recently-viewed', root), recent.get());
   refreshFromCatalog(api, ctx);
 }

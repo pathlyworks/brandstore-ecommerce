@@ -64,6 +64,7 @@ function cartLine(line, { cart, saved }) {
     value: line.quantity,
     stock: line.stock,
     onChange: (quantity) => cart.apply(updateQuantity, id, quantity),
+    onZero: () => cart.apply(updateQuantity, id, 0), // typing 0 removes the line (same rule as the reducer)
   });
   stepper.element
     .querySelectorAll('button, input')
