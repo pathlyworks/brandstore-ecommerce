@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="The page you asked for does not exist. Go back to the BrandStore home page or compare our products.">
+    <meta name="robots" content="noindex">
+    <title>Page not found — BrandStore</title>
+    <meta name="theme-color" content="#2563eb">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <!-- Cascade order: tokens/reset -> page skeleton -> BEM components -> utilities -->
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/utilities.css">
+    <script src="js/boot.js"></script>
+    <script defer src="js/app.js"></script>
+    <script defer src="js/dom.js"></script>
+    <script defer src="js/nav.js"></script>
+    <script defer src="js/regions.js"></script>
+    <script defer src="js/main.js"></script>
+</head>
+<body>
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+
+    <header class="site-header">
+        <div class="container site-header__inner">
+            <a href="index.html" class="logo">BrandStore</a>
+            <nav class="nav" aria-label="Main Navigation">
+                <button type="button" class="nav__toggle" aria-expanded="false" aria-controls="nav-menu" aria-label="Toggle navigation menu">
+                    <span class="nav__toggle-icon" aria-hidden="true"></span>
+                </button>
+                <ul id="nav-menu" class="nav__list">
+                    <li class="nav__item"><a href="index.html" class="nav__link">Home</a></li>
+                    <li class="nav__item"><a href="index.html#categories" class="nav__link">Categories</a></li>
+                    <li class="nav__item"><a href="index.html#featured" class="nav__link">Featured</a></li>
+                    <li class="nav__item"><a href="index.html#deals" class="nav__link">Deals</a></li>
+                    <li class="nav__item"><a href="index.html#testimonials" class="nav__link">Testimonials</a></li>
+                    <li class="nav__item"><a href="comparison.html" class="nav__link">Compare Products</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main id="main-content" tabindex="-1" class="section section--compact">
+        <div class="container">
+            <section class="page-header" aria-labelledby="notfound-heading">
+                <h1 id="notfound-heading" class="page-header__title">Page not found</h1>
+                <p class="page-header__lead">We could not find that page. It may have moved, or the address may have a typo.</p>
+                <div class="page-header__controls">
+                    <a href="index.html" class="btn btn--secondary">Back to the home page</a>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container site-footer__inner">
+            <p>&copy; 2026 BrandStore. All rights reserved.</p>
+            <nav class="footer-nav" aria-label="Footer Navigation">
+                <ul class="footer-nav__list">
+                    <li class="footer-nav__item"><a href="index.html" class="footer-nav__link">Home</a></li>
+                    <li class="footer-nav__item"><a href="comparison.html" class="footer-nav__link">Product Comparison</a></li>
+                    <li class="footer-nav__item"><a href="index.html#newsletter" class="footer-nav__link">Newsletter</a></li>
+                </ul>
+            </nav>
+        </div>
+    </footer>
+
+</body>
+</html>

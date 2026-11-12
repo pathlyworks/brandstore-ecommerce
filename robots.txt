@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /qa/
+
+Sitemap: https://brandstore.example/sitemap.xml

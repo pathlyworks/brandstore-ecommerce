@@ -1,0 +1,17 @@
+# Netlify settings. The site is plain HTML, CSS and JavaScript: no build step.
+# GitHub Pages ignores this file; the site works there too (see docs/RUNBOOK.md).
+[build]
+  publish = "."
+
+# Security headers for every response. The Content-Security-Policy only allows
+# files from the site itself, which is all this project uses (no inline scripts,
+# no inline styles, no third-party requests). qa/headers.js tests the site
+# under exactly these headers.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "DENY"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+    Content-Security-Policy = "default-src 'self'; img-src 'self'; style-src 'self'; script-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; object-src 'none'"
