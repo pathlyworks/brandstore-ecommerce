@@ -5,85 +5,92 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Compare BrandStore flagship products side by side across price, category, battery life, water resistance, weight, and warranty.">
     <title>Product Comparison — BrandStore</title>
-    <link rel="stylesheet" href="css/style.css">
+    <!-- Cascade order: tokens/reset -> page skeleton -> BEM components -> utilities -->
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/utilities.css">
+    <script>document.documentElement.classList.add('js');</script>
 </head>
 <body>
     <a class="skip-link" href="#main-content">Skip to main content</a>
 
     <header class="site-header">
-        <div class="container header-container">
+        <div class="container site-header__inner">
             <a href="index.html" class="logo">BrandStore</a>
-            <nav class="main-nav" aria-label="Main Navigation">
-                <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="nav-menu" aria-label="Toggle navigation menu">☰</button>
-                <ul id="nav-menu" class="nav-list">
-                    <li><a href="index.html">Home</a></li>
-                    <li><a href="index.html#categories">Categories</a></li>
-                    <li><a href="index.html#featured">Featured</a></li>
-                    <li><a href="index.html#deals">Deals</a></li>
-                    <li><a href="comparison.html" class="active" aria-current="page">Compare Products</a></li>
+            <nav class="nav" aria-label="Main Navigation">
+                <button type="button" class="nav__toggle" aria-expanded="false" aria-controls="nav-menu" aria-label="Toggle navigation menu">
+                    <span class="nav__toggle-icon" aria-hidden="true"></span>
+                </button>
+                <ul id="nav-menu" class="nav__list">
+                    <li class="nav__item"><a href="index.html" class="nav__link">Home</a></li>
+                    <li class="nav__item"><a href="index.html#categories" class="nav__link">Categories</a></li>
+                    <li class="nav__item"><a href="index.html#featured" class="nav__link">Featured</a></li>
+                    <li class="nav__item"><a href="index.html#deals" class="nav__link">Deals</a></li>
+                    <li class="nav__item"><a href="comparison.html" class="nav__link nav__link--current" aria-current="page">Compare Products</a></li>
                 </ul>
             </nav>
         </div>
     </header>
 
-    <main id="main-content" class="comparison-main">
+    <main id="main-content" class="section section--compact">
         <div class="container">
             <section class="page-header" aria-labelledby="comparison-heading">
-                <h1 id="comparison-heading">Product Comparison</h1>
-                <p>Compare key specifications and features side by side to choose the right product for your daily workflow.</p>
-                <div class="comparison-controls">
-                    <button type="button" id="highlight-diff-btn" class="btn btn-secondary" aria-pressed="false">Highlight Differences</button>
+                <h1 id="comparison-heading" class="page-header__title">Product Comparison</h1>
+                <p class="page-header__lead">Compare key specifications and features side by side to choose the right product for your daily workflow.</p>
+                <div class="page-header__controls">
+                    <button type="button" id="highlight-diff-btn" class="btn btn--secondary" aria-pressed="false">Highlight Differences</button>
                 </div>
             </section>
 
-            <section class="comparison-section" aria-label="Product specifications comparison table">
-                <div class="table-wrapper" tabindex="0" role="region" aria-label="Scrollable product comparison table">
+            <section aria-label="Product specifications comparison table">
+                <div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable product comparison table" data-scroll-region>
                     <table class="comparison-table">
-                        <caption>Side-by-side technical and pricing comparison of BrandStore featured products</caption>
+                        <caption class="comparison-table__caption">Side-by-side technical and pricing comparison of BrandStore featured products</caption>
                         <thead>
                             <tr>
-                                <th scope="col">Specification</th>
-                                <th scope="col">Wireless Headphones Pro</th>
-                                <th scope="col">Ergonomic Smartwatch</th>
-                                <th scope="col">Minimalist Leather Backpack</th>
+                                <th scope="col" class="comparison-table__heading">Specification</th>
+                                <th scope="col" class="comparison-table__heading">Wireless Headphones Pro</th>
+                                <th scope="col" class="comparison-table__heading">Ergonomic Smartwatch</th>
+                                <th scope="col" class="comparison-table__heading">Minimalist Leather Backpack</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <th scope="row">Price</th>
-                                <td>$199.99</td>
-                                <td>$149.99</td>
-                                <td>$89.99</td>
+                            <tr class="comparison-table__row">
+                                <th scope="row" class="comparison-table__row-heading">Price</th>
+                                <td class="comparison-table__cell">$199.99</td>
+                                <td class="comparison-table__cell">$149.99</td>
+                                <td class="comparison-table__cell">$89.99</td>
                             </tr>
-                            <tr>
-                                <th scope="row">Category</th>
-                                <td>Electronics</td>
-                                <td>Electronics</td>
-                                <td>Accessories</td>
+                            <tr class="comparison-table__row">
+                                <th scope="row" class="comparison-table__row-heading">Category</th>
+                                <td class="comparison-table__cell">Electronics</td>
+                                <td class="comparison-table__cell">Electronics</td>
+                                <td class="comparison-table__cell">Accessories</td>
                             </tr>
-                            <tr>
-                                <th scope="row">Battery Life</th>
-                                <td>40 Hours</td>
-                                <td>7 Days</td>
-                                <td>N/A (Passive)</td>
+                            <tr class="comparison-table__row">
+                                <th scope="row" class="comparison-table__row-heading">Battery Life</th>
+                                <td class="comparison-table__cell">40 Hours</td>
+                                <td class="comparison-table__cell">7 Days</td>
+                                <td class="comparison-table__cell">N/A (Passive)</td>
                             </tr>
-                            <tr>
-                                <th scope="row">Water Resistance</th>
-                                <td>IPX4 Splashproof</td>
-                                <td>IP68 Swimproof</td>
-                                <td>Water-Resistant Coating</td>
+                            <tr class="comparison-table__row">
+                                <th scope="row" class="comparison-table__row-heading">Water Resistance</th>
+                                <td class="comparison-table__cell">IPX4 Splashproof</td>
+                                <td class="comparison-table__cell">IP68 Swimproof</td>
+                                <td class="comparison-table__cell">Water-Resistant Coating</td>
                             </tr>
-                            <tr>
-                                <th scope="row">Weight</th>
-                                <td>250 g</td>
-                                <td>42 g</td>
-                                <td>890 g</td>
+                            <tr class="comparison-table__row">
+                                <th scope="row" class="comparison-table__row-heading">Weight</th>
+                                <td class="comparison-table__cell">250 g</td>
+                                <td class="comparison-table__cell">42 g</td>
+                                <td class="comparison-table__cell">890 g</td>
                             </tr>
-                            <tr>
-                                <th scope="row">Warranty</th>
-                                <td>2 Years Limited</td>
-                                <td>1 Year Limited</td>
-                                <td>Lifetime Guarantee</td>
+                            <tr class="comparison-table__row">
+                                <th scope="row" class="comparison-table__row-heading">Warranty</th>
+                                <td class="comparison-table__cell">2 Years Limited</td>
+                                <td class="comparison-table__cell">1 Year Limited</td>
+                                <td class="comparison-table__cell">Lifetime Guarantee</td>
                             </tr>
                         </tbody>
                     </table>
@@ -93,13 +100,13 @@
     </main>
 
     <footer class="site-footer">
-        <div class="container footer-container">
+        <div class="container site-footer__inner">
             <p>&copy; 2026 BrandStore. All rights reserved.</p>
-            <nav aria-label="Footer Navigation">
-                <ul class="footer-links">
-                    <li><a href="index.html">Home</a></li>
-                    <li><a href="index.html#featured">Featured Products</a></li>
-                    <li><a href="index.html#newsletter">Newsletter</a></li>
+            <nav class="footer-nav" aria-label="Footer Navigation">
+                <ul class="footer-nav__list">
+                    <li class="footer-nav__item"><a href="index.html" class="footer-nav__link">Home</a></li>
+                    <li class="footer-nav__item"><a href="index.html#featured" class="footer-nav__link">Featured Products</a></li>
+                    <li class="footer-nav__item"><a href="index.html#newsletter" class="footer-nav__link">Newsletter</a></li>
                 </ul>
             </nav>
         </div>
