@@ -4,6 +4,7 @@
  *   npm run e2e                                   # Chromium, desktop and phone sizes
  *   E2E_BROWSERS=chromium,firefox,webkit npm run e2e
  *   E2E_DIST=1 npm run e2e                        # test the build output (run npm run build first)
+ *   E2E_ONLY=catalog npm run e2e                  # only journeys whose name contains "catalog"
  *
  * Uses the Playwright library (first time: `npx playwright install chromium`). Each journey runs
  * in a fresh page; any console error or uncaught exception fails the journey.
@@ -11,16 +12,21 @@
 import { chromium, firefox, webkit } from 'playwright';
 import { existsSync } from 'node:fs';
 import { serve } from '../../scripts/serve.mjs';
+import { registerCatalogJourneys } from './catalog-journeys.mjs';
 
 const ENGINES = { chromium, firefox, webkit };
 const engines = (process.env.E2E_BROWSERS || 'chromium').split(',');
 const VIEWPORTS = { desktop: { width: 1280, height: 900 }, phone: { width: 375, height: 740 } };
-const site = await serve(process.env.E2E_DIST ? 'dist' : '.', 0);
+// High API rate limit: the journeys send far more than 60 requests a minute from one address.
+const site = await serve(process.env.E2E_DIST ? 'dist' : '.', 0, { apiRateLimit: 100000 });
 const journeys = [];
 
-/** Register a journey. `size` limits it to one viewport. */
-function journey(name, fn, size) {
-  journeys.push({ name, fn, size });
+/**
+ * Register a journey. `size` limits it to one viewport; `allowHttpErrors` accepts the browser's
+ * "Failed to load resource" console line for journeys that cause 4xx/5xx responses on purpose.
+ */
+function journey(name, fn, size, { allowHttpErrors = false } = {}) {
+  journeys.push({ name, fn, size, allowHttpErrors });
 }
 
 /** Throw with a readable message when a condition is false. */
@@ -154,6 +160,8 @@ journey('not found: unknown address gets the 404 page with one h1', async (page)
   expect((await page.locator('h1').count()) === 1, 'expected one h1');
 });
 
+registerCatalogJourneys({ journey, expect, url: site.url });
+
 let failures = 0;
 let runs = 0;
 for (const name of engines) {
@@ -164,14 +172,19 @@ for (const name of engines) {
       : {};
   const browser = await engine.launch(options);
   for (const [sizeName, viewport] of Object.entries(VIEWPORTS)) {
-    for (const j of journeys.filter((x) => !x.size || x.size === sizeName)) {
+    const only = process.env.E2E_ONLY || '';
+    for (const j of journeys.filter(
+      (x) => (!x.size || x.size === sizeName) && x.name.includes(only),
+    )) {
       const page = await browser.newPage({ viewport });
       const errors = [];
       page.on('pageerror', (e) => errors.push(String(e)));
-      page.on(
-        'console',
-        (m) => m.type() === 'error' && !m.text().includes('404') && errors.push(m.text()),
-      );
+      page.on('console', (m) => {
+        const text = m.text();
+        const expected =
+          text.includes('404') || (j.allowHttpErrors && text.startsWith('Failed to load resource'));
+        if (m.type() === 'error' && !expected) errors.push(text);
+      });
       runs += 1;
       try {
         await j.fn(page);
