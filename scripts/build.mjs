@@ -17,6 +17,8 @@ const out = join(root, 'dist');
 const COPY = [
   'index.html',
   'comparison.html',
+  'catalog.html',
+  'product.html',
   '404.html',
   'css',
   'src',

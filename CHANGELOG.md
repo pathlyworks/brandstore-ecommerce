@@ -1,5 +1,16 @@
 # Changelog
 
+## Unreleased — Phase 2, Task 2: catalog (branch `feature/catalog-search-filter-sort`)
+### Added
+- `catalog.html`: live catalog from `GET /products` with debounced search, category/brand/price/rating filters with client-side facet counts, sorting, pagination, loading/empty/error states with retry, and the whole view in the URL (reload, share, Back/Forward).
+- `product.html`: one product from `GET /products/{id}` with a "Product not found" state.
+- Superseded requests are aborted (`AbortController`) and late answers ignored (`src/utils/latest.js`).
+- API: `brand` field and filter, `minRating` filter, 500 documented; mock test headers `X-Mock-Status` / `X-Mock-Delay`; API served on `/api` by `npm run start`, Vite and a Netlify Function.
+- Tests: fixtures (`tests/fixtures/catalog-cases.json`), unit tests for query strings, facets, debounce, http, state and errors; integration tests against the mock and the Netlify function; 9 catalog/product e2e journeys.
+- `task_2_catalog.md` (deliverable), new short `README.md`.
+### Fixed
+- Invisible "Clear all filters" button (dark-background outline style), 44 px tap target for short nav links, long product names overflowing at 200% text, heading order on the product error box.
+
 ## Unreleased — Phase 2, Task 1, revision 3
 ### Changed
 - `README.md` rewritten as a short report with the required sections first: Endpoint Table, Storage Strategy, QA Matrix, Deviations List.

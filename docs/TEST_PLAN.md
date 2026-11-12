@@ -74,3 +74,9 @@ real tests); each journey above passes in Chromium before merge and in all three
 
 The e2e runner was checked to fail when a feature is broken: removing the product filter from the
 home page made 4 of 17 runs fail.
+
+### Update after Phase 2, Task 2 (catalog)
+
+- Unit: 71 tests (query strings, facets, debounce, latest-request runner, money, error wording, http client with a fake `fetch`, URL-backed catalog state, plus the Task 1 tests).
+- Integration: 22 tests: the real `api/` modules against the real mock server (every case in `tests/fixtures/catalog-cases.json`, each error status, abort) and the Netlify function. These replace MSW for now (MSW could not be installed in the build environment).
+- End-to-end: 18 journeys, 34 runs in Chromium at desktop and phone size, all passing; the catalog journeys check results against the same fixtures, the debounce (one request per burst), aborting of superseded requests, URL reload/Back/Forward, and every loading/empty/error state.

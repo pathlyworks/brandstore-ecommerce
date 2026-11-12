@@ -1,0 +1,177 @@
+{
+  "description": "Expected GET /products results for the mock catalog (mock-server/data.mjs). Computed independently of the mock (Python, 2026-11-12) and checked by tests/integration/catalog-api.test.js and tests/e2e/run.mjs. limit defaults to 6 here (the catalog page size); the API default is 12.",
+  "defaults": {
+    "limit": 6
+  },
+  "cases": [
+    {
+      "name": "default view, page 1",
+      "query": {},
+      "expect": {
+        "ids": [
+          "headphones-pro",
+          "smartwatch",
+          "leather-backpack",
+          "bluetooth-speaker",
+          "usb-c-hub",
+          "merino-tee"
+        ],
+        "total": 12,
+        "totalPages": 2
+      }
+    },
+    {
+      "name": "default view, page 2",
+      "query": {
+        "page": 2
+      },
+      "expect": {
+        "ids": [
+          "rain-shell",
+          "wool-socks",
+          "ceramic-mug",
+          "desk-lamp",
+          "linen-throw",
+          "card-wallet"
+        ],
+        "total": 12,
+        "totalPages": 2
+      }
+    },
+    {
+      "name": "category",
+      "query": {
+        "category": "electronics"
+      },
+      "expect": {
+        "ids": ["headphones-pro", "smartwatch", "bluetooth-speaker", "usb-c-hub"],
+        "total": 4,
+        "totalPages": 1
+      }
+    },
+    {
+      "name": "another category",
+      "query": {
+        "category": "apparel"
+      },
+      "expect": {
+        "ids": ["merino-tee", "rain-shell", "wool-socks"],
+        "total": 3,
+        "totalPages": 1
+      }
+    },
+    {
+      "name": "category + brand",
+      "query": {
+        "category": "electronics",
+        "brand": "Pulse"
+      },
+      "expect": {
+        "ids": ["smartwatch", "usb-c-hub"],
+        "total": 2,
+        "totalPages": 1
+      }
+    },
+    {
+      "name": "brand + sort by price high to low",
+      "query": {
+        "brand": "Northline",
+        "sort": "price_desc"
+      },
+      "expect": {
+        "ids": ["rain-shell", "leather-backpack", "merino-tee", "card-wallet"],
+        "total": 4,
+        "totalPages": 1
+      }
+    },
+    {
+      "name": "price range in cents",
+      "query": {
+        "minPrice": 3000,
+        "maxPrice": 8000,
+        "sort": "price_asc"
+      },
+      "expect": {
+        "ids": [
+          "ceramic-mug",
+          "usb-c-hub",
+          "merino-tee",
+          "bluetooth-speaker",
+          "desk-lamp",
+          "linen-throw"
+        ],
+        "total": 6,
+        "totalPages": 1
+      }
+    },
+    {
+      "name": "minimum rating + top rated",
+      "query": {
+        "minRating": 4.6,
+        "sort": "rating_desc"
+      },
+      "expect": {
+        "ids": ["wool-socks", "headphones-pro", "leather-backpack", "smartwatch", "linen-throw"],
+        "total": 5,
+        "totalPages": 1
+      }
+    },
+    {
+      "name": "search",
+      "query": {
+        "q": "wool"
+      },
+      "expect": {
+        "ids": ["wool-socks"],
+        "total": 1,
+        "totalPages": 1
+      }
+    },
+    {
+      "name": "search, case-insensitive, sorted by name",
+      "query": {
+        "q": "LE",
+        "sort": "name_asc"
+      },
+      "expect": {
+        "ids": [
+          "desk-lamp",
+          "leather-backpack",
+          "rain-shell",
+          "bluetooth-speaker",
+          "card-wallet",
+          "headphones-pro"
+        ],
+        "total": 6,
+        "totalPages": 1
+      }
+    },
+    {
+      "name": "everything combined, page 2 of 2",
+      "query": {
+        "category": "apparel",
+        "minRating": 4.2,
+        "maxPrice": 12000,
+        "sort": "price_asc",
+        "limit": 2,
+        "page": 2
+      },
+      "expect": {
+        "ids": ["rain-shell"],
+        "total": 3,
+        "totalPages": 2
+      }
+    },
+    {
+      "name": "no results",
+      "query": {
+        "q": "zzz"
+      },
+      "expect": {
+        "ids": [],
+        "total": 0,
+        "totalPages": 1
+      }
+    }
+  ]
+}

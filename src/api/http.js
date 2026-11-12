@@ -1,15 +1,104 @@
 /**
  * src/api/http.js
  *
- * The only module that calls fetch. Adds base URL, JSON headers, bearer token, a timeout, and turns every non-2xx into ApiError. On 401 it calls onUnauthorized (the app signs the user out); on 429 it does not retry automatically, it surfaces retryAfter.
+ * The only module that calls fetch. It adds the base URL and JSON headers, passes the caller's
+ * AbortSignal through (so a newer request can cancel an older one), adds a timeout, and turns every
+ * failure into an ApiError. An aborted request is re-thrown as is (name "AbortError") so callers can
+ * ignore it.
  */
-import { notImplemented } from '../utils/not-implemented.js';
+import { ApiError } from './errors.js';
 
 /**
- * Factory so tests can inject a base URL and token source.
- * @param {{ baseUrl: string, getToken: () => string | null, onUnauthorized: () => void, timeoutMs?: number }} options
- * @returns {{ request: (method: string, path: string, body?: unknown) => Promise<unknown> }}
+ * Parse a JSON body; null when there is none or it is not JSON.
+ * @param {Response} response
+ * @returns {Promise<any>}
  */
-export function createHttpClient(options) {
-  return notImplemented('api/http.createHttpClient');
+async function readJson(response) {
+  const text = await response.text();
+  if (!text) return null;
+  try {
+    return JSON.parse(text);
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Combine the caller's signal with a timeout (when the browser supports AbortSignal.any).
+ * @param {AbortSignal | undefined} signal
+ * @param {number} timeoutMs
+ * @returns {AbortSignal | undefined}
+ */
+function withTimeout(signal, timeoutMs) {
+  if (typeof AbortSignal.any !== 'function' || typeof AbortSignal.timeout !== 'function') {
+    return signal;
+  }
+  const timeout = AbortSignal.timeout(timeoutMs);
+  return signal ? AbortSignal.any([signal, timeout]) : timeout;
+}
+
+/**
+ * Build the ApiError for a non-2xx response.
+ * @param {Response} response
+ * @param {any} body
+ * @returns {ApiError}
+ */
+function errorFrom(response, body) {
+  const retryAfter = Number(response.headers.get('Retry-After')) || null;
+  return new ApiError(
+    response.status,
+    body?.error?.code || `HTTP_${response.status}`,
+    body?.error?.message || response.statusText || 'Request failed',
+    body?.error?.details || [],
+    retryAfter,
+  );
+}
+
+/**
+ * @param {{ baseUrl: string, fetchImpl?: typeof fetch, timeoutMs?: number,
+ *   getToken?: () => string | null, onUnauthorized?: () => void }} options
+ * @returns {{ get: (path: string, init?: { signal?: AbortSignal, headers?: Record<string, string> }) => Promise<any> }}
+ */
+export function createHttpClient({
+  baseUrl,
+  fetchImpl = (...args) => fetch(...args),
+  timeoutMs = 10000,
+  getToken = () => null,
+  onUnauthorized = () => {},
+}) {
+  /** Send one request; resolve with the parsed JSON body or reject with ApiError / AbortError. */
+  async function request(method, path, { signal, headers = {}, body } = {}) {
+    const token = getToken();
+    let response;
+    try {
+      response = await fetchImpl(baseUrl + path, {
+        method,
+        headers: {
+          Accept: 'application/json',
+          ...(body !== undefined ? { 'Content-Type': 'application/json' } : {}),
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          ...headers,
+        },
+        body: body !== undefined ? JSON.stringify(body) : undefined,
+        signal: withTimeout(signal, timeoutMs),
+      });
+    } catch (error) {
+      if (signal?.aborted) throw error; // superseded by a newer request: let the caller ignore it
+      throw new ApiError(
+        0,
+        error?.name === 'TimeoutError' ? 'TIMEOUT' : 'NETWORK',
+        'Network request failed.',
+      );
+    }
+    const data = await readJson(response);
+    if (!response.ok) {
+      if (response.status === 401) onUnauthorized();
+      throw errorFrom(response, data);
+    }
+    return data;
+  }
+  return {
+    get: (path, init) => request('GET', path, init),
+    request,
+  };
 }

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Search, filter, sort and browse every BrandStore product by category, brand, price and rating, with shareable filtered views.">
+    <title>Shop All Products — BrandStore</title>
+    <link rel="canonical" href="https://brandstore.example/catalog.html">
+    <meta name="theme-color" content="#2563eb">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="BrandStore">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:title" content="Shop All Products — BrandStore">
+    <meta property="og:description" content="Search, filter, sort and browse every BrandStore product by category, brand, price and rating, with shareable filtered views.">
+    <meta property="og:url" content="https://brandstore.example/catalog.html">
+    <meta property="og:image" content="https://brandstore.example/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="BrandStore: curated electronics, apparel and modern essentials, with a headphones, smartwatch and backpack illustration.">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Shop All Products — BrandStore">
+    <meta name="twitter:description" content="Search, filter, sort and browse every BrandStore product by category, brand, price and rating, with shareable filtered views.">
+    <meta name="twitter:image" content="https://brandstore.example/og-image.png">
+    <!-- Cascade order: tokens/reset -> page skeleton -> BEM components -> utilities -->
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/utilities.css">
+    <script type="module" src="src/pages/catalog.js"></script>
+</head>
+<body>
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+
+    <header class="site-header">
+        <div class="container site-header__inner">
+            <a href="index.html" class="logo">BrandStore</a>
+            <nav class="nav" aria-label="Main Navigation">
+                <button type="button" class="nav__toggle" aria-expanded="false" aria-controls="nav-menu" aria-label="Toggle navigation menu">
+                    <span class="nav__toggle-icon" aria-hidden="true"></span>
+                </button>
+                <ul id="nav-menu" class="nav__list">
+                    <li class="nav__item"><a href="index.html" class="nav__link">Home</a></li>
+                    <li class="nav__item"><a href="catalog.html" class="nav__link nav__link--current" aria-current="page">Shop</a></li>
+                    <li class="nav__item"><a href="index.html#categories" class="nav__link">Categories</a></li>
+                    <li class="nav__item"><a href="index.html#deals" class="nav__link">Deals</a></li>
+                    <li class="nav__item"><a href="comparison.html" class="nav__link">Compare Products</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+        <main id="main-content" tabindex="-1" class="section section--compact">
+        <div class="container">
+            <section class="page-header" aria-labelledby="catalog-title">
+                <h1 id="catalog-title" class="page-header__title">Shop All Products</h1>
+                <p class="page-header__lead">Search, filter and sort the full BrandStore catalog. Every view has its own address, so you can bookmark or share it.</p>
+            </section>
+
+            <div id="catalog-demo" class="demo" hidden></div>
+
+            <div class="catalog">
+                <form id="catalog-filters" class="filters" aria-labelledby="filters-title" novalidate>
+                    <h2 id="filters-title" class="filters__title">Filters</h2>
+                    <div class="filters__field">
+                        <label for="catalog-search" class="filters__label">Search products</label>
+                        <input type="search" id="catalog-search" name="q" class="filters__input" maxlength="100" autocomplete="off" aria-describedby="catalog-search-hint">
+                        <p id="catalog-search-hint" class="filters__hint">Results update as you type.</p>
+                    </div>
+                    <fieldset class="filters__group">
+                        <legend class="filters__label">Category</legend>
+                        <div id="facet-category" class="filters__options"></div>
+                    </fieldset>
+                    <fieldset class="filters__group">
+                        <legend class="filters__label">Brand</legend>
+                        <div id="facet-brand" class="filters__options"></div>
+                    </fieldset>
+                    <fieldset class="filters__group">
+                        <legend class="filters__label">Price (USD)</legend>
+                        <div class="filters__range">
+                            <label for="price-min" class="filters__sublabel">Min</label>
+                            <input type="text" inputmode="decimal" id="price-min" name="minPrice" class="filters__input filters__input--price" autocomplete="off" aria-describedby="price-error">
+                            <label for="price-max" class="filters__sublabel">Max</label>
+                            <input type="text" inputmode="decimal" id="price-max" name="maxPrice" class="filters__input filters__input--price" autocomplete="off" aria-describedby="price-error">
+                        </div>
+                        <p id="price-error" class="filters__error" role="alert"></p>
+                    </fieldset>
+                    <div class="filters__field">
+                        <label for="catalog-rating" class="filters__label">Minimum rating</label>
+                        <select id="catalog-rating" name="minRating" class="filters__input">
+                            <option value="">Any rating</option>
+                            <option value="4.5">4.5 and up</option>
+                            <option value="4">4.0 and up</option>
+                            <option value="3.5">3.5 and up</option>
+                            <option value="3">3.0 and up</option>
+                        </select>
+                    </div>
+                    <button type="button" id="catalog-reset" class="btn btn--ghost filters__reset">Clear all filters</button>
+                </form>
+
+                <section class="catalog__results" aria-labelledby="results-heading">
+                    <div class="catalog__toolbar">
+                        <h2 id="results-heading" class="catalog__heading" tabindex="-1">Products</h2>
+                        <div class="catalog__sort">
+                            <label for="catalog-sort" class="filters__label">Sort by</label>
+                            <select id="catalog-sort" name="sort" class="filters__input">
+                                <option value="">Featured</option>
+                                <option value="price_asc">Price: low to high</option>
+                                <option value="price_desc">Price: high to low</option>
+                                <option value="rating_desc">Top rated</option>
+                                <option value="name_asc">Name: A to Z</option>
+                            </select>
+                        </div>
+                    </div>
+                    <p id="catalog-status" class="catalog__status" role="status"></p>
+                    <ul id="catalog-results" class="catalog__grid" aria-busy="false"></ul>
+                    <div id="catalog-error" class="catalog__error" role="alert" hidden></div>
+                    <nav id="catalog-pagination" class="pagination" aria-label="Product pages" hidden></nav>
+                </section>
+            </div>
+            <noscript><p class="noscript-note">The catalog needs JavaScript to load products.</p></noscript>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container site-footer__inner">
+            <p>&copy; 2026 BrandStore. All rights reserved.</p>
+            <nav class="footer-nav" aria-label="Footer Navigation">
+                <ul class="footer-nav__list">
+                    <li class="footer-nav__item"><a href="index.html" class="footer-nav__link">Home</a></li>
+                    <li class="footer-nav__item"><a href="catalog.html" class="footer-nav__link">Shop All Products</a></li>
+                    <li class="footer-nav__item"><a href="index.html#newsletter" class="footer-nav__link">Newsletter</a></li>
+                </ul>
+            </nav>
+        </div>
+    </footer>
+
+</body>
+</html>

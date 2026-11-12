@@ -4,19 +4,38 @@
  * The first three products are the Phase 1 catalogue (same ids, names and prices).
  */
 
+/** Brand of every product (added in Phase 2 Task 2 for the brand filter). */
+const BRAND_BY_ID = {
+  'headphones-pro': 'Sonique',
+  smartwatch: 'Pulse',
+  'leather-backpack': 'Northline',
+  'bluetooth-speaker': 'Sonique',
+  'usb-c-hub': 'Pulse',
+  'merino-tee': 'Northline',
+  'rain-shell': 'Northline',
+  'wool-socks': 'Trailhead',
+  'ceramic-mug': 'Hearth',
+  'desk-lamp': 'Hearth',
+  'linen-throw': 'Hearth',
+  'card-wallet': 'Northline',
+};
+
+export const BRANDS = ['Hearth', 'Northline', 'Pulse', 'Sonique', 'Trailhead'];
+
 /** @param {string} id @param {string} name @param {string} category @param {number} price */
 function product(id, name, category, price, extra = {}) {
   return {
     id,
     name,
     category,
+    brand: BRAND_BY_ID[id],
     price,
     compareAtPrice: null,
     currency: 'USD',
     rating: 4.5,
     reviewCount: 0,
     stock: 25,
-    image: { url: `/assets/${id}-800.svg`, alt: name },
+    image: { url: '/assets/product-placeholder.svg', alt: name },
     ...extra,
   };
 }
