@@ -1,40 +1,73 @@
 /**
  * src/utils/storage.js
  *
- * Safe wrapper around localStorage and sessionStorage: JSON, versioned keys, try/catch (private mode, quota, disabled storage).
+ * The only module that touches Web Storage. JSON in and out, and it never throws: private mode,
+ * disabled storage, a full quota or corrupt JSON all fall back quietly, so the app keeps working
+ * in memory. Keys are versioned (e.g. "brandstore:cart:v1"): if the stored shape ever changes, the
+ * key changes and old data is ignored instead of breaking the page.
  */
-import { notImplemented } from './not-implemented.js';
 
-/** @template T */
+export const KEYS = Object.freeze({
+  cart: 'brandstore:cart:v1',
+  saved: 'brandstore:saved:v1',
+  recent: 'brandstore:recent:v1',
+});
 
 /**
- * Never throws.
- * @param {"local" | "session"} area
- * @param {string} key e.g. "brandstore:cart:v1"
- * @param {T} fallback returned when missing or corrupt
+ * The Storage object for an area, or null when the browser blocks it.
+ * @param {'local' | 'session'} area
+ * @returns {Storage | null}
+ */
+function areaOf(area) {
+  try {
+    return area === 'session' ? window.sessionStorage : window.localStorage;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Read and parse a value. Never throws.
+ * @template T
+ * @param {'local' | 'session'} area
+ * @param {string} key
+ * @param {T} fallback returned when missing, unreadable or corrupt
  * @returns {T}
  */
 export function readJson(area, key, fallback) {
-  return notImplemented('utils/storage.readJson');
+  try {
+    const text = areaOf(area)?.getItem(key);
+    return text ? JSON.parse(text) : fallback;
+  } catch {
+    return fallback;
+  }
 }
 
 /**
- * false when storage is unavailable or full.
- * @param {"local" | "session"} area
+ * Serialise and store a value. Never throws.
+ * @param {'local' | 'session'} area
  * @param {string} key
  * @param {unknown} value
- * @returns {boolean}
+ * @returns {boolean} false when storage is unavailable or full
  */
 export function writeJson(area, key, value) {
-  return notImplemented('utils/storage.writeJson');
+  try {
+    areaOf(area).setItem(key, JSON.stringify(value));
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 /**
- * Never throws.
- * @param {"local" | "session"} area
+ * Delete a value. Never throws.
+ * @param {'local' | 'session'} area
  * @param {string} key
- * @returns {void}
  */
 export function remove(area, key) {
-  return notImplemented('utils/storage.remove');
+  try {
+    areaOf(area)?.removeItem(key);
+  } catch {
+    // nothing to do: storage is unavailable
+  }
 }
