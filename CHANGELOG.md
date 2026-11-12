@@ -1,5 +1,16 @@
 # Changelog
 
+## Unreleased — Phase 2, Task 3: product detail, cart, save for later (branch `feature/product-detail-cart-save-for-later`)
+### Added
+- Product page: image gallery, specs table, stock status, quantity stepper limited by stock, add to cart, save for later, recently viewed strip; out-of-stock products cannot be added and say why.
+- `cart.html`: cart lines, totals (free shipping from $100.00, else $7.99), clear cart, saved-for-later list (move to cart / remove), recently viewed; "Cart (n)" in the menu on every page.
+- Cart and saved list as pure functions over state objects (destructuring + spread), persisted in localStorage and rehydrated with validation; recently viewed in sessionStorage (no duplicates, max 6).
+- `src/api/product-api.js`: the one Axios module, with request and response interceptors (Axios 1.19.0 vendored by `npm run vendor`).
+- API: product detail now has a 3-image gallery and real specs.
+- Tests: cart fixture totals, pure-function and storage unit tests, Axios unit and integration tests, 8 cart e2e journeys.
+### Changed
+- Home page product prices use the shared `formatMoney`.
+
 ## Unreleased — Phase 2, Task 2: catalog (branch `feature/catalog-search-filter-sort`)
 ### Added
 - `catalog.html`: live catalog from `GET /products` with debounced search, category/brand/price/rating filters with client-side facet counts, sorting, pagination, loading/empty/error states with retry, and the whole view in the URL (reload, share, Back/Forward).
