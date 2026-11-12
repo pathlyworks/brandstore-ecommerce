@@ -447,12 +447,15 @@ export function start({ port = 4010, rateLimitMax } = {}) {
   });
 }
 
+// No top-level await here: vite.config.js imports this file, and Vite bundles the config as CommonJS
+// (package.json has no "type": "module"), where top-level await is a build error and `npm run dev` cannot start.
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
-  const { url } = await start({
+  start({
     port: Number(process.env.PORT || 4010),
     rateLimitMax: Number(process.env.RATE_LIMIT_MAX || 60),
+  }).then(({ url }) => {
+    console.log(
+      `BrandStore mock API listening on ${url}  (demo login: demo@brandstore.test / Passw0rd!)`,
+    );
   });
-  console.log(
-    `BrandStore mock API listening on ${url}  (demo login: demo@brandstore.test / Passw0rd!)`,
-  );
 }

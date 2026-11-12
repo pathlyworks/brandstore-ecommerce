@@ -5,6 +5,8 @@
 - The API address comes from `VITE_API_BASE` (the official TechSphere API, used for grading); without it the app keeps using our mock on `/api` (`VITE_API_URL` still works).
 - New `src/api/techsphere.js`: translates catalog queries, list and product bodies (string prices, `stock_status`, `reviews_count`, specs) and `{ error }` bodies, used by both the fetch client and the Axios module; `X-Client-Id` is not sent to that API (its CORS rules would block the request).
 - Tests: `tests/unit/techsphere.test.js` (10 tests).
+### Fixed
+- `npm run dev` could not start: `vite.config.js` imports `mock-server/server.mjs`, whose top-level `await` is a build error when Vite bundles the config as CommonJS. The mock's start-up now uses `.then()`.
 
 ## Unreleased — Phase 2, Task 3, revision 2 (after review)
 ### Changed
