@@ -4,5 +4,5 @@
   <rect x="260" y="175" width="280" height="180" rx="28" fill="#2563EB"/>
   <circle cx="400" cy="265" r="54" fill="#EFF6FF"/>
   <text x="400" y="510" text-anchor="middle" fill="#1E293B" font-family="system-ui, sans-serif" font-size="30" font-weight="700">Modern Essentials Collection</text>
-  <text x="400" y="548" text-anchor="middle" fill="#475569" font-family="system-ui, sans-serif" font-size="20">Flagship Audio, Wearables & Carry</text>
+  <text x="400" y="548" text-anchor="middle" fill="#475569" font-family="system-ui, sans-serif" font-size="20">Flagship Audio, Wearables &amp; Carry</text>
 </svg>
