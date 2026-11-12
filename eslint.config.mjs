@@ -141,7 +141,6 @@ export default [
     languageOptions: { sourceType: 'module', globals: { ...node, ...browser } },
   },
 
-
   {
     // Phase 1 QA scripts and the URL setter: CommonJS Node scripts.
     // qa/ scripts also pass callbacks to page.evaluate(), which run in the browser.

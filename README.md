@@ -1,211 +1,129 @@
-# BrandStore — Phase 2, Task 1: API Contract Review and Application Plan
+# BrandStore — API Contract Review and Application Plan (Phase 2, Task 1)
 
-| Item | Value |
-| :--- | :--- |
-| Author | Ahmed |
-| Date | 2026-11-12 (revision 2, after review) |
-| Branch | `feature/api-contract-and-app-plan` (naming convention in section 10) |
-| This report | `README.md` (this file) and the same content as `REPORT.pdf` |
-| Run the site | `npm install`, then `npm run start` (http://127.0.0.1:8080) or `npm run dev` (Vite) |
-| API contract | `api/openapi.json` + mock server `mock-server/server.mjs` (`npm run mock`, port 4010, demo login `demo@brandstore.test` / `Passw0rd!`) |
-| Phase 1 documentation | `docs/phase1/README.md`, `task_1_build_plan.md`, `LAUNCH_REPORT.md` |
+Author: Ahmed · Date: 2026-11-12 · Branch: `feature/api-contract-and-app-plan` · Same content as PDF: `REPORT.pdf`
 
-## 1. What Changed Since the Last Review
+Run: `npm install` then `npm run start` (http://127.0.0.1:8080). API: `npm run mock` (port 4010, login `demo@brandstore.test` / `Passw0rd!`).
 
-| Review point | What changed | Evidence |
-| :--- | :--- | :--- |
-| Required npm scripts (dev, build, lint, format, test, e2e) | Added `build` and `e2e` (plus `start` and `preview`). All scripts are listed in section 4 with what was verified | `package.json` |
-| External ES modules, small named functions, no inline scripts or global sprawl | All site code moved from 11 classic scripts on a `window.BrandStore` global into ES modules in `src/`. Each page loads one module entry; no globals; every named function is commented and at most 40 lines | `qa/js-rules.js`: 0 failures (43 files, 85 functions, longest 38 lines) |
-| Report did not match the site | One report (this file). Section 3 lists exactly what the site does today and what is only planned | sections 3 and 7 |
-| Required sections and tables | Endpoint Table (section 5), QA Matrix (section 7), Deviations List (section 12) | this file |
-| Interactive features not reliable | Added 9 automated end-to-end journeys covering every interactive feature; re-ran all 41 Phase 1 behaviour checks after the move to modules | section 7: 17 of 17 runs and 41 of 41 checks pass |
+## 1. Endpoint Table
 
-## 2. Answer to the Product Question
+Spec: `api/openapi.json`. Observed: `npm run contract` sent 45 requests to the mock server and found 0 differences from the spec (full log: `docs/api/ENDPOINTS.md`).
 
-*"How should shoppers browse, filter, and manage a cart and account so that they can trust prices, stock, and order history?"*
+| Method | Path | Auth | Status codes in spec | Status codes observed | Success JSON |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| GET | `/products?category&q&minPrice&maxPrice&inStock&sort&page&limit` | none | 200, 400, 429 | 200, 400, 429 | `{ data: Product[], meta: { page, limit, total, totalPages } }` |
+| GET | `/products/{id}` | none | 200, 400, 404, 429 | 200, 400, 404, 429 | `{ data: Product + { description, specs } }` |
+| POST | `/auth/login` | none | 200, 400, 401, 429 | 200, 400, 401, 429 | `{ data: { token, tokenType, expiresIn, user } }` |
+| GET | `/account/orders?status&page&limit` | Bearer | 200, 400, 401, 429 | 200, 400, 401, 429 | `{ data: Order[], meta }` |
+| PATCH | `/account/orders/{id}/cancel` | Bearer | 200, 400, 401, 404, 429 | 200, 400, 401, 404, 429 | `{ data: Order }` |
+| GET | `/account/addresses` | Bearer | 200, 401, 429 | 200, 401, 429 | `{ data: Address[] }` |
+| PUT | `/account/addresses/{id}` | Bearer | 200, 201, 400, 401, 429 | 200, 201, 400, 401, 429 | `{ data: Address }` (201 = created) |
+| DELETE | `/account/addresses/{id}` | Bearer | 200, 401, 404, 429 | 200, 401, 404, 429 | `{ data: { id, deleted: true } }` |
 
-- **Prices come from the API only, in integer cents.** No floating-point money anywhere. The cart keeps a price snapshot for display, but checkout re-reads `GET /products/{id}`, so a stale price is never charged. Formatting happens in one function (`utils/money.formatMoney`).
-- **Stock is shown from the API's `stock` field.** Quantities are clamped to `min(stock, 10)`, out-of-stock items cannot be added, and the `inStock` filter is sent to the API, not applied to a stale list.
-- **Order history is read from `GET /account/orders` every time and never stored on the device.** "Cancel" appears only when the API says `cancellable: true`. If the order changed meanwhile, the API answers 400 `ORDER_NOT_CANCELLABLE` and the list is refreshed.
-- **Browsing state lives in the URL** (category, search, price range, sort, page), so links can be shared and Back works. Invalid values are corrected before a request is sent; a page past the end shows an empty state, not an error.
-- **The cart and saved items survive refresh, closing the tab and logging out** (localStorage); **the sign-in survives refresh but not closing the tab** (sessionStorage). Any 401 signs the shopper out cleanly; a 429 shows how many seconds to wait.
+Errors: `{ error: { code, message, details? } }`. 400 = invalid input (`VALIDATION_ERROR`, `INVALID_JSON`, `ORDER_NOT_CANCELLABLE`); 401 = no or bad token (`UNAUTHENTICATED`, `INVALID_TOKEN`) or wrong password (`INVALID_CREDENTIALS`); 404 = `NOT_FOUND`; 429 = more than 60 requests per minute (`RATE_LIMITED`) or a 6th failed login within a minute (`TOO_MANY_LOGIN_ATTEMPTS`), with `Retry-After`. Prices are integer cents.
 
-## 3. What Is on the Site Today vs Planned
+## 2. Storage Strategy
 
-| Feature | On the site today? | Code | Tested by |
-| :--- | :--- | :--- | :--- |
-| Product cards and testimonials rendered from data (3 products, 2 quotes) | **Yes** | `src/components/catalog-render.js`, data in `src/state/content.js` | e2e "home", `qa/behaviour.js` |
-| Category filter buttons and category-card links, with a spoken result count | **Yes** | `src/components/product-filter.js` | e2e "browse" x2 |
-| Launch-offers strip with previous/next buttons | **Yes** | `src/components/deals.js` | e2e "deals" |
-| Newsletter form with validation and accessible messages | **Yes** (nothing is sent) | `src/components/newsletter.js`, `src/utils/validate.js` | e2e "newsletter", unit tests |
-| Mobile menu, skip link, keyboard-scrollable regions | **Yes** | `src/components/nav.js`, `scroll-regions.js` | e2e "keyboard", "phone menu" |
-| Comparison table with "highlight differences" | **Yes** | `src/components/comparison-table.js` | e2e "comparison" |
-| 404 page | **Yes** | `404.html`, `src/pages/not-found.js` | e2e "not found" |
-| Catalogue from the API: search, price range, sort, pagination | **No: planned** (task 2) | stubs in `src/api/products.js`, `src/state/catalog.js`, `src/utils/query-string.js` | contract checks the API now |
-| Cart and save-for-later | **No: planned** | stubs in `src/state/cart.js`, `saved.js`, `src/utils/cart-math.js` | test plan section 9 |
-| Sign-in, order history, cancel order, address book | **No: planned** | stubs in `src/api/`, `src/state/session.js`, `src/components/` | contract checks the API now |
+Decided by what must survive a **refresh**, **closing the tab**, and **logout**.
 
-The planned modules exist as documented stubs (JSDoc signatures that throw "planned but not implemented"), so the boundaries can be reviewed and linted before feature code is written. No page imports them yet.
+| Data | Storage | Survives refresh | Survives tab close | Survives logout | Why |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| Cart | localStorage `brandstore:cart:v1` | Yes | Yes | Yes | Shoppers expect their cart tomorrow; it has no personal data; prices are re-checked with the API before checkout |
+| Save for later | localStorage `brandstore:saved:v1` | Yes | Yes | Yes | A wishlist is only useful if it lasts |
+| Sign-in (token, expiry, user) | sessionStorage `brandstore:session:v1` | Yes | **No** | **No** | Refresh must not sign you out, but a token must not outlive the tab on a shared computer; removed on logout and on any 401 |
+| Session flags (return-to page, notices) | sessionStorage `brandstore:flags:v1` | Yes | **No** | **No** | Only meaningful during this visit |
+| Filters, sort, page | URL query string | Yes | via history/bookmark | Yes | Shareable links, Back button works |
+| Orders, addresses | memory only | refetched | **No** | **No** | Personal data; the server is the source of truth |
 
-## 4. npm Scripts
+Trade-offs (XSS, cookies, versioned keys, private mode): `docs/STORAGE.md`.
 
-| Script | Command | Verified in the build environment |
-| :--- | :--- | :--- |
-| `dev` | `vite` | No: Vite could not be installed here (no registry access); `npm run start` serves the same files |
-| `build` | `node scripts/build.mjs` | **Yes**: copies the site to `dist/`, checks every page reference and that all 15 modules imported by the pages exist, writes `dist/_headers`; fails if anything is missing (checked by breaking an import) |
-| `start` / `preview` | `node scripts/serve.mjs` (project root / `dist/`) | **Yes** |
-| `lint` | `eslint .` (ESLint 10.1.0) | **Yes: 0 problems on a fresh clone** |
-| `format` / `format:check` | `prettier --write .` / `prettier --check .` (Prettier 3.8.1) | **Yes: no changes / all files formatted on a fresh clone** |
-| `test` | `vitest run` | 37 unit tests pass through a Vitest-compatible shim on Node's test runner (Vitest not installable here) |
-| `e2e` | `node tests/e2e/run.mjs` (Playwright library) | **Yes: 17 of 17 journey runs pass** (Chromium) |
-| `contract` | `node scripts/contract.mjs` | **Yes: 45 requests, 0 problems** |
-| `mock` | `node mock-server/server.mjs` | **Yes** |
-| `qa` | Phase 1 static, accessibility and behaviour checks | **Yes** |
-| `branch:check` | `node scripts/check-branch.mjs` | **Yes** |
-| `check` | branch, lint, format, test, build, e2e, contract | as above |
+## 3. QA Matrix
 
-## 5. Endpoint Table (spec vs observed)
-
-Generated by `npm run contract` (copied from `docs/api/ENDPOINTS.md`). Spec = `api/openapi.json`; observed = what the mock server returned.
-
-| Method | Path | Auth | Summary | Status codes in spec | Status codes observed | Error codes observed | Success JSON (top level; data fields) |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| GET | `/products` | none | List products with filters, sorting and pagination | 200, 400, 429 | 200, 400, 429 | VALIDATION_ERROR, RATE_LIMITED | {data: [id, name, category, price, compareAtPrice, currency, rating, reviewCount, stock, image], meta: {page: integer, limit: integer, total: integer, totalPages: integer}} |
-| GET | `/products/{id}` | none | Get one product | 200, 400, 404, 429 | 200, 400, 404, 429 | NOT_FOUND, VALIDATION_ERROR, RATE_LIMITED | {data: id, name, category, price, compareAtPrice, currency, rating, reviewCount, stock, image, description, specs} |
-| POST | `/auth/login` | none | Exchange email and password for a bearer token | 200, 400, 401, 429 | 200, 400, 401, 429 | VALIDATION_ERROR, INVALID_JSON, INVALID_CREDENTIALS, RATE_LIMITED, TOO_MANY_LOGIN_ATTEMPTS | {data: token, tokenType, expiresIn, user} |
-| GET | `/account/orders` | Bearer | List the signed-in user's orders, newest first | 200, 400, 401, 429 | 200, 400, 401, 429 | UNAUTHENTICATED, INVALID_TOKEN, VALIDATION_ERROR, RATE_LIMITED | {data: [id, createdAt, status, items, subtotal, shipping, total, currency, cancellable, cancelledAt, cancelReason], meta: {page: integer, limit: integer, total: integer, totalPages: integer}} |
-| PATCH | `/account/orders/{id}/cancel` | Bearer | Cancel an order that is still processing | 200, 400, 401, 404, 429 | 200, 400, 401, 404, 429 | UNAUTHENTICATED, VALIDATION_ERROR, ORDER_NOT_CANCELLABLE, NOT_FOUND, RATE_LIMITED | {data: id, createdAt, status, items, subtotal, shipping, total, currency, cancelledAt, cancelReason, cancellable} |
-| GET | `/account/addresses` | Bearer | List saved addresses | 200, 401, 429 | 200, 401, 429 | UNAUTHENTICATED, RATE_LIMITED | {data: [id, label, fullName, line1, line2, city, postalCode, country, phone, isDefault]} |
-| PUT | `/account/addresses/{id}` | Bearer | Create or replace the address with this client-chosen id (idempotent) | 200, 201, 400, 401, 429 | 200, 201, 400, 401, 429 | UNAUTHENTICATED, VALIDATION_ERROR, RATE_LIMITED | {data: id, label, fullName, line1, line2, city, postalCode, country, phone, isDefault} |
-| DELETE | `/account/addresses/{id}` | Bearer | Delete an address | 200, 401, 404, 429 | 200, 401, 404, 429 | UNAUTHENTICATED, NOT_FOUND, RATE_LIMITED | {data: id, deleted} |
-
-Error body for every 4xx: `{ "error": { "code", "message", "details"?: [{ "field", "message" }] } }`. Every response has `X-RateLimit-Limit` and `X-RateLimit-Remaining`; 429 adds `Retry-After`; 401 adds `WWW-Authenticate: Bearer`; 201 adds `Location`. Outside the 8 operations: unknown path returns 404, wrong method 405 with `Allow`, and `OPTIONS` returns 204 (CORS).
-
-| Status | How it was produced (full log of 45 requests: `docs/api/ENDPOINTS.md`) |
-| :--- | :--- |
-| 200 | Valid requests; `GET /products?page=99` returns 200 with empty `data`; `PUT` on an existing address id |
-| 201 | `PUT /account/addresses/office` when `office` did not exist (with `Location`) |
-| 400 | `limit=500`; `minPrice > maxPrice`; unknown `category`/`sort`; bad product id; login without fields; malformed JSON; `status=lost`; cancel reason over 200 characters; cancelling a delivered or already cancelled order (`ORDER_NOT_CANCELLABLE`); invalid address fields |
-| 401 | `/account/*` without a token (`UNAUTHENTICATED`) or with an unknown token (`INVALID_TOKEN`); wrong password (`INVALID_CREDENTIALS`) |
-| 404 | Unknown product; unknown order `o-9999`; deleting an address twice |
-| 429 | The 61st request within 60 s from one client, on every operation (`RATE_LIMITED`); the 6th failed login for one email within 60 s (`TOO_MANY_LOGIN_ATTEMPTS`) |
-
-## 6. JSON Shapes Observed
-
-```text
-GET /products                   { data: ProductSummary[], meta: { page, limit, total, totalPages } }
-ProductSummary                  { id, name, category, price (cents), compareAtPrice|null, currency, rating, reviewCount, stock, image: { url, alt } }
-GET /products/{id}              { data: ProductSummary + { description, specs: [{ label, value }] } }
-POST /auth/login                { data: { token, tokenType: "Bearer", expiresIn: 3600, user: { id, name, email } } }
-GET /account/orders             { data: Order[], meta }
-Order                           { id, createdAt, status, items: [{ productId, name, quantity, unitPrice, lineTotal }], subtotal, shipping, total, currency, cancellable, cancelledAt|null, cancelReason|null }
-PATCH /account/orders/{id}/cancel  { data: Order }
-GET /account/addresses          { data: Address[] }
-Address                         { id, label, fullName, line1, line2|null, city, postalCode, country, phone|null, isDefault }
-PUT /account/addresses/{id}     { data: Address }   (201 created, 200 replaced)
-DELETE /account/addresses/{id}  { data: { id, deleted: true } }
-```
-
-## 7. QA Matrix
-
-**End-to-end journeys (browser x viewport),** `npm run e2e`, 2026-11-12:
-
-| Journey | Chromium 1280x900 | Chromium 375x740 | Firefox | WebKit (Safari) |
+| Check | Chrome desktop 1280 | Chrome phone 375 | Firefox | Safari / WebKit |
 | :--- | :--- | :--- | :--- | :--- |
-| Home renders 3 products and 2 testimonials; no `window.BrandStore` global | Pass | Pass | Not run | Not run |
-| Category filter shows matching products and announces the count | Pass | Pass | Not run | Not run |
-| Category card link filters the list | Pass | Pass | Not run | Not run |
-| Deals: next scrolls, previous disabled at start | Pass | Pass | Not run | Not run |
-| Newsletter: invalid shows error; valid shows success, and the old error does not come back | Pass | Pass | Not run | Not run |
-| First Tab is the skip link; Enter moves focus to main | Pass | Pass | Not run | Not run |
-| Phone menu opens, Escape closes, focus returns to the button | n/a (phone only) | Pass | Not run | Not run |
-| Comparison table: highlight differences on and off | Pass | Pass | Not run | Not run |
-| Unknown address returns the 404 page with one h1 | Pass | Pass | Not run | Not run |
+| Products and testimonials render; no global variables | Pass | Pass | Not run | Not run |
+| Category filter and category links | Pass | Pass | Not run | Not run |
+| Deals previous / next | Pass | Pass | Not run | Not run |
+| Newsletter error and success messages | Pass | Pass | Not run | Not run |
+| Skip link and keyboard focus | Pass | Pass | Not run | Not run |
+| Phone menu (open, Escape, focus back) | n/a | Pass | Not run | Not run |
+| Comparison table highlight | Pass | Pass | Not run | Not run |
+| 404 page | Pass | Pass | Not run | Not run |
 
-Firefox and WebKit are not installed in the build environment. To run them: `npx playwright install firefox webkit`, then `E2E_BROWSERS=chromium,firefox,webkit npm run e2e`.
+Source: `npm run e2e`, 17 of 17 runs passed. Firefox and Safari were not installed in the build environment.
 
-**All other checks,** re-run after the move to ES modules:
+| Other check | Command | Result |
+| :--- | :--- | :--- |
+| Lint | `npm run lint` | 0 problems |
+| Formatting | `npm run format:check` | all files formatted |
+| ES-module rules (no classic or inline scripts, no globals, functions ≤ 40 lines) | `node qa/js-rules.js` | 0 failures |
+| Build | `npm run build` | OK: every page reference and import resolves |
+| API contract | `npm run contract` | 45 requests, 0 problems |
+| Unit tests | `npm test` | 37 pass (run through a Vitest-compatible shim; see deviation 5) |
+| Phase 1 behaviour, layout, keyboard, accessibility audit | `npm run qa`, `qa/*.js` | all pass (41/41 behaviour, 163/163 audit) |
 
-| Check | Command | Environment | Result |
-| :--- | :--- | :--- | :--- |
-| Lint | `npm run lint` | fresh clone | Pass: 0 problems |
-| Formatting | `npm run format:check` | fresh clone | Pass |
-| Module rules (ES modules, no inline scripts, no globals, functions ≤ 40 lines) | `node qa/js-rules.js` | static | Pass: 0 failures |
-| Unit tests | `npm test` | Node test runner + shim | 37 of 37 pass |
-| Build | `npm run build` | Node 22 | Pass: 15 modules resolved, 0 missing references |
-| API contract | `npm run contract` | mock server | 45 requests, 0 problems |
-| Phase 1 behaviour (rendering, XSS safety, filter, menu, newsletter) | `node qa/behaviour.js` | Chromium | 41 of 41 pass |
-| Layout and overflow at 375, 768, 1024 and 1440 px | `node qa/layout.js` | Chromium | Pass |
-| Keyboard order and focus | `node qa/keyboard.js` | Chromium | Pass |
-| Device profiles (iPhone SE, iPhone 13, Pixel 7, iPad Mini, 2 desktops) | `node qa/matrix.js` | Chromium emulation | 6 of 6 pass |
-| Accessibility and SEO audit (own rules, not Lighthouse) | `node qa/preflight.js` | Chromium | 163 of 163 pass |
-| Text contrast | `node qa/contrast.js` | Chromium | Lowest 5.02:1 (needs 4.5:1) |
-| Layout shift | `node qa/cls.js` | Chromium, CPU x6 | CLS 0 |
-| Security headers and CSP (module scripts allowed by `script-src 'self'`) | `node qa/headers.js` | Chromium + Netlify headers | Pass: 0 failures |
+## 4. Deviations List
 
-## 8. Module Layout (ES modules)
+| # | Deviation | Reason |
+| :--- | :--- | :--- |
+| 1 | The OpenAPI spec and mock server were written by me | None was provided with the task; `SPEC=<file> API_URL=<url> npm run contract` re-checks official ones |
+| 2 | Endpoints exercised by a script, not by hand in a REST client | Repeatable; the same requests are in `docs/api/brandstore.postman_collection.json` for Postman |
+| 3 | Address PUT/DELETE use `/account/addresses/{id}` | A collection-level PUT/DELETE would replace or delete every address |
+| 4 | Non-cancellable order returns 400 (not 409); DELETE returns 200 with a body (not 204) | Stay within the status codes listed in the task |
+| 5 | No `package-lock.json`; unit tests run through a shim, not real Vitest | No package registry access in the build environment; run `npm install` and `npm test` |
+| 6 | The site must be opened over http, not by double-clicking the file | Browsers do not load ES modules from `file://` |
+| 7 | `build` copies and checks files instead of bundling | Vite is allowed as a dev server only |
+| 8 | Cart, sign-in, orders and addresses are not on the site yet | This task is planning; they are designed (sections 2, 5) and built in the next task |
 
-| Folder | Owns | May import | Must not |
-| :--- | :--- | :--- | :--- |
-| `src/pages/` | One entry module per HTML page; picks the features and calls `start()` | `main.js`, `components/` | contain feature logic |
-| `src/main.js` | `start(features)`: runs each feature, isolates failures; later wires the http client and stores | everything | contain business logic |
-| `src/components/` | One piece of UI. Live features export `init()`; planned API components export `mount(root, deps)` | `api/`, `state/`, `utils/` | import `main.js` |
-| `src/state/` | What the app remembers: today the static content; planned cart, saved items, session, catalog filters | `utils/` | call the API |
-| `src/api/` | The REST API: one fetch wrapper (`http.js`), one file per resource, `ApiError` | `utils/` | touch the DOM or state |
-| `src/utils/` | Pure helpers: DOM, validation, money, cart math, query strings, storage | nothing from the app | call `fetch` or read state |
+## 5. Module Layout (ES modules)
 
-Dependency direction: `pages -> main.js, components -> (api, state) -> utils`. ESLint enforces it (restricted imports per folder; `fetch` only in `api/http.js`; Web Storage only in `utils/storage.js`; checked with probe files: 4 of 4 violations reported). `qa/js-rules.js` enforces the page rules. Full map and flows: `docs/ARCHITECTURE.md`.
+Every page loads exactly one external ES module and no other script: `index.html` → `src/pages/home.js`, `comparison.html` → `src/pages/comparison.js`, `404.html` → `src/pages/not-found.js`. No inline scripts, no `window` globals, every function named, commented and at most 40 lines.
 
-## 9. Test Plan (summary)
+| Folder | Owns | May import |
+| :--- | :--- | :--- |
+| `src/pages/` | One entry per page; lists the features it starts | `main.js`, `components/` |
+| `src/main.js` | `start()`: runs features, one failure cannot stop the others | — |
+| `src/components/` | One piece of UI each (nav, filter, deals, newsletter, table; planned: cart, login, orders, addresses) | `api/`, `state/`, `utils/` |
+| `src/state/` | What the app remembers (content now; cart, saved, session, filters planned) | `utils/` |
+| `src/api/` | REST calls: one `fetch` wrapper plus one file per resource (planned) | `utils/` |
+| `src/utils/` | Pure helpers: DOM, validation, money, cart math, query strings, storage | nothing |
 
-| Highest-risk module | Unit | Integration (Vitest + MSW) | End-to-end |
-| :--- | :--- | :--- | :--- |
-| Cart math (`utils/cart-math.js`, `state/cart.js`) | Every function, table-driven, cents only, shipping threshold 9999/10000 | Cart store + storage persistence, corrupt storage ignored | Add, change quantity, refresh, totals unchanged |
-| Auth (`api/auth.js`, `api/http.js`, `state/session.js`) | Session expiry with a fake clock; sign-out clears the right keys | Bearer header; 401 signs out once; 429 lockout message | Sign in, refresh, sign out |
-| Query-string building (`utils/query-string.js`, `state/catalog.js`) | Build/parse, encoding, defaults, round trip | Exact request URL seen by MSW; 400 details shown | Filter, paginate, Back, shared link |
+ESLint enforces these import rules, allows `fetch` only in `src/api/http.js` and Web Storage only in `src/utils/storage.js`. Details: `docs/ARCHITECTURE.md`.
 
-All modules, cases and exit criteria: `docs/TEST_PLAN.md`.
+## 6. What the Site Does Today vs Planned
 
-## 10. Feature Branch and Naming Convention
+| Feature | Today |
+| :--- | :--- |
+| Product cards, testimonials, category filter, deals strip, newsletter form, mobile menu, skip link, comparison table, 404 page | **On the site** (all covered by the QA matrix) |
+| Catalogue from the API (search, price range, sort, pages), cart, save for later, sign-in, order history and cancel, address book | **Planned**: API contract, storage and modules are designed here; code stubs exist in `src/api`, `src/state`, `src/utils` but no page uses them yet |
 
-`<type>/<short-description>`: type is one of `feature`, `fix`, `docs`, `chore`, `test`, `refactor`; lowercase kebab-case; at most 50 characters; branched from `main`; merged by pull request with CI green. This work: **`feature/api-contract-and-app-plan`** (`npm run branch:check`). Details: `CONTRIBUTING.md`.
+## 7. How Shoppers Can Trust Prices, Stock and Order History
 
-## 11. Storage Strategy
+This is the design for the cart and account features built in the next task.
 
-| Data                                                                                                                                           | Where            | Key                     | Refresh   | Tab close                      | Logout      | Why                                                                                                                                                                                                 |
-| :--------------------------------------------------------------------------------------------------------------------------------------------- | :--------------- | :---------------------- | :-------- | :----------------------------- | :---------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Cart lines (`productId`, `quantity`, price snapshot)                                                                                           | localStorage     | `brandstore:cart:v1`    | kept      | kept                           | kept        | A shopper expects the cart tomorrow and after signing out/in. It holds no personal data. Prices are re-checked against `GET /products/{id}` before checkout, so a stale snapshot cannot be charged. |
-| Save-for-later items                                                                                                                           | localStorage     | `brandstore:saved:v1`   | kept      | kept                           | kept        | A wishlist is only useful if it lasts; same content and risk level as the cart.                                                                                                                     |
-| Session: token, `expiresAt`, user `{id, name, email}`                                                                                          | sessionStorage   | `brandstore:session:v1` | kept      | **cleared**                    | **cleared** | Refresh must not sign the user out, but a bearer token should not outlive the tab (shared computers). Cleared on logout and on any 401.                                                             |
-| Transient flags: `returnTo` after login, "session expired" notice, dismissed rate-limit banner, last cancelled order id for a one-time message | sessionStorage   | `brandstore:flags:v1`   | kept      | cleared                        | **cleared** | Only meaningful during this visit; must not leak into a later visit or another user's session.                                                                                                      |
-| Catalog filters, sort, page                                                                                                                    | URL query string | n/a                     | kept      | n/a (in history and bookmarks) | unaffected  | Shareable and back/forward work; storing them would make the URL lie.                                                                                                                               |
-| Products, orders, addresses from the API                                                                                                       | memory only      | n/a                     | refetched | gone                           | cleared     | The server is the source of truth. Orders and addresses are personal data and are never written to the device.                                                                                      |
+- **Prices:** always from the API, in integer cents; the cart price is re-checked before checkout.
+- **Stock:** from the API's `stock`; quantity limited to what is in stock; out-of-stock items cannot be added.
+- **Order history:** always loaded from the server, never stored on the device; "Cancel" only when the API says `cancellable: true`.
+- **Browse and filter:** filters live in the URL, so links and Back work; bad values are corrected before calling the API.
 
-Logout removes the session and flags and drops account data from memory; it keeps the cart and saved items. Reasons and trade-offs: `docs/STORAGE.md`.
+## 8. npm Scripts, Test Plan and Branch
 
-## 12. Deviations List
+| Script | Does |
+| :--- | :--- |
+| `dev` | Vite dev server |
+| `build` | Copy site to `dist/` and verify every reference and import |
+| `lint` / `format` | ESLint / Prettier (`format:check` to only check) |
+| `test` | Vitest unit tests |
+| `e2e` | Browser journeys (Playwright) |
+| `start`, `preview`, `mock`, `contract`, `qa`, `branch:check`, `check` | serve, serve `dist/`, mock API, contract check, Phase 1 QA, branch rule, everything |
 
-| # | Deviation | Reason | Follow-up |
-| :--- | :--- | :--- | :--- |
-| 1 | `api/openapi.json` and `mock-server/` were written for this task | No OpenAPI file or mock server was provided | `SPEC=<file> API_URL=<server> npm run contract` re-checks the official ones; then regenerate section 5 |
-| 2 | Endpoints exercised by a script (Node `fetch`), not by hand in a REST client | Repeatable evidence for every status code | `docs/api/brandstore.postman_collection.json` runs the same 36 requests in Postman or Insomnia |
-| 3 | The site must be served over http; opening `index.html` from disk no longer runs the scripts | Browsers do not load ES modules from `file://` | `npm run start`, `npm run dev`, or any host |
-| 4 | `build` copies and verifies files instead of bundling | Vite is allowed as a dev server only; browsers load the modules natively | Revisit if the module count makes loading slow |
-| 5 | `e2e` uses the Playwright library with a small runner, not `@playwright/test` | It could be run and verified offline here | Same journeys can move to `@playwright/test` unchanged in logic |
-| 6 | No `package-lock.json`; Vite, Vitest, MSW not installed; unit tests run through a shim | No package-registry access in the build environment | `npm install`, commit the lock file, run `npm test` |
-| 7 | `PUT` and `DELETE` addresses take an id: `/account/addresses/{id}` | A collection-level `PUT`/`DELETE` would replace or wipe every address | Confirm with the official spec |
-| 8 | Non-cancellable order returns 400 (409 would be more usual); `DELETE` returns 200 with a body, not 204 | Stay within the status codes listed for this task | Adjust to the official spec |
-| 9 | 405 (wrong method) and 204 (`OPTIONS`) exist beyond the listed codes | Correct HTTP behaviour | none |
-| 10 | Phase 1 HTML and CSS are linted where applicable but excluded from Prettier | Reformatting would bury their history in whitespace changes | Remove from `.prettierignore` when each page is reworked |
-| 11 | The Content-Security-Policy (`default-src 'self'`) will block an API on another origin | Found while planning `api/http.js` | Add the API origin to `connect-src` when the host is known |
-| 12 | The 404 page loads its CSS and modules by relative path, so a deep wrong address such as `/a/b` shows it unstyled | Relative paths keep the site working from a sub-folder (GitHub Pages) | Root-relative paths once the host is fixed |
+Test plan (`docs/TEST_PLAN.md`): the highest-risk modules are **cart math** (unit + integration + e2e), **auth** (unit + integration with MSW + e2e) and **query-string building** (unit + integration + e2e).
 
-## 13. How to Verify
+Branch convention (`CONTRIBUTING.md`): `<type>/<short-description>`, type = feature, fix, docs, chore, test or refactor, lowercase kebab-case, at most 50 characters. This branch: `feature/api-contract-and-app-plan`.
 
-```bash
-git checkout feature/api-contract-and-app-plan
-npm install
-npx playwright install chromium
-npm run lint && npm run format:check && npm test && npm run build && npm run e2e && npm run contract
-npm run start     # open http://127.0.0.1:8080
-```
+## 9. Changes Since the Last Review
+
+- The required sections (Endpoint Table, Storage Strategy, QA Matrix, Deviations List) are now the first four sections of this short report.
+- The last classic script (`src/boot.js`) is gone: every page now loads only one ES module. The mobile-menu CSS uses `@media (scripting: enabled)` instead.
+- All checks re-run after the change (section 3).
+
+More detail: `docs/ARCHITECTURE.md`, `docs/STORAGE.md`, `docs/TEST_PLAN.md`, `docs/api/ENDPOINTS.md`, `CHANGELOG.md`. Phase 1 documents: `docs/phase1/README.md`, `LAUNCH_REPORT.md`.

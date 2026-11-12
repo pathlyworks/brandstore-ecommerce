@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased — Phase 2, Task 1, revision 3
+### Changed
+- `README.md` rewritten as a short report with the required sections first: Endpoint Table, Storage Strategy, QA Matrix, Deviations List.
+- Removed the last classic script (`src/boot.js`); pages load only one ES module each. The mobile-menu CSS uses `@media (scripting: enabled)`.
+
 ## Unreleased — Phase 2, Task 1, revision 2 (after review)
 ### Changed
 - All site JavaScript moved from 11 classic scripts on a `window.BrandStore` global to ES modules in `src/` (one module entry per page in `src/pages/`); `js/` removed. The site is now served over http (`npm run start` / `npm run dev`).
