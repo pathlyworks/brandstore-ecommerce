@@ -27,6 +27,8 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap;
+    column-gap: var(--space-md);
     min-height: var(--size-header);
 }
 

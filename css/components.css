@@ -219,9 +219,13 @@
         display: none;
     }
 
+    /* flex-wrap: if text is enlarged without the viewport growing, the links
+       drop to a second line instead of being clipped off-screen. */
     .js .nav__list {
         position: static;
         flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: flex-end;
         column-gap: var(--space-lg);
         padding: 0;
         border-bottom: 0;
