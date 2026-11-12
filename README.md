@@ -1,5 +1,7 @@
 # BrandStore — E-Commerce Storefront (Tasks 1–5)
 
+**Launch report (Task 5): [`LAUNCH_REPORT.md`](LAUNCH_REPORT.md) / `LAUNCH_REPORT.pdf`. Release: `v1.0.1` ([`CHANGELOG.md`](CHANGELOG.md)).**
+
 A static HTML5 / CSS3 / vanilla JavaScript storefront: the build plan and layout architecture (Tasks 1–2) the visual-polish, interaction-state and motion pass (Task 3), and the JavaScript interactivity, data-driven sections and form validation (Task 4). Sections 1–6 describe the pages and layout; sections 7–15 cover routes, CSS methodology, states, motion, keyboard operation, deviations, QA evidence and deliverables; sections 16–19 cover the JavaScript; sections 20–25 cover the accessibility, SEO, QA and deployment work of Task 5.
 
 ## 1. Scope & Overview
@@ -286,10 +288,10 @@ Run the checks: `npm i -D playwright`, then `node qa/js-rules.js && node qa/toke
 ## 14. Deliverables & Consistency
 | Deliverable | Where | Notes |
 | :--- | :--- | :--- |
-| Repository | this folder, `.git` included | Task 1–3 history; the Task 4 commits split the JavaScript into modules, add data-driven rendering and form validation, and extend `qa/`. |
-| Report | `README.md` (this file) and `task_1_build_plan.md` | `task_1_build_plan.md` is sections 1–6 of this file, word for word. |
-| Demo | static site, deployable as is | Submit the deployed URL in the assessment form. |
-| Deck | not part of this task | — |
+| Repository | this folder, `.git` included | Tasks 1–5 history; release tags `v1.0.0` and `v1.0.1` with `CHANGELOG.md`. Task 5 commits add the SEO files, the 404 page, security headers, three QA scripts and the launch report. |
+| Report | `LAUNCH_REPORT.md` / `LAUNCH_REPORT.pdf` (Task 5 launch report, 2 pages), `README.md` (this file) and `task_1_build_plan.md` | The launch report has the endpoint table, SEO summary, deviations list, QA matrix and results; `task_1_build_plan.md` is sections 1–6 of this file, word for word. |
+| Demo | static site, deployable as is (`docs/RUNBOOK.md`) | Live URL pending deployment; the same URL goes in the report header and the assessment form. |
+| Deck | not part of this task (not requested in the Task 5 brief) | — |
 
 Figures used across the files and kept in sync: 2 pages (plus a 404 page), 4 categories, 3 products, 6 offers, 2 testimonials, 6 comparison rows, 4 breakpoints, 3 animations, 4 CSS files, 12 JS files, 46 commented functions, 11 QA scripts, 3 HTML pages (2 content + 404).
 
@@ -530,8 +532,8 @@ setTimeout(() => console.log(document.querySelector('#newsletter-error').textCon
 
 ## 21. Accessibility and SEO Pass
 - **Accessibility:** one `main` (focus target of the skip link), `header`, `footer`, every `nav` labelled; one `h1` and no skipped heading levels per page; every control has an accessible name; every image has `alt`; form field has a label and described-by hint and error; contrast measured (lowest 5.02:1); focus order and keyboard operation per section 11; reflow at 320px and 200% text.
-- **SEO:** unique `title` and `description` per page (length checked), canonical, Open Graph and Twitter tags with absolute URLs, a 1200x630 `og-image.png`, favicon, `robots.txt` pointing to `sitemap.xml`, sitemap listing every indexable page, custom `404.html` marked `noindex`, internal links resolve.
-- `node qa/preflight.js` runs 148 checks (all pass) with the placeholder host, 150 with `--release` after `node scripts/set-site-url.js <url>`; verified for a root host and a GitHub Pages sub-path.
+- **SEO:** unique `title` and `description` and exactly one `h1` on every page (404 included), Open Graph and Twitter tags with absolute URLs on every page, canonical on the two indexable pages, a 1200x630 `og-image.png`, favicon, `robots.txt` pointing to `sitemap.xml`, sitemap listing every indexable page, custom `404.html` marked `noindex`, internal links resolve.
+- `node qa/preflight.js` runs 163 checks (all pass) on all three pages, 404 included, with the placeholder host, 166 with `--release` after `node scripts/set-site-url.js <url>`; verified for a root host and a GitHub Pages sub-path.
 - `node qa/headers.js` serves the site with the `netlify.toml` headers and loads each page at 375 and 1280px: 0 CSP violations or console errors, 404 status for unknown paths, `.git` not served.
 
 ## 22. QA Matrix (browser x viewport)
@@ -557,6 +559,7 @@ Static site, no build. Netlify Drop or GitHub Pages; exact steps, the URL replac
 | Bug | Found by | Cause | Fix | Verified |
 | :--- | :--- | :--- | :--- | :--- |
 | Last desktop nav links clipped at 200% text size | `qa/preflight.js` text-enlargement check, confirmed by screenshot | `.nav__list` and `.site-header__inner` did not wrap | `flex-wrap: wrap` plus column gap in `css/layout.css` and `css/components.css` | preflight, layout and keyboard checks pass; screenshot shows all links |
+| 404 page had no Open Graph tags | grader feedback on the first Task 5 submission | OG/Twitter checks only ran on indexable pages | added the tags; preflight now checks title, description, OG and single h1 on all three pages | preflight 163 of 163 |
 | 404 page had in-page anchors that went nowhere | preflight internal-link check | anchors like `#featured` do not exist on `404.html` | repointed to `index.html#...` | preflight link check passes |
 | Preflight failed on GitHub Pages sub-path URLs | testing the URL script with `https://someone.github.io/brandstore` | og-image path mapped by stripping only the host | resolve the file by its base name | sub-path run passes 150 of 150 |
 
