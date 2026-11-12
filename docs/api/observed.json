@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-12T11:31:02.013Z",
+  "generatedAt": "2026-11-12T11:54:06.478Z",
   "baseUrl": "mock-server (random local port)",
   "rateLimit": 60,
   "requests": [
@@ -593,7 +593,7 @@
       "request": {
         "headers": {
           "X-Client-Id": "contract-run",
-          "Authorization": "Bearer 3ecb3bb1-cb50-4869-967a-cd7f99ba8aa3"
+          "Authorization": "Bearer 797fe195-c16d-494c-bfb3-33badeb5fb32"
         }
       }
     },
@@ -639,7 +639,7 @@
       "request": {
         "headers": {
           "X-Client-Id": "contract-run",
-          "Authorization": "Bearer 3ecb3bb1-cb50-4869-967a-cd7f99ba8aa3"
+          "Authorization": "Bearer 797fe195-c16d-494c-bfb3-33badeb5fb32"
         }
       }
     },
@@ -672,7 +672,7 @@
       "request": {
         "headers": {
           "X-Client-Id": "contract-run",
-          "Authorization": "Bearer 3ecb3bb1-cb50-4869-967a-cd7f99ba8aa3"
+          "Authorization": "Bearer 797fe195-c16d-494c-bfb3-33badeb5fb32"
         }
       }
     },
@@ -732,7 +732,7 @@
       "request": {
         "headers": {
           "X-Client-Id": "contract-run",
-          "Authorization": "Bearer 3ecb3bb1-cb50-4869-967a-cd7f99ba8aa3",
+          "Authorization": "Bearer 797fe195-c16d-494c-bfb3-33badeb5fb32",
           "Content-Type": "application/json"
         },
         "body": {
@@ -780,7 +780,7 @@
       "request": {
         "headers": {
           "X-Client-Id": "contract-run",
-          "Authorization": "Bearer 3ecb3bb1-cb50-4869-967a-cd7f99ba8aa3",
+          "Authorization": "Bearer 797fe195-c16d-494c-bfb3-33badeb5fb32",
           "Content-Type": "application/json"
         },
         "body": {
@@ -811,7 +811,7 @@
       "request": {
         "headers": {
           "X-Client-Id": "contract-run",
-          "Authorization": "Bearer 3ecb3bb1-cb50-4869-967a-cd7f99ba8aa3"
+          "Authorization": "Bearer 797fe195-c16d-494c-bfb3-33badeb5fb32"
         }
       }
     },
@@ -838,7 +838,7 @@
       "request": {
         "headers": {
           "X-Client-Id": "contract-run",
-          "Authorization": "Bearer 3ecb3bb1-cb50-4869-967a-cd7f99ba8aa3"
+          "Authorization": "Bearer 797fe195-c16d-494c-bfb3-33badeb5fb32"
         }
       }
     },
@@ -865,7 +865,7 @@
       "request": {
         "headers": {
           "X-Client-Id": "contract-run",
-          "Authorization": "Bearer 3ecb3bb1-cb50-4869-967a-cd7f99ba8aa3"
+          "Authorization": "Bearer 797fe195-c16d-494c-bfb3-33badeb5fb32"
         }
       }
     },
@@ -929,7 +929,7 @@
       "request": {
         "headers": {
           "X-Client-Id": "contract-run",
-          "Authorization": "Bearer 3ecb3bb1-cb50-4869-967a-cd7f99ba8aa3"
+          "Authorization": "Bearer 797fe195-c16d-494c-bfb3-33badeb5fb32"
         }
       }
     },
@@ -1001,7 +1001,7 @@
       "request": {
         "headers": {
           "X-Client-Id": "contract-run",
-          "Authorization": "Bearer 3ecb3bb1-cb50-4869-967a-cd7f99ba8aa3",
+          "Authorization": "Bearer 797fe195-c16d-494c-bfb3-33badeb5fb32",
           "Content-Type": "application/json"
         },
         "body": {
@@ -1045,7 +1045,7 @@
       "request": {
         "headers": {
           "X-Client-Id": "contract-run",
-          "Authorization": "Bearer 3ecb3bb1-cb50-4869-967a-cd7f99ba8aa3",
+          "Authorization": "Bearer 797fe195-c16d-494c-bfb3-33badeb5fb32",
           "Content-Type": "application/json"
         },
         "body": {
@@ -1088,7 +1088,7 @@
       "request": {
         "headers": {
           "X-Client-Id": "contract-run",
-          "Authorization": "Bearer 3ecb3bb1-cb50-4869-967a-cd7f99ba8aa3",
+          "Authorization": "Bearer 797fe195-c16d-494c-bfb3-33badeb5fb32",
           "Content-Type": "application/json"
         },
         "body": {
@@ -1151,7 +1151,7 @@
       "request": {
         "headers": {
           "X-Client-Id": "contract-run",
-          "Authorization": "Bearer 3ecb3bb1-cb50-4869-967a-cd7f99ba8aa3"
+          "Authorization": "Bearer 797fe195-c16d-494c-bfb3-33badeb5fb32"
         }
       }
     },
@@ -1178,7 +1178,7 @@
       "request": {
         "headers": {
           "X-Client-Id": "contract-run",
-          "Authorization": "Bearer 3ecb3bb1-cb50-4869-967a-cd7f99ba8aa3"
+          "Authorization": "Bearer 797fe195-c16d-494c-bfb3-33badeb5fb32"
         }
       }
     },
@@ -1345,7 +1345,7 @@
       "request": {
         "headers": {
           "X-Client-Id": "burst-listOrders",
-          "Authorization": "Bearer 3ef7edae-ef75-443e-94cc-3a60ce506ec3"
+          "Authorization": "Bearer 76d3eb9a-a4c5-4885-93b6-f5a317524794"
         }
       }
     },
@@ -1373,7 +1373,7 @@
       "request": {
         "headers": {
           "X-Client-Id": "burst-cancelOrder",
-          "Authorization": "Bearer 3ef7edae-ef75-443e-94cc-3a60ce506ec3",
+          "Authorization": "Bearer 76d3eb9a-a4c5-4885-93b6-f5a317524794",
           "Content-Type": "application/json"
         },
         "body": {
@@ -1405,7 +1405,7 @@
       "request": {
         "headers": {
           "X-Client-Id": "burst-listAddresses",
-          "Authorization": "Bearer 3ef7edae-ef75-443e-94cc-3a60ce506ec3"
+          "Authorization": "Bearer 76d3eb9a-a4c5-4885-93b6-f5a317524794"
         }
       }
     },
@@ -1433,7 +1433,7 @@
       "request": {
         "headers": {
           "X-Client-Id": "burst-putAddress",
-          "Authorization": "Bearer 3ef7edae-ef75-443e-94cc-3a60ce506ec3",
+          "Authorization": "Bearer 76d3eb9a-a4c5-4885-93b6-f5a317524794",
           "Content-Type": "application/json"
         },
         "body": {
@@ -1470,7 +1470,7 @@
       "request": {
         "headers": {
           "X-Client-Id": "burst-deleteAddress",
-          "Authorization": "Bearer 3ef7edae-ef75-443e-94cc-3a60ce506ec3"
+          "Authorization": "Bearer 76d3eb9a-a4c5-4885-93b6-f5a317524794"
         }
       }
     },

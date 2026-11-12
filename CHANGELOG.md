@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased — Phase 2, Task 1, revision 2 (after review)
+### Changed
+- All site JavaScript moved from 11 classic scripts on a `window.BrandStore` global to ES modules in `src/` (one module entry per page in `src/pages/`); `js/` removed. The site is now served over http (`npm run start` / `npm run dev`).
+- `README.md` is now the Phase 2 report (endpoint table, QA matrix, deviations list, site-today-vs-planned); the Phase 1 README moved to `docs/phase1/README.md`.
+- QA scripts load the site over http (`qa/serve.js`); `qa/js-rules.js` now checks ES modules, globals and function length.
+### Added
+- npm scripts `build` (copy + verify into `dist/`), `e2e` (9 Playwright journeys), `start`, `preview`, `qa`.
+- Unit tests for the email rules, `start()` and the content data.
+- Netlify builds with `npm run build` and publishes `dist/` (with `_headers`).
+
 ## Unreleased — Phase 2, Task 1: API contract review and application plan (branch `feature/api-contract-and-app-plan`)
 ### Added
 - `api/openapi.json` (8 operations) and a zero-dependency mock server (`npm run mock`).

@@ -1,19 +1,23 @@
 # Architecture: ES module layout (Phase 2)
 
-The Phase 2 app lives in `src/` as native ES modules (served by Vite in development). The Phase 1
-static site (`index.html`, `css/`, `js/`) keeps working unchanged until its pages are migrated.
+All JavaScript lives in `src/` as native ES modules. Each page loads exactly one external module
+entry (`<script type="module" src="src/pages/<page>.js">`) plus the tiny classic `src/boot.js`
+(adds the `js` class before first paint). There are no inline scripts, no `window.*` globals and no
+`js/` folder any more: the Phase 1 scripts were converted to modules on 2026-11-12. Modules need
+http, so open the site with `npm run start` (or `npm run dev`), not by double-clicking the file.
 
 ## 1. Folders and what each one owns
 
-| Folder            | Owns                                                                                                        | May import                 | Must not                                     |
-| :---------------- | :---------------------------------------------------------------------------------------------------------- | :------------------------- | :------------------------------------------- |
-| `src/utils/`      | Pure helpers: money in cents, cart math, query strings, validation, storage wrapper, DOM helper             | nothing from the app       | call `fetch`; read app state                 |
-| `src/api/`        | Talking to the REST API: one fetch wrapper (`http.js`), one file per resource, `ApiError`                   | `utils/`                   | touch the DOM or state; store anything       |
-| `src/state/`      | What the app remembers: cart, saved items, session, catalog filters; persistence through `utils/storage.js` | `utils/`                   | call the API (results are passed in)         |
-| `src/components/` | Rendering and user events for one piece of UI; each exports `mount(root, deps)` and returns `unmount`       | `api/`, `state/`, `utils/` | import `main.js` or reach outside its `root` |
-| `src/main.js`     | Composition root: creates the http client and stores, mounts components, connects 401 to sign-out           | everything                 | contain business logic                       |
+| Folder            | Owns                                                                                                                                                                                                  | May import                 | Must not                                     |
+| :---------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------- | :------------------------------------------- |
+| `src/utils/`      | Pure helpers: money in cents, cart math, query strings, validation, storage wrapper, DOM helper                                                                                                       | nothing from the app       | call `fetch`; read app state                 |
+| `src/api/`        | Talking to the REST API: one fetch wrapper (`http.js`), one file per resource, `ApiError`                                                                                                             | `utils/`                   | touch the DOM or state; store anything       |
+| `src/state/`      | What the app remembers: cart, saved items, session, catalog filters; persistence through `utils/storage.js`                                                                                           | `utils/`                   | call the API (results are passed in)         |
+| `src/components/` | Rendering and user events for one piece of UI. Live Phase 1 features export `init()` (they enhance markup already in the page); planned API components export `mount(root, deps)` returning `unmount` | `api/`, `state/`, `utils/` | import `main.js` or reach outside its `root` |
+| `src/main.js`     | Composition root: creates the http client and stores, mounts components, connects 401 to sign-out                                                                                                     | everything                 | contain business logic                       |
+| `src/pages/`      | One entry module per HTML page; imports the features that page needs and calls `start()`                                                                                                              | `main.js`, `components/`   | contain feature logic                        |
 
-Dependency direction: `main.js -> components -> (api, state) -> utils`. Nothing points upward.
+Dependency direction: `pages -> main.js, components -> (api, state) -> utils`. Nothing points upward.
 
 ## 2. Enforced, not just written down
 
@@ -24,10 +28,29 @@ Dependency direction: `main.js -> components -> (api, state) -> utils`. Nothing 
 - `no-restricted-globals`: `fetch` is allowed only in `src/api/http.js`; `localStorage` and
   `sessionStorage` only in `src/utils/storage.js`.
 
+`qa/js-rules.js` adds the page-level rules: one module entry per page, no inline script bodies or
+handlers, no `window.x =` globals, no top-level `var`, every named function commented and at most
+40 lines (today: 43 files, 85 named functions, longest 38 lines).
+
 Checked on 2026-11-12 by adding two probe files that break the rules: lint reported all 4 violations
 (restricted import x2, `localStorage`, `fetch`), then the probes were removed.
 
-## 3. Module map (every file exists today as a documented stub)
+## 3. Module map
+
+### 3.1 Live today (what the site runs)
+
+| Page              | Entry module              | Features started (in order)                                                        |
+| :---------------- | :------------------------ | :--------------------------------------------------------------------------------- |
+| `index.html`      | `src/pages/home.js`       | `catalog-render`, `product-filter`, `nav`, `newsletter`, `deals`, `scroll-regions` |
+| `comparison.html` | `src/pages/comparison.js` | `nav`, `scroll-regions`, `comparison-table`                                        |
+| `404.html`        | `src/pages/not-found.js`  | `nav`, `scroll-regions`                                                            |
+
+Shared live modules: `src/main.js` (`start`), `src/utils/dom.js` (`el`, `clear`, `qs`, `qsa`),
+`src/utils/validate.js` (`getEmailError`), `src/state/content.js` (the 3 products and 2 testimonials
+the home page renders). 15 modules in total are reachable from the pages (`npm run build` checks
+that every import resolves).
+
+### 3.2 Planned for the API (documented stubs)
 
 Each planned function has its JSDoc signature and throws "planned but not implemented" until it is
 built, so the boundaries can be reviewed, linted and imported before feature code is written.

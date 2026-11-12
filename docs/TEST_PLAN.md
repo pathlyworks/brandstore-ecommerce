@@ -6,7 +6,7 @@
 | :---------- | :----------------------------------------- | :----------------- | :----------------------------------------------------------------------------------------------------------------------------------- |
 | Unit        | Vitest (jsdom where DOM is touched)        | `npm test`         | One module in isolation; storage and clock injected                                                                                  |
 | Integration | Vitest + jsdom + Mock Service Worker (MSW) | `npm test`         | Modules working together through `api/http.js` against MSW handlers that return every contract status (200, 201, 400, 401, 404, 429) |
-| End-to-end  | Playwright (Chromium, Firefox, WebKit)     | `npm run test:e2e` | Real user journeys in the browser against Vite + the mock server                                                                     |
+| End-to-end  | Playwright (Chromium, Firefox, WebKit)     | `npm run e2e`      | Real user journeys in the browser against the site served over http                                                                  |
 | Contract    | `scripts/contract.mjs`                     | `npm run contract` | The API still behaves as `api/openapi.json` says (status codes, error codes, body schemas)                                           |
 
 CI (`.github/workflows/ci.yml`) runs lint, format check, unit + integration tests and the contract
@@ -65,8 +65,12 @@ real tests); each journey above passes in Chromium before merge and in all three
 
 ## 6. Status today (2026-11-12)
 
-- Written and passing: `tests/unit/module-map.test.js` (21 checks). Run here with Node's built-in
-  test runner through a small Vitest-compatible shim, because Vitest could not be installed in the
-  build environment; `npm test` runs it with real Vitest after `npm install`.
-- Contract: `npm run contract`: 45 requests, 0 problems.
-- Integration and e2e tests: planned above; written together with the modules in Phase 2 task 2.
+| Level       | What exists                                                                  | Result here                                                                                                                                                         |
+| :---------- | :--------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Unit        | `tests/unit/`: module map (21), email rules (11), `start()` (2), content (3) | 37 passed, run with Node's test runner through a small Vitest-compatible shim (Vitest could not be installed in the build environment; `npm test` uses real Vitest) |
+| Integration | planned (section 3); written with the API modules in task 2                  | not run                                                                                                                                                             |
+| End-to-end  | `tests/e2e/run.mjs`: 9 journeys over the live features (Playwright library)  | 17 of 17 runs passed in Chromium at 1280x900 and 375x740; Firefox and WebKit not installed here (`E2E_BROWSERS=chromium,firefox,webkit npm run e2e`)                |
+| Contract    | `npm run contract`                                                           | 45 requests, 0 problems                                                                                                                                             |
+
+The e2e runner was checked to fail when a feature is broken: removing the product filter from the
+home page made 4 of 17 runs fail.

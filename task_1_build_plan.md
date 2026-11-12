@@ -1,6 +1,6 @@
 # BrandStore — Task 1 Build Plan
 
-This file is sections 1–6 of `README.md`, kept identical to it.
+This file is sections 1–6 of `docs/phase1/README.md` (the Phase 1 README), kept identical to it.
 
 ## 1. Scope & Overview
 - **Pages built:**

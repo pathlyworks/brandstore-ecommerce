@@ -6,8 +6,9 @@ real browser, a real account or a real screen reader. Each one ends with the evi
 
 ## 1. Deploy (pick one, about 5 minutes)
 
-**Netlify Drop (no account setup beyond sign-in):** go to https://app.netlify.com/drop, drag this whole
-project folder onto the page. `netlify.toml` is picked up automatically (security headers, publish dir).
+**Netlify Drop (no account setup beyond sign-in):** run `npm run build`, go to https://app.netlify.com/drop
+and drag the `dist/` folder onto the page. `dist/_headers` carries the security headers. (A Git-connected
+Netlify site runs `npm run build` and publishes `dist/` itself, from `netlify.toml`.)
 Note the URL, e.g. `https://your-name.netlify.app`. You can rename it under Site configuration.
 
 **GitHub Pages:** push the repo, then Settings > Pages > Deploy from branch > `main` / root. The URL is
@@ -20,7 +21,7 @@ Note the URL, e.g. `https://your-name.netlify.app`. You can rename it under Site
 node scripts/set-site-url.js https://your-name.netlify.app      # or https://user.github.io/repo
 node qa/preflight.js --release        # must end with: failed 0   (it fails while the placeholder host remains)
 ```
-Commit and redeploy (drag the folder again on Netlify Drop, or `git push`).
+Commit and redeploy (`npm run build` and drag `dist/` again on Netlify Drop, or `git push`).
 
 ## 3. Smoke test the live site
 Open the URL; check the landing page, `/comparison.html`, and `/typo` (should show the 404 page on Netlify;
