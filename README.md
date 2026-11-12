@@ -1,6 +1,6 @@
-# BrandStore — E-Commerce Storefront (Tasks 1–4)
+# BrandStore — E-Commerce Storefront (Tasks 1–5)
 
-A static HTML5 / CSS3 / vanilla JavaScript storefront: the build plan and layout architecture (Tasks 1–2) the visual-polish, interaction-state and motion pass (Task 3), and the JavaScript interactivity, data-driven sections and form validation (Task 4). Sections 1–6 describe the pages and layout; sections 7–15 cover routes, CSS methodology, states, motion, keyboard operation, deviations, QA evidence and deliverables; sections 16–19 cover the JavaScript.
+A static HTML5 / CSS3 / vanilla JavaScript storefront: the build plan and layout architecture (Tasks 1–2) the visual-polish, interaction-state and motion pass (Task 3), and the JavaScript interactivity, data-driven sections and form validation (Task 4). Sections 1–6 describe the pages and layout; sections 7–15 cover routes, CSS methodology, states, motion, keyboard operation, deviations, QA evidence and deliverables; sections 16–19 cover the JavaScript; sections 20–25 cover the accessibility, SEO, QA and deployment work of Task 5.
 
 ## 1. Scope & Overview
 - **Pages built:**
@@ -271,7 +271,7 @@ The Figma file and brand guideline were not available to this workspace, so "the
 | 18 | Regression for the debugged bug | No stale error after a success or after a correction inside the 50ms window | *Measured* — `node qa/behaviour.js`; session in `node qa/debug-newsletter.js` |
 | 19 | Layout shift from script rendering | Cumulative Layout Shift 0 at 375px and 1280px, at normal speed and with the CPU slowed 6x | *Measured* — `node qa/cls.js` |
 | 20 | Comparison table toggle | "Highlight Differences" marks 6 rows and sets `aria-pressed` | *Measured* — `node qa/behaviour.js` |
-| 21 | Firefox, Safari, real phones and tablets | — | *Not measured* |
+| 21 | Firefox, Safari, Edge, real phones and tablets | Chrome rows only; see section 22 | *Not measured* (Chrome emulation is *measured*, section 22) |
 | 22 | Screen reader pass (NVDA, VoiceOver, TalkBack): what is actually spoken for the alert, status and filter regions | — | *Not measured*; the roles and ids are *measured*, the announcements are *reasoned* from them |
 | 23 | axe DevTools and Lighthouse runs | — | *Not measured* |
 | 24 | Pixel comparison with the Figma design | — | *Not measured* (design file not available here) |
@@ -289,7 +289,7 @@ Run the checks: `npm i -D playwright`, then `node qa/js-rules.js && node qa/toke
 | Demo | static site, deployable as is | Submit the deployed URL in the assessment form. |
 | Deck | not part of this task | — |
 
-Figures used across the files and kept in sync: 2 pages, 4 categories, 3 products, 6 offers, 2 testimonials, 6 comparison rows, 4 breakpoints, 3 animations, 4 CSS files, 12 JS files, 46 commented functions, 8 QA scripts.
+Figures used across the files and kept in sync: 2 pages (plus a 404 page), 4 categories, 3 products, 6 offers, 2 testimonials, 6 comparison rows, 4 breakpoints, 3 animations, 4 CSS files, 12 JS files, 46 commented functions, 11 QA scripts.
 
 ## 15. Project Structure
 ```text
@@ -312,7 +312,13 @@ js/regions.js         focusable scroll regions
 js/table.js           comparison highlight
 js/main.js            starts the registered features
 assets/               responsive SVG illustrations
-qa/                   reproducible checks (js-rules, tokens, layout, keyboard, contrast, behaviour, cls, debug-newsletter)
+qa/                   reproducible checks (js-rules, tokens, layout, keyboard, contrast, behaviour, cls, debug-newsletter, preflight, headers, matrix)
+404.html              not-found page (noindex)
+netlify.toml          publish dir and security headers (Netlify only)
+robots.txt, sitemap.xml, favicon.svg, apple-touch-icon.png, og-image.png, .nojekyll
+scripts/set-site-url.js  replaces the placeholder host with the deployed URL
+docs/RUNBOOK.md       steps only the owner can run (deploy, Lighthouse, axe, screen reader)
+LAUNCH_REPORT.md      the 1–2 page report for stakeholders
 ```
 
 ---
@@ -502,3 +508,57 @@ setTimeout(() => console.log(document.querySelector('#newsletter-error').textCon
 - The address check is a readable approximation, not a full RFC 5322 parser. It accepts ASCII letters, numbers and `. _ % + ' -` before the “@” and rejects internationalised (non-ASCII) addresses. A real service would also confirm by sending a message.
 - The subscription is simulated in the browser: nothing is sent or stored.
 - The filter and the data-driven sections need JavaScript; without it the visitor sees a note and a link to the comparison page.
+
+---
+
+## 20. Task 5 — Accessibility, SEO, QA, Deployment & Launch Report
+
+### 20.1 Success criteria and where each is checked
+| Criterion | Status | Evidence |
+| :--- | :--- | :--- |
+| Live URL loads and behaves as described | *Not measured* — deployment is the owner's step | `docs/RUNBOOK.md` section 1 |
+| QA matrix is specific and matches the repository | Chrome rows *Measured*; Firefox, Safari/Edge, real phone *Not measured* | section 22 |
+| Lighthouse Accessibility and SEO >= 90; axe has no critical violations | *Not measured* (Lighthouse and axe are not available in this workspace) | offline stand-in: `node qa/preflight.js` (section 21) |
+| Report understandable to a non-technical reader | Written | `LAUNCH_REPORT.md` |
+| At least one real bug found and fixed in QA documented | Done | section 24 |
+
+### 20.2 Evidence labels
+*Measured* = a script in `qa/` produced it on 2026-11-12 in Chrome for Testing 153 (Playwright). *Not measured* = nobody ran it yet.
+`qa/preflight.js` is **our own audit with rules named after axe and Lighthouse; it is not axe or Lighthouse** and its pass count must not be reported as theirs.
+
+## 21. Accessibility and SEO Pass
+- **Accessibility:** one `main` (focus target of the skip link), `header`, `footer`, every `nav` labelled; one `h1` and no skipped heading levels per page; every control has an accessible name; every image has `alt`; form field has a label and described-by hint and error; contrast measured (lowest 5.02:1); focus order and keyboard operation per section 11; reflow at 320px and 200% text.
+- **SEO:** unique `title` and `description` per page (length checked), canonical, Open Graph and Twitter tags with absolute URLs, a 1200x630 `og-image.png`, favicon, `robots.txt` pointing to `sitemap.xml`, sitemap listing every indexable page, custom `404.html` marked `noindex`, internal links resolve.
+- `node qa/preflight.js` runs 148 checks (all pass) with the placeholder host, 150 with `--release` after `node scripts/set-site-url.js <url>`; verified for a root host and a GitHub Pages sub-path.
+- `node qa/headers.js` serves the site with the `netlify.toml` headers and loads each page at 375 and 1280px: 0 CSP violations or console errors, 404 status for unknown paths, `.git` not served.
+
+## 22. QA Matrix (browser x viewport)
+`node qa/matrix.js [--md]` runs the same checks in Chrome for Testing 153 on six profiles (phones and tablet use Playwright device profiles: emulated size, touch and user agent, not physical devices).
+
+| Browser | Viewport | Result | Evidence |
+| :--- | :--- | :--- | :--- |
+| Chrome 153 | Desktop 1440x900 | PASS | *Measured* |
+| Chrome 153 | Laptop 1024x768 | PASS | *Measured* |
+| Chrome 153 | Tablet 768x1024 (iPad Mini) | PASS | *Measured*, emulated |
+| Chrome 153 | Phone 375x667 (iPhone SE) | PASS | *Measured*, emulated |
+| Chrome 153 | Phone 390x844 (iPhone 13) | PASS | *Measured*, emulated |
+| Chrome 153 | Phone 412x915 (Pixel 7) | PASS | *Measured*, emulated |
+| Firefox | desktop and phone | — | *Not measured* (engine not installed here) |
+| Safari / Edge | desktop and phone | — | *Not measured* |
+| Real phone | — | — | *Not measured* |
+| Lighthouse, axe, screen reader | — | — | *Not measured*; steps in `docs/RUNBOOK.md` |
+
+## 23. Deployment
+Static site, no build. Netlify Drop or GitHub Pages; exact steps, the URL replacement command and the release check are in `docs/RUNBOOK.md`. `netlify.toml` sets the publish directory and security headers (nosniff, frame deny, strict referrer policy, permissions policy, a content-security-policy that allows only same-origin resources); GitHub Pages ignores it.
+
+## 24. Bug Log (Task 5)
+| Bug | Found by | Cause | Fix | Verified |
+| :--- | :--- | :--- | :--- | :--- |
+| Last desktop nav links clipped at 200% text size | `qa/preflight.js` text-enlargement check, confirmed by screenshot | `.nav__list` and `.site-header__inner` did not wrap | `flex-wrap: wrap` plus column gap in `css/layout.css` and `css/components.css` | preflight, layout and keyboard checks pass; screenshot shows all links |
+| 404 page had in-page anchors that went nowhere | preflight internal-link check | anchors like `#featured` do not exist on `404.html` | repointed to `index.html#...` | preflight link check passes |
+| Preflight failed on GitHub Pages sub-path URLs | testing the URL script with `https://someone.github.io/brandstore` | og-image path mapped by stripping only the host | resolve the file by its base name | sub-path run passes 150 of 150 |
+
+## 25. Known Limitations (Task 5)
+- On a nested unknown URL (e.g. `/a/b`) the 404 page loads but its relative assets do not; the fix is root-relative asset paths.
+- Security headers do not apply on GitHub Pages.
+- Lighthouse, axe, screen-reader, Firefox, Safari and real-device results are not in this repository until the owner runs them.
