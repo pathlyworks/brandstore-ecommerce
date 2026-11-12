@@ -21,3 +21,6 @@ coverage/
 playwright-report/
 test-results/
 package-lock.json
+
+# Third-party code copied as published (npm run vendor).
+src/vendor/

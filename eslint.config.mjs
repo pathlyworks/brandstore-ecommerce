@@ -78,7 +78,16 @@ const forbid = (folders, why) => [
 ];
 
 export default [
-  { ignores: ['node_modules/', 'dist/', 'playwright-report/', 'test-results/', 'coverage/'] },
+  {
+    ignores: [
+      'node_modules/',
+      'src/vendor/',
+      'dist/',
+      'playwright-report/',
+      'test-results/',
+      'coverage/',
+    ],
+  },
   {
     rules: {
       ...recommended,

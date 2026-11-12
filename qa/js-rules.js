@@ -6,6 +6,7 @@
 //  3. src/: no globals created: no window.X = / globalThis.X = / top-level var.
 //  4. src/: no innerHTML / outerHTML / insertAdjacentHTML / document.write.
 //  5. src/: every named function has a comment directly above it and is at most MAX_FUNCTION_LINES long.
+// src/vendor/ (third-party code copied as published, e.g. Axios) is not checked.
 // Usage: node qa/js-rules.js [projectRoot]
 const fs = require('fs'), path = require('path');
 const root = process.argv[2] || path.resolve(__dirname, '..');
@@ -25,7 +26,7 @@ for (const f of fs.readdirSync(root).filter(f => f.endsWith('.html'))) {
   if (handlers.length || jsUrls.length || inline.length || classic.length || modules !== 1) fail(f);
 }
 
-const walk = (d) => fs.readdirSync(d, { withFileTypes: true }).flatMap(e => e.isDirectory() ? walk(path.join(d, e.name)) : e.name.endsWith('.js') ? [path.join(d, e.name)] : []);
+const walk = (d) => fs.readdirSync(d, { withFileTypes: true }).flatMap(e => e.isDirectory() ? (e.name === 'vendor' ? [] : walk(path.join(d, e.name))) : e.name.endsWith('.js') ? [path.join(d, e.name)] : []);
 let functions = 0, files = 0, longest = { lines: 0, name: '' };
 for (const file of walk(path.join(root, 'src'))) {
   const f = path.relative(root, file); files++;

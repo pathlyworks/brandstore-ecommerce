@@ -2,7 +2,7 @@
   "name": "brandstore",
   "version": "2.0.0-alpha.0",
   "private": true,
-  "description": "BrandStore storefront: static pages (index.html, comparison.html, 404.html) driven by ES modules in src/, with the Phase 2 REST contract in api/openapi.json and a mock server in mock-server/.",
+  "description": "BrandStore storefront: static pages driven by ES modules in src/, a REST contract in api/openapi.json and a mock API in mock-server/ (served on /api).",
   "engines": {
     "node": ">=20"
   },
@@ -23,7 +23,8 @@
     "contract": "node scripts/contract.mjs",
     "qa": "node qa/js-rules.js && node qa/preflight.js && node qa/behaviour.js",
     "branch:check": "node scripts/check-branch.mjs",
-    "check": "npm run branch:check && npm run lint && npm run format:check && npm run test && npm run build && npm run e2e && npm run contract"
+    "check": "npm run branch:check && npm run lint && npm run format:check && npm run test && npm run build && npm run e2e && npm run contract",
+    "vendor": "node scripts/vendor.mjs"
   },
   "devDependencies": {
     "eslint": "^10.1.0",
@@ -33,5 +34,8 @@
     "prettier": "^3.8.1",
     "vite": "^7.0.0",
     "vitest": "^3.2.0"
+  },
+  "dependencies": {
+    "axios": "1.19.0"
   }
 }
