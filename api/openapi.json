@@ -2,8 +2,8 @@
   "openapi": "3.0.3",
   "info": {
     "title": "BrandStore API",
-    "version": "1.0.0",
-    "description": "Contract for the BrandStore storefront (Phase 2). Written by the project team because no official specification file was supplied with the task; the mock server in mock-server/ implements it and scripts/contract.mjs checks the two against each other. Money is integer cents. Success bodies are { data, meta? }; error bodies are { error: { code, message, details? } }. Every response carries X-RateLimit-Limit and X-RateLimit-Remaining; 429 responses carry Retry-After (seconds)."
+    "version": "1.1.0",
+    "description": "Contract for the BrandStore storefront (Phase 2). Written by the project team because no official specification file was supplied with the task; the mock server in mock-server/ implements it and scripts/contract.mjs checks the two against each other. Money is integer cents. Success bodies are { data, meta? }; error bodies are { error: { code, message, details? } }. Every response carries X-RateLimit-Limit and X-RateLimit-Remaining; 429 responses carry Retry-After (seconds). v1.1.0 (Phase 2 Task 2): products have a brand; GET /products accepts brand and minRating; the catalog operations document 500; the mock server accepts an X-Mock-Status test header."
   },
   "servers": [
     {
@@ -37,6 +37,24 @@
             "in": "query",
             "schema": {
               "$ref": "#/components/schemas/Category"
+            }
+          },
+          {
+            "name": "brand",
+            "in": "query",
+            "description": "Exact brand name",
+            "schema": {
+              "$ref": "#/components/schemas/Brand"
+            }
+          },
+          {
+            "name": "minRating",
+            "in": "query",
+            "description": "Minimum average rating, 0 to 5, one decimal (e.g. 4.5)",
+            "schema": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 5
             }
           },
           {
@@ -96,6 +114,12 @@
               "maximum": 50,
               "default": 12
             }
+          },
+          {
+            "$ref": "#/components/parameters/mockStatus"
+          },
+          {
+            "$ref": "#/components/parameters/mockDelay"
           }
         ],
         "responses": {
@@ -126,6 +150,9 @@
           },
           "429": {
             "$ref": "#/components/responses/RateLimited"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
           }
         }
       }
@@ -144,6 +171,12 @@
               "type": "string",
               "pattern": "^[a-z0-9-]{1,64}$"
             }
+          },
+          {
+            "$ref": "#/components/parameters/mockStatus"
+          },
+          {
+            "$ref": "#/components/parameters/mockDelay"
           }
         ],
         "responses": {
@@ -171,6 +204,9 @@
           },
           "429": {
             "$ref": "#/components/responses/RateLimited"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
           }
         }
       }
@@ -554,6 +590,27 @@
           "type": "string",
           "pattern": "^[a-z0-9-]{1,40}$"
         }
+      },
+      "mockStatus": {
+        "name": "X-Mock-Status",
+        "in": "header",
+        "required": false,
+        "description": "Mock server only, not part of the production contract: forces the response status (400, 404, 429 or 500) so error handling can be demonstrated and tested.",
+        "schema": {
+          "type": "string",
+          "enum": ["400", "404", "429", "500"]
+        }
+      },
+      "mockDelay": {
+        "name": "X-Mock-Delay",
+        "in": "header",
+        "required": false,
+        "description": "Mock server only: delays the response by this many milliseconds (max 5000) to demonstrate loading states and request races.",
+        "schema": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 5000
+        }
       }
     },
     "responses": {
@@ -620,6 +677,16 @@
               "type": "integer"
             },
             "description": "Seconds to wait"
+          }
+        }
+      },
+      "InternalError": {
+        "description": "Server error. code is INTERNAL. Clients show a retry option.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
           }
         }
       }
@@ -692,6 +759,7 @@
           "id",
           "name",
           "category",
+          "brand",
           "price",
           "compareAtPrice",
           "currency",
@@ -709,6 +777,9 @@
           },
           "category": {
             "$ref": "#/components/schemas/Category"
+          },
+          "brand": {
+            "$ref": "#/components/schemas/Brand"
           },
           "price": {
             "$ref": "#/components/schemas/Money"
@@ -1002,6 +1073,10 @@
             "type": "boolean"
           }
         }
+      },
+      "Brand": {
+        "type": "string",
+        "enum": ["Hearth", "Northline", "Pulse", "Sonique", "Trailhead"]
       }
     }
   }

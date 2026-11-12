@@ -11,7 +11,15 @@
 import { createServer } from 'node:http';
 import { randomUUID } from 'node:crypto';
 import { pathToFileURL } from 'node:url';
-import { CATEGORIES, DETAILS, PRODUCTS, USERS, seedAddresses, seedOrders } from './data.mjs';
+import {
+  BRANDS,
+  CATEGORIES,
+  DETAILS,
+  PRODUCTS,
+  USERS,
+  seedAddresses,
+  seedOrders,
+} from './data.mjs';
 
 const SORTS = ['price_asc', 'price_desc', 'rating_desc', 'name_asc'];
 const ORDER_STATUSES = ['processing', 'shipped', 'delivered', 'cancelled'];
@@ -113,6 +121,13 @@ export function createApp({ rateLimitMax = 60 } = {}) {
     const sort = q.get('sort');
     const search = q.get('q');
     const inStock = q.get('inStock');
+    const brand = q.get('brand');
+    const minRatingRaw = q.get('minRating');
+    const minRating = minRatingRaw === null ? null : Number(minRatingRaw);
+    if (brand !== null && !BRANDS.includes(brand))
+      errors.push({ field: 'brand', message: `must be one of ${BRANDS.join(', ')}` });
+    if (minRatingRaw !== null && (!/^\d(\.\d)?$/.test(minRatingRaw) || minRating > 5))
+      errors.push({ field: 'minRating', message: 'must be a number from 0 to 5 (one decimal)' });
     if (category !== null && !CATEGORIES.includes(category))
       errors.push({ field: 'category', message: `must be one of ${CATEGORIES.join(', ')}` });
     if (sort !== null && !SORTS.includes(sort))
@@ -128,6 +143,8 @@ export function createApp({ rateLimitMax = 60 } = {}) {
     let list = PRODUCTS.filter(
       (p) =>
         (!category || p.category === category) &&
+        (!brand || p.brand === brand) &&
+        (minRating === null || p.rating >= minRating) &&
         (!search || p.name.toLowerCase().includes(search.trim().toLowerCase())) &&
         (minPrice === null || p.price >= minPrice) &&
         (maxPrice === null || p.price <= maxPrice) &&
@@ -292,6 +309,32 @@ export function createApp({ rateLimitMax = 60 } = {}) {
     return [200, { data: { id, deleted: true } }];
   }
 
+  /**
+   * Mock-only test hook (not part of the public contract): a request with header
+   * X-Mock-Status: 400 | 404 | 429 | 500 fails with that status, so the client's error states can be
+   * demonstrated and tested on demand.
+   */
+  function simulateFailure(req) {
+    const wanted = req.headers['x-mock-status'];
+    if (!wanted) return;
+    const failures = {
+      400: ['VALIDATION_ERROR', 'One or more fields are invalid.'],
+      404: ['NOT_FOUND', 'The requested resource was not found.'],
+      429: ['RATE_LIMITED', 'Too many requests. Try again later.'],
+      500: ['INTERNAL', 'Unexpected error.'],
+    };
+    if (!failures[wanted]) return;
+    const err = new HttpError(Number(wanted), ...failures[wanted]);
+    if (wanted === '429') err.retryAfter = 5;
+    throw err;
+  }
+
+  /** Mock-only test hook: X-Mock-Delay: <ms> (max 5000) delays the response, to show loading states and races. */
+  function simulateDelay(req) {
+    const ms = Math.min(Number(req.headers['x-mock-delay']) || 0, 5000);
+    return ms > 0 ? new Promise((done) => setTimeout(done, ms)) : Promise.resolve();
+  }
+
   // ---- routing -------------------------------------------------------------------------
   /** [method, pattern, needsAuth, handler(ctx)] */
   const routes = [
@@ -341,7 +384,10 @@ export function createApp({ rateLimitMax = 60 } = {}) {
 
   async function handle(req, res) {
     res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Headers', 'Authorization, Content-Type, X-Client-Id');
+    res.setHeader(
+      'Access-Control-Allow-Headers',
+      'Authorization, Content-Type, X-Client-Id, X-Mock-Status, X-Mock-Delay',
+    );
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
     res.setHeader(
       'Access-Control-Expose-Headers',
@@ -355,6 +401,8 @@ export function createApp({ rateLimitMax = 60 } = {}) {
         return send(res, 204);
       }
       rateLimit(req, res);
+      await simulateDelay(req);
+      simulateFailure(req);
       const matching = routes.filter(([, re]) => re.test(url.pathname));
       if (!matching.length) throw new HttpError(404, 'NOT_FOUND', `No route for ${url.pathname}.`);
       const route = matching.find(([m]) => m === req.method);
@@ -399,7 +447,7 @@ export function start({ port = 4010, rateLimitMax } = {}) {
   });
 }
 
-if (import.meta.url === pathToFileURL(process.argv[1]).href) {
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const { url } = await start({
     port: Number(process.env.PORT || 4010),
     rateLimitMax: Number(process.env.RATE_LIMIT_MAX || 60),

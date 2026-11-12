@@ -85,7 +85,50 @@ const cases = [
     400,
     { note: 'unknown category and sort (two details)' },
   ],
+  [
+    'listProducts',
+    'GET',
+    '/products',
+    '/products?brand=Northline&minRating=4.4&sort=price_desc',
+    200,
+    {
+      note: 'brand + minimum rating + sort (Task 2)',
+      expectIds: ['leather-backpack', 'merino-tee'],
+    },
+  ],
+  [
+    'listProducts',
+    'GET',
+    '/products',
+    '/products?category=electronics&sort=price_asc&page=2&limit=2',
+    200,
+    { note: 'page 2 of a filtered, sorted list', expectIds: ['smartwatch', 'headphones-pro'] },
+  ],
+  [
+    'listProducts',
+    'GET',
+    '/products',
+    '/products?brand=Acme&minRating=6',
+    400,
+    { note: 'unknown brand, rating above 5' },
+  ],
+  [
+    'listProducts',
+    'GET',
+    '/products',
+    '/products',
+    500,
+    { mockStatus: '500', note: 'X-Mock-Status: 500 (mock-only hook)' },
+  ],
   ['getProduct', 'GET', '/products/{id}', '/products/headphones-pro', 200, {}],
+  [
+    'getProduct',
+    'GET',
+    '/products/{id}',
+    '/products/headphones-pro',
+    500,
+    { mockStatus: '500', note: 'X-Mock-Status: 500 (mock-only hook)' },
+  ],
   ['getProduct', 'GET', '/products/{id}', '/products/does-not-exist', 404, {}],
   [
     'getProduct',
@@ -249,6 +292,7 @@ async function call(c, clientId = 'contract-run') {
   const headers = { 'X-Client-Id': clientId };
   if (o.auth === true) headers.Authorization = `Bearer ${vars.token}`;
   if (o.auth === 'bad') headers.Authorization = 'Bearer not-a-real-token';
+  if (o.mockStatus) headers['X-Mock-Status'] = o.mockStatus;
   let body;
   if (o.raw !== undefined) body = o.raw;
   else if (o.body !== undefined) body = JSON.stringify(o.body);
@@ -281,6 +325,7 @@ async function call(c, clientId = 'contract-run') {
     shape: shapeOf(json),
     body: json,
     request: { headers, body: o.raw ?? o.body },
+    expectIds: o.expectIds,
   };
 }
 
@@ -346,6 +391,13 @@ for (const [template, item] of Object.entries(spec.paths)) {
 for (const r of log)
   if (r.status !== r.expected)
     problems.push(`${r.method} ${r.path}: expected ${r.expected}, got ${r.status}`);
+// Results must match the fixtures (mock-server/data.mjs) where a case names the expected ids.
+for (const r of log) {
+  if (!r.expectIds) continue;
+  const got = (r.body?.data || []).map((p) => p.id);
+  if (JSON.stringify(got) !== JSON.stringify(r.expectIds))
+    problems.push(`${r.path}: expected ids ${r.expectIds.join(',')}, got ${got.join(',')}`);
+}
 
 // ---- write the evidence ------------------------------------------------------------------
 await mkdir(`${root}docs/api`, { recursive: true });

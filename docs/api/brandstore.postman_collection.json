@@ -191,7 +191,107 @@
       }
     },
     {
-      "name": "08 GET /products/headphones-pro -> 200",
+      "name": "08 GET /products?brand=Northline&minRating=4.4&sort=price_desc -> 200 (brand + minimum rating + sort (Task 2))",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status is 200', () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-Client-Id",
+            "value": "postman"
+          }
+        ],
+        "url": "{{baseUrl}}/products?brand=Northline&minRating=4.4&sort=price_desc",
+        "description": "listProducts"
+      }
+    },
+    {
+      "name": "09 GET /products?category=electronics&sort=price_asc&page=2&limit=2 -> 200 (page 2 of a filtered, sorted list)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status is 200', () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-Client-Id",
+            "value": "postman"
+          }
+        ],
+        "url": "{{baseUrl}}/products?category=electronics&sort=price_asc&page=2&limit=2",
+        "description": "listProducts"
+      }
+    },
+    {
+      "name": "10 GET /products?brand=Acme&minRating=6 -> 400 (unknown brand, rating above 5)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status is 400', () => pm.response.to.have.status(400));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-Client-Id",
+            "value": "postman"
+          }
+        ],
+        "url": "{{baseUrl}}/products?brand=Acme&minRating=6",
+        "description": "listProducts"
+      }
+    },
+    {
+      "name": "11 GET /products -> 500 (X-Mock-Status: 500 (mock-only hook))",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status is 500', () => pm.response.to.have.status(500));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-Client-Id",
+            "value": "postman"
+          }
+        ],
+        "url": "{{baseUrl}}/products",
+        "description": "listProducts"
+      }
+    },
+    {
+      "name": "12 GET /products/headphones-pro -> 200",
       "event": [
         {
           "listen": "test",
@@ -216,7 +316,32 @@
       }
     },
     {
-      "name": "09 GET /products/does-not-exist -> 404",
+      "name": "13 GET /products/headphones-pro -> 500 (X-Mock-Status: 500 (mock-only hook))",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status is 500', () => pm.response.to.have.status(500));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-Client-Id",
+            "value": "postman"
+          }
+        ],
+        "url": "{{baseUrl}}/products/headphones-pro",
+        "description": "getProduct"
+      }
+    },
+    {
+      "name": "14 GET /products/does-not-exist -> 404",
       "event": [
         {
           "listen": "test",
@@ -241,7 +366,7 @@
       }
     },
     {
-      "name": "10 GET /products/BAD%20ID -> 400 (id breaks the pattern)",
+      "name": "15 GET /products/BAD%20ID -> 400 (id breaks the pattern)",
       "event": [
         {
           "listen": "test",
@@ -266,7 +391,7 @@
       }
     },
     {
-      "name": "11 POST /auth/login -> 400 (missing email and password)",
+      "name": "16 POST /auth/login -> 400 (missing email and password)",
       "event": [
         {
           "listen": "test",
@@ -299,7 +424,7 @@
       }
     },
     {
-      "name": "12 POST /auth/login -> 400 (malformed JSON)",
+      "name": "17 POST /auth/login -> 400 (malformed JSON)",
       "event": [
         {
           "listen": "test",
@@ -332,7 +457,7 @@
       }
     },
     {
-      "name": "13 POST /auth/login -> 401 (wrong password)",
+      "name": "18 POST /auth/login -> 401 (wrong password)",
       "event": [
         {
           "listen": "test",
@@ -365,7 +490,7 @@
       }
     },
     {
-      "name": "14 POST /auth/login -> 200",
+      "name": "19 POST /auth/login -> 200",
       "event": [
         {
           "listen": "test",
@@ -399,7 +524,7 @@
       }
     },
     {
-      "name": "15 GET /account/orders -> 401 (no Authorization header)",
+      "name": "20 GET /account/orders -> 401 (no Authorization header)",
       "event": [
         {
           "listen": "test",
@@ -424,7 +549,7 @@
       }
     },
     {
-      "name": "16 GET /account/orders -> 401 (unknown token)",
+      "name": "21 GET /account/orders -> 401 (unknown token)",
       "event": [
         {
           "listen": "test",
@@ -453,7 +578,7 @@
       }
     },
     {
-      "name": "17 GET /account/orders -> 200",
+      "name": "22 GET /account/orders -> 200",
       "event": [
         {
           "listen": "test",
@@ -482,7 +607,7 @@
       }
     },
     {
-      "name": "18 GET /account/orders?status=processing&limit=5 -> 200",
+      "name": "23 GET /account/orders?status=processing&limit=5 -> 200",
       "event": [
         {
           "listen": "test",
@@ -511,7 +636,7 @@
       }
     },
     {
-      "name": "19 GET /account/orders?status=lost -> 400",
+      "name": "24 GET /account/orders?status=lost -> 400",
       "event": [
         {
           "listen": "test",
@@ -540,7 +665,7 @@
       }
     },
     {
-      "name": "20 PATCH /account/orders/o-1003/cancel -> 401",
+      "name": "25 PATCH /account/orders/o-1003/cancel -> 401",
       "event": [
         {
           "listen": "test",
@@ -565,7 +690,7 @@
       }
     },
     {
-      "name": "21 PATCH /account/orders/o-1003/cancel -> 400 (reason too long)",
+      "name": "26 PATCH /account/orders/o-1003/cancel -> 400 (reason too long)",
       "event": [
         {
           "listen": "test",
@@ -602,7 +727,7 @@
       }
     },
     {
-      "name": "22 PATCH /account/orders/o-1003/cancel -> 200",
+      "name": "27 PATCH /account/orders/o-1003/cancel -> 200",
       "event": [
         {
           "listen": "test",
@@ -639,7 +764,7 @@
       }
     },
     {
-      "name": "23 PATCH /account/orders/o-1003/cancel -> 400 (already cancelled)",
+      "name": "28 PATCH /account/orders/o-1003/cancel -> 400 (already cancelled)",
       "event": [
         {
           "listen": "test",
@@ -668,7 +793,7 @@
       }
     },
     {
-      "name": "24 PATCH /account/orders/o-1001/cancel -> 400 (delivered order)",
+      "name": "29 PATCH /account/orders/o-1001/cancel -> 400 (delivered order)",
       "event": [
         {
           "listen": "test",
@@ -697,7 +822,7 @@
       }
     },
     {
-      "name": "25 PATCH /account/orders/o-9999/cancel -> 404",
+      "name": "30 PATCH /account/orders/o-9999/cancel -> 404",
       "event": [
         {
           "listen": "test",
@@ -726,7 +851,7 @@
       }
     },
     {
-      "name": "26 GET /account/addresses -> 401",
+      "name": "31 GET /account/addresses -> 401",
       "event": [
         {
           "listen": "test",
@@ -751,7 +876,7 @@
       }
     },
     {
-      "name": "27 GET /account/addresses -> 200",
+      "name": "32 GET /account/addresses -> 200",
       "event": [
         {
           "listen": "test",
@@ -780,7 +905,7 @@
       }
     },
     {
-      "name": "28 PUT /account/addresses/office -> 401",
+      "name": "33 PUT /account/addresses/office -> 401",
       "event": [
         {
           "listen": "test",
@@ -813,7 +938,7 @@
       }
     },
     {
-      "name": "29 PUT /account/addresses/office -> 201 (new id: created)",
+      "name": "34 PUT /account/addresses/office -> 201 (new id: created)",
       "event": [
         {
           "listen": "test",
@@ -850,7 +975,7 @@
       }
     },
     {
-      "name": "30 PUT /account/addresses/office -> 200 (same id again: replaced)",
+      "name": "35 PUT /account/addresses/office -> 200 (same id again: replaced)",
       "event": [
         {
           "listen": "test",
@@ -887,7 +1012,7 @@
       }
     },
     {
-      "name": "31 PUT /account/addresses/office -> 400",
+      "name": "36 PUT /account/addresses/office -> 400",
       "event": [
         {
           "listen": "test",
@@ -924,7 +1049,7 @@
       }
     },
     {
-      "name": "32 DELETE /account/addresses/office -> 401",
+      "name": "37 DELETE /account/addresses/office -> 401",
       "event": [
         {
           "listen": "test",
@@ -949,7 +1074,7 @@
       }
     },
     {
-      "name": "33 DELETE /account/addresses/office -> 200",
+      "name": "38 DELETE /account/addresses/office -> 200",
       "event": [
         {
           "listen": "test",
@@ -978,7 +1103,7 @@
       }
     },
     {
-      "name": "34 DELETE /account/addresses/office -> 404 (already deleted)",
+      "name": "39 DELETE /account/addresses/office -> 404 (already deleted)",
       "event": [
         {
           "listen": "test",
@@ -1007,7 +1132,7 @@
       }
     },
     {
-      "name": "35 GET /nothing-here -> 404 (not an operation)",
+      "name": "40 GET /nothing-here -> 404 (not an operation)",
       "event": [
         {
           "listen": "test",
@@ -1032,7 +1157,7 @@
       }
     },
     {
-      "name": "36 DELETE /products -> 405 (wrong method; Allow header lists GET)",
+      "name": "41 DELETE /products -> 405 (wrong method; Allow header lists GET)",
       "event": [
         {
           "listen": "test",

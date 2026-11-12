@@ -3,11 +3,15 @@
  *   node scripts/serve.mjs            # serves the project root on http://127.0.0.1:8080
  *   node scripts/serve.mjs dist 4173  # serves the build output (npm run preview)
  * Unknown paths get 404.html with status 404, like Netlify.
+ * Requests to /api/* go to the mock API (mock-server/server.mjs) in the same process, so the site and
+ * the API share one origin, exactly like the Netlify function in production (netlify/functions/api.mjs).
+ * API_RATE_LIMIT sets the mock's requests-per-minute limit (default 60, as in the spec).
  */
 import { createServer } from 'node:http';
 import { readFile, stat } from 'node:fs/promises';
 import { extname, join, resolve, sep } from 'node:path';
 import { pathToFileURL } from 'node:url';
+import { createApp } from '../mock-server/server.mjs';
 
 const TYPES = {
   '.html': 'text/html; charset=utf-8',
@@ -34,9 +38,18 @@ async function findFile(root, urlPath) {
 }
 
 /** Start serving `dir`; resolves with { url, close }. */
-export function serve(dir = '.', port = 8080) {
+export function serve(
+  dir = '.',
+  port = 8080,
+  { apiRateLimit = Number(process.env.API_RATE_LIMIT || 60) } = {},
+) {
   const root = resolve(dir);
+  const api = createApp({ rateLimitMax: apiRateLimit });
   const server = createServer(async (req, res) => {
+    if (req.url.startsWith('/api/')) {
+      req.url = req.url.slice(4);
+      return api.handle(req, res);
+    }
     const file = await findFile(root, req.url);
     const target = file || join(root, '404.html');
     const body = await readFile(target).catch(() => Buffer.from('Not found'));
@@ -52,7 +65,7 @@ export function serve(dir = '.', port = 8080) {
   });
 }
 
-if (import.meta.url === pathToFileURL(process.argv[1]).href) {
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const { url } = await serve(
     process.argv[2] || '.',
     Number(process.argv[3] || process.env.PORT || 8080),

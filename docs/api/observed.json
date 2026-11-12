@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-12T11:54:06.478Z",
+  "generatedAt": "2026-11-12T14:08:48.363Z",
   "baseUrl": "mock-server (random local port)",
   "rateLimit": 60,
   "requests": [
@@ -23,6 +23,7 @@
             "id": "string",
             "name": "string",
             "category": "string",
+            "brand": "string",
             "price": "integer",
             "compareAtPrice": "null",
             "currency": "string",
@@ -68,6 +69,7 @@
             "id": "string",
             "name": "string",
             "category": "string",
+            "brand": "string",
             "price": "integer",
             "compareAtPrice": "null",
             "currency": "string",
@@ -113,6 +115,7 @@
             "id": "string",
             "name": "string",
             "category": "string",
+            "brand": "string",
             "price": "integer",
             "compareAtPrice": "null",
             "currency": "string",
@@ -264,6 +267,165 @@
       }
     },
     {
+      "operationId": "listProducts",
+      "method": "GET",
+      "template": "/products",
+      "path": "/products?brand=Northline&minRating=4.4&sort=price_desc",
+      "note": "brand + minimum rating + sort (Task 2)",
+      "expected": 200,
+      "status": 200,
+      "errorCode": null,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "52"
+      },
+      "shape": {
+        "data": [
+          {
+            "id": "string",
+            "name": "string",
+            "category": "string",
+            "brand": "string",
+            "price": "integer",
+            "compareAtPrice": "integer",
+            "currency": "string",
+            "rating": "number",
+            "reviewCount": "integer",
+            "stock": "integer",
+            "image": {
+              "url": "string",
+              "alt": "string"
+            }
+          }
+        ],
+        "meta": {
+          "page": "integer",
+          "limit": "integer",
+          "total": "integer",
+          "totalPages": "integer"
+        }
+      },
+      "request": {
+        "headers": {
+          "X-Client-Id": "contract-run"
+        }
+      },
+      "expectIds": [
+        "leather-backpack",
+        "merino-tee"
+      ]
+    },
+    {
+      "operationId": "listProducts",
+      "method": "GET",
+      "template": "/products",
+      "path": "/products?category=electronics&sort=price_asc&page=2&limit=2",
+      "note": "page 2 of a filtered, sorted list",
+      "expected": 200,
+      "status": 200,
+      "errorCode": null,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "51"
+      },
+      "shape": {
+        "data": [
+          {
+            "id": "string",
+            "name": "string",
+            "category": "string",
+            "brand": "string",
+            "price": "integer",
+            "compareAtPrice": "null",
+            "currency": "string",
+            "rating": "number",
+            "reviewCount": "integer",
+            "stock": "integer",
+            "image": {
+              "url": "string",
+              "alt": "string"
+            }
+          }
+        ],
+        "meta": {
+          "page": "integer",
+          "limit": "integer",
+          "total": "integer",
+          "totalPages": "integer"
+        }
+      },
+      "request": {
+        "headers": {
+          "X-Client-Id": "contract-run"
+        }
+      },
+      "expectIds": [
+        "smartwatch",
+        "headphones-pro"
+      ]
+    },
+    {
+      "operationId": "listProducts",
+      "method": "GET",
+      "template": "/products",
+      "path": "/products?brand=Acme&minRating=6",
+      "note": "unknown brand, rating above 5",
+      "expected": 400,
+      "status": 400,
+      "errorCode": "VALIDATION_ERROR",
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "50"
+      },
+      "shape": {
+        "error": {
+          "code": "string",
+          "message": "string",
+          "details": [
+            {
+              "field": "string",
+              "message": "string"
+            }
+          ]
+        }
+      },
+      "request": {
+        "headers": {
+          "X-Client-Id": "contract-run"
+        }
+      }
+    },
+    {
+      "operationId": "listProducts",
+      "method": "GET",
+      "template": "/products",
+      "path": "/products",
+      "note": "X-Mock-Status: 500 (mock-only hook)",
+      "expected": 500,
+      "status": 500,
+      "errorCode": "INTERNAL",
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "49"
+      },
+      "shape": {
+        "error": {
+          "code": "string",
+          "message": "string"
+        }
+      },
+      "request": {
+        "headers": {
+          "X-Client-Id": "contract-run",
+          "X-Mock-Status": "500"
+        }
+      }
+    },
+    {
       "operationId": "getProduct",
       "method": "GET",
       "template": "/products/{id}",
@@ -275,13 +437,14 @@
       "headers": {
         "content-type": "application/json; charset=utf-8",
         "x-ratelimit-limit": "60",
-        "x-ratelimit-remaining": "52"
+        "x-ratelimit-remaining": "48"
       },
       "shape": {
         "data": {
           "id": "string",
           "name": "string",
           "category": "string",
+          "brand": "string",
           "price": "integer",
           "compareAtPrice": "null",
           "currency": "string",
@@ -311,6 +474,33 @@
       "operationId": "getProduct",
       "method": "GET",
       "template": "/products/{id}",
+      "path": "/products/headphones-pro",
+      "note": "X-Mock-Status: 500 (mock-only hook)",
+      "expected": 500,
+      "status": 500,
+      "errorCode": "INTERNAL",
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "47"
+      },
+      "shape": {
+        "error": {
+          "code": "string",
+          "message": "string"
+        }
+      },
+      "request": {
+        "headers": {
+          "X-Client-Id": "contract-run",
+          "X-Mock-Status": "500"
+        }
+      }
+    },
+    {
+      "operationId": "getProduct",
+      "method": "GET",
+      "template": "/products/{id}",
       "path": "/products/does-not-exist",
       "note": "",
       "expected": 404,
@@ -319,7 +509,7 @@
       "headers": {
         "content-type": "application/json; charset=utf-8",
         "x-ratelimit-limit": "60",
-        "x-ratelimit-remaining": "51"
+        "x-ratelimit-remaining": "46"
       },
       "shape": {
         "error": {
@@ -345,7 +535,7 @@
       "headers": {
         "content-type": "application/json; charset=utf-8",
         "x-ratelimit-limit": "60",
-        "x-ratelimit-remaining": "50"
+        "x-ratelimit-remaining": "45"
       },
       "shape": {
         "error": {
@@ -377,7 +567,7 @@
       "headers": {
         "content-type": "application/json; charset=utf-8",
         "x-ratelimit-limit": "60",
-        "x-ratelimit-remaining": "49"
+        "x-ratelimit-remaining": "44"
       },
       "shape": {
         "error": {
@@ -411,7 +601,7 @@
       "headers": {
         "content-type": "application/json; charset=utf-8",
         "x-ratelimit-limit": "60",
-        "x-ratelimit-remaining": "48"
+        "x-ratelimit-remaining": "43"
       },
       "shape": {
         "error": {
@@ -440,7 +630,7 @@
         "content-type": "application/json; charset=utf-8",
         "www-authenticate": "Bearer",
         "x-ratelimit-limit": "60",
-        "x-ratelimit-remaining": "47"
+        "x-ratelimit-remaining": "42"
       },
       "shape": {
         "error": {
@@ -471,7 +661,7 @@
       "headers": {
         "content-type": "application/json; charset=utf-8",
         "x-ratelimit-limit": "60",
-        "x-ratelimit-remaining": "46"
+        "x-ratelimit-remaining": "41"
       },
       "shape": {
         "data": {
@@ -509,7 +699,7 @@
         "content-type": "application/json; charset=utf-8",
         "www-authenticate": "Bearer",
         "x-ratelimit-limit": "60",
-        "x-ratelimit-remaining": "45"
+        "x-ratelimit-remaining": "40"
       },
       "shape": {
         "error": {
@@ -536,7 +726,7 @@
         "content-type": "application/json; charset=utf-8",
         "www-authenticate": "Bearer",
         "x-ratelimit-limit": "60",
-        "x-ratelimit-remaining": "44"
+        "x-ratelimit-remaining": "39"
       },
       "shape": {
         "error": {
@@ -563,7 +753,7 @@
       "headers": {
         "content-type": "application/json; charset=utf-8",
         "x-ratelimit-limit": "60",
-        "x-ratelimit-remaining": "43"
+        "x-ratelimit-remaining": "38"
       },
       "shape": {
         "data": [
@@ -593,7 +783,7 @@
       "request": {
         "headers": {
           "X-Client-Id": "contract-run",
-          "Authorization": "Bearer 797fe195-c16d-494c-bfb3-33badeb5fb32"
+          "Authorization": "Bearer 736be2c4-479b-4b9e-a1cf-805ed94c00ad"
         }
       }
     },
@@ -609,7 +799,7 @@
       "headers": {
         "content-type": "application/json; charset=utf-8",
         "x-ratelimit-limit": "60",
-        "x-ratelimit-remaining": "42"
+        "x-ratelimit-remaining": "37"
       },
       "shape": {
         "data": [
@@ -639,7 +829,7 @@
       "request": {
         "headers": {
           "X-Client-Id": "contract-run",
-          "Authorization": "Bearer 797fe195-c16d-494c-bfb3-33badeb5fb32"
+          "Authorization": "Bearer 736be2c4-479b-4b9e-a1cf-805ed94c00ad"
         }
       }
     },
@@ -655,7 +845,7 @@
       "headers": {
         "content-type": "application/json; charset=utf-8",
         "x-ratelimit-limit": "60",
-        "x-ratelimit-remaining": "41"
+        "x-ratelimit-remaining": "36"
       },
       "shape": {
         "error": {
@@ -672,7 +862,7 @@
       "request": {
         "headers": {
           "X-Client-Id": "contract-run",
-          "Authorization": "Bearer 797fe195-c16d-494c-bfb3-33badeb5fb32"
+          "Authorization": "Bearer 736be2c4-479b-4b9e-a1cf-805ed94c00ad"
         }
       }
     },
@@ -689,7 +879,7 @@
         "content-type": "application/json; charset=utf-8",
         "www-authenticate": "Bearer",
         "x-ratelimit-limit": "60",
-        "x-ratelimit-remaining": "40"
+        "x-ratelimit-remaining": "35"
       },
       "shape": {
         "error": {
@@ -715,7 +905,7 @@
       "headers": {
         "content-type": "application/json; charset=utf-8",
         "x-ratelimit-limit": "60",
-        "x-ratelimit-remaining": "39"
+        "x-ratelimit-remaining": "34"
       },
       "shape": {
         "error": {
@@ -732,7 +922,7 @@
       "request": {
         "headers": {
           "X-Client-Id": "contract-run",
-          "Authorization": "Bearer 797fe195-c16d-494c-bfb3-33badeb5fb32",
+          "Authorization": "Bearer 736be2c4-479b-4b9e-a1cf-805ed94c00ad",
           "Content-Type": "application/json"
         },
         "body": {
@@ -752,7 +942,7 @@
       "headers": {
         "content-type": "application/json; charset=utf-8",
         "x-ratelimit-limit": "60",
-        "x-ratelimit-remaining": "38"
+        "x-ratelimit-remaining": "33"
       },
       "shape": {
         "data": {
@@ -780,7 +970,7 @@
       "request": {
         "headers": {
           "X-Client-Id": "contract-run",
-          "Authorization": "Bearer 797fe195-c16d-494c-bfb3-33badeb5fb32",
+          "Authorization": "Bearer 736be2c4-479b-4b9e-a1cf-805ed94c00ad",
           "Content-Type": "application/json"
         },
         "body": {
@@ -800,7 +990,7 @@
       "headers": {
         "content-type": "application/json; charset=utf-8",
         "x-ratelimit-limit": "60",
-        "x-ratelimit-remaining": "37"
+        "x-ratelimit-remaining": "32"
       },
       "shape": {
         "error": {
@@ -811,7 +1001,7 @@
       "request": {
         "headers": {
           "X-Client-Id": "contract-run",
-          "Authorization": "Bearer 797fe195-c16d-494c-bfb3-33badeb5fb32"
+          "Authorization": "Bearer 736be2c4-479b-4b9e-a1cf-805ed94c00ad"
         }
       }
     },
@@ -827,7 +1017,7 @@
       "headers": {
         "content-type": "application/json; charset=utf-8",
         "x-ratelimit-limit": "60",
-        "x-ratelimit-remaining": "36"
+        "x-ratelimit-remaining": "31"
       },
       "shape": {
         "error": {
@@ -838,7 +1028,7 @@
       "request": {
         "headers": {
           "X-Client-Id": "contract-run",
-          "Authorization": "Bearer 797fe195-c16d-494c-bfb3-33badeb5fb32"
+          "Authorization": "Bearer 736be2c4-479b-4b9e-a1cf-805ed94c00ad"
         }
       }
     },
@@ -854,7 +1044,7 @@
       "headers": {
         "content-type": "application/json; charset=utf-8",
         "x-ratelimit-limit": "60",
-        "x-ratelimit-remaining": "35"
+        "x-ratelimit-remaining": "30"
       },
       "shape": {
         "error": {
@@ -865,7 +1055,7 @@
       "request": {
         "headers": {
           "X-Client-Id": "contract-run",
-          "Authorization": "Bearer 797fe195-c16d-494c-bfb3-33badeb5fb32"
+          "Authorization": "Bearer 736be2c4-479b-4b9e-a1cf-805ed94c00ad"
         }
       }
     },
@@ -882,7 +1072,7 @@
         "content-type": "application/json; charset=utf-8",
         "www-authenticate": "Bearer",
         "x-ratelimit-limit": "60",
-        "x-ratelimit-remaining": "34"
+        "x-ratelimit-remaining": "29"
       },
       "shape": {
         "error": {
@@ -908,7 +1098,7 @@
       "headers": {
         "content-type": "application/json; charset=utf-8",
         "x-ratelimit-limit": "60",
-        "x-ratelimit-remaining": "33"
+        "x-ratelimit-remaining": "28"
       },
       "shape": {
         "data": [
@@ -929,7 +1119,7 @@
       "request": {
         "headers": {
           "X-Client-Id": "contract-run",
-          "Authorization": "Bearer 797fe195-c16d-494c-bfb3-33badeb5fb32"
+          "Authorization": "Bearer 736be2c4-479b-4b9e-a1cf-805ed94c00ad"
         }
       }
     },
@@ -946,7 +1136,7 @@
         "content-type": "application/json; charset=utf-8",
         "www-authenticate": "Bearer",
         "x-ratelimit-limit": "60",
-        "x-ratelimit-remaining": "32"
+        "x-ratelimit-remaining": "27"
       },
       "shape": {
         "error": {
@@ -982,7 +1172,7 @@
         "content-type": "application/json; charset=utf-8",
         "location": "/account/addresses/office",
         "x-ratelimit-limit": "60",
-        "x-ratelimit-remaining": "31"
+        "x-ratelimit-remaining": "26"
       },
       "shape": {
         "data": {
@@ -1001,7 +1191,7 @@
       "request": {
         "headers": {
           "X-Client-Id": "contract-run",
-          "Authorization": "Bearer 797fe195-c16d-494c-bfb3-33badeb5fb32",
+          "Authorization": "Bearer 736be2c4-479b-4b9e-a1cf-805ed94c00ad",
           "Content-Type": "application/json"
         },
         "body": {
@@ -1026,7 +1216,7 @@
       "headers": {
         "content-type": "application/json; charset=utf-8",
         "x-ratelimit-limit": "60",
-        "x-ratelimit-remaining": "30"
+        "x-ratelimit-remaining": "25"
       },
       "shape": {
         "data": {
@@ -1045,7 +1235,7 @@
       "request": {
         "headers": {
           "X-Client-Id": "contract-run",
-          "Authorization": "Bearer 797fe195-c16d-494c-bfb3-33badeb5fb32",
+          "Authorization": "Bearer 736be2c4-479b-4b9e-a1cf-805ed94c00ad",
           "Content-Type": "application/json"
         },
         "body": {
@@ -1071,7 +1261,7 @@
       "headers": {
         "content-type": "application/json; charset=utf-8",
         "x-ratelimit-limit": "60",
-        "x-ratelimit-remaining": "29"
+        "x-ratelimit-remaining": "24"
       },
       "shape": {
         "error": {
@@ -1088,7 +1278,7 @@
       "request": {
         "headers": {
           "X-Client-Id": "contract-run",
-          "Authorization": "Bearer 797fe195-c16d-494c-bfb3-33badeb5fb32",
+          "Authorization": "Bearer 736be2c4-479b-4b9e-a1cf-805ed94c00ad",
           "Content-Type": "application/json"
         },
         "body": {
@@ -1114,7 +1304,7 @@
         "content-type": "application/json; charset=utf-8",
         "www-authenticate": "Bearer",
         "x-ratelimit-limit": "60",
-        "x-ratelimit-remaining": "28"
+        "x-ratelimit-remaining": "23"
       },
       "shape": {
         "error": {
@@ -1140,7 +1330,7 @@
       "headers": {
         "content-type": "application/json; charset=utf-8",
         "x-ratelimit-limit": "60",
-        "x-ratelimit-remaining": "27"
+        "x-ratelimit-remaining": "22"
       },
       "shape": {
         "data": {
@@ -1151,7 +1341,7 @@
       "request": {
         "headers": {
           "X-Client-Id": "contract-run",
-          "Authorization": "Bearer 797fe195-c16d-494c-bfb3-33badeb5fb32"
+          "Authorization": "Bearer 736be2c4-479b-4b9e-a1cf-805ed94c00ad"
         }
       }
     },
@@ -1167,7 +1357,7 @@
       "headers": {
         "content-type": "application/json; charset=utf-8",
         "x-ratelimit-limit": "60",
-        "x-ratelimit-remaining": "26"
+        "x-ratelimit-remaining": "21"
       },
       "shape": {
         "error": {
@@ -1178,7 +1368,7 @@
       "request": {
         "headers": {
           "X-Client-Id": "contract-run",
-          "Authorization": "Bearer 797fe195-c16d-494c-bfb3-33badeb5fb32"
+          "Authorization": "Bearer 736be2c4-479b-4b9e-a1cf-805ed94c00ad"
         }
       }
     },
@@ -1194,7 +1384,7 @@
       "headers": {
         "content-type": "application/json; charset=utf-8",
         "x-ratelimit-limit": "60",
-        "x-ratelimit-remaining": "25"
+        "x-ratelimit-remaining": "20"
       },
       "shape": {
         "error": {
@@ -1221,7 +1411,7 @@
         "content-type": "application/json; charset=utf-8",
         "allow": "GET",
         "x-ratelimit-limit": "60",
-        "x-ratelimit-remaining": "24"
+        "x-ratelimit-remaining": "19"
       },
       "shape": {
         "error": {
@@ -1345,7 +1535,7 @@
       "request": {
         "headers": {
           "X-Client-Id": "burst-listOrders",
-          "Authorization": "Bearer 76d3eb9a-a4c5-4885-93b6-f5a317524794"
+          "Authorization": "Bearer b9e606b4-c396-4236-9e18-6e0671d0564f"
         }
       }
     },
@@ -1373,7 +1563,7 @@
       "request": {
         "headers": {
           "X-Client-Id": "burst-cancelOrder",
-          "Authorization": "Bearer 76d3eb9a-a4c5-4885-93b6-f5a317524794",
+          "Authorization": "Bearer b9e606b4-c396-4236-9e18-6e0671d0564f",
           "Content-Type": "application/json"
         },
         "body": {
@@ -1405,7 +1595,7 @@
       "request": {
         "headers": {
           "X-Client-Id": "burst-listAddresses",
-          "Authorization": "Bearer 76d3eb9a-a4c5-4885-93b6-f5a317524794"
+          "Authorization": "Bearer b9e606b4-c396-4236-9e18-6e0671d0564f"
         }
       }
     },
@@ -1433,7 +1623,7 @@
       "request": {
         "headers": {
           "X-Client-Id": "burst-putAddress",
-          "Authorization": "Bearer 76d3eb9a-a4c5-4885-93b6-f5a317524794",
+          "Authorization": "Bearer b9e606b4-c396-4236-9e18-6e0671d0564f",
           "Content-Type": "application/json"
         },
         "body": {
@@ -1470,7 +1660,7 @@
       "request": {
         "headers": {
           "X-Client-Id": "burst-deleteAddress",
-          "Authorization": "Bearer 76d3eb9a-a4c5-4885-93b6-f5a317524794"
+          "Authorization": "Bearer b9e606b4-c396-4236-9e18-6e0671d0564f"
         }
       }
     },
