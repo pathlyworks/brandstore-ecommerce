@@ -3,11 +3,11 @@
 A storefront built in plain HTML, CSS and ES-module JavaScript against a REST API (OpenAPI spec in
 `api/openapi.json`, mock server in `mock-server/`). No framework; Vite is used only as a dev server.
 
-## Current task: Phase 2, Task 3 — Product detail, persistent cart, save for later
+## Current task: Phase 2, Task 4 — Login, JWT-protected account area, web security basics
 
-**Deliverable document: [`task_3_cart.md`](task_3_cart.md)** (what was built, cart pure functions, totals with
-fixture check, what survives refresh/tab close, out-of-stock behaviour, Axios vs fetch, QA matrix, deviations list).
-Branch: `feature/product-detail-cart-save-for-later`.
+**Deliverable document: [`task_4_auth.md`](task_4_auth.md)** (what was built, 400/401 handling, token flow and
+expiry, logout, QA matrix, deviations). **Security note: [`docs/SECURITY.md`](docs/SECURITY.md)** (token storage
+trade-off, XSS, CORS, CSRF, proposed CSP). Branch: `feature/auth-account-security`.
 
 ## Run it
 
@@ -16,6 +16,9 @@ npm install
 npm run start            # site + mock API on http://127.0.0.1:8080 (catalog: /catalog.html)
 npm run dev              # the same through Vite
 ```
+
+**Against the official TechSphere API** (used for grading): `python3 api/techsphere/server.py` (port 4010), then
+`VITE_API_BASE=http://127.0.0.1:4010 npm run start`. Test account: `student@techsphere.test` / `Passw0rd!`.
 
 Open `catalog.html#demo` for buttons that make the next request fail (400, 404, 429, 500) or load slowly.
 
@@ -27,10 +30,12 @@ Open `catalog.html#demo` for buttons that make the next request fail (400, 404, 
 | `catalog.html` | **Live catalog from the API:** debounced search; category, brand, price and rating filters with counts; sort; pagination; loading, empty and error states with retry; every view in the URL |
 | `product.html?id=…` | **Product detail:** gallery, specs table, stock status, quantity stepper, add to cart, save for later, recently viewed strip (loaded through the Axios module) |
 | `cart.html` | **Cart:** lines with quantity steppers, totals with the shipping rule, clear cart, saved-for-later list, recently viewed; kept in localStorage, prices re-checked with the API |
+| `login.html` / `register.html` | **Sign in / create account:** labelled, validated forms; 401 and 400 messages; token kept in sessionStorage |
+| `account.html` | **Account (Bearer token):** order history with pages and cancel, address book (edit, delete), sign out (cart kept); expired session → sign-in with a message |
 | `comparison.html` | Comparison table with "Highlight differences" |
 | `404.html` | Not-found page |
 
-Planned (designed in `task_1_api_plan.md`, not built yet): checkout, sign-in, order history, address book.
+Planned (designed in `task_1_api_plan.md`, not built yet): checkout.
 
 ## npm scripts
 
@@ -57,6 +62,7 @@ have no API there.)
 
 | Task | Document |
 | :--- | :--- |
+| Phase 2, Task 4 | `task_4_auth.md`, `docs/SECURITY.md` |
 | Phase 2, Task 3 | `task_3_cart.md` |
 | Phase 2, Task 2 | `task_2_catalog.md` |
 | Phase 2, Task 1 | `task_1_api_plan.md`; previous README `docs/phase2-task1-README.md`; `docs/ARCHITECTURE.md`, `docs/STORAGE.md`, `docs/TEST_PLAN.md`, `docs/api/ENDPOINTS.md` |

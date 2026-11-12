@@ -7,8 +7,10 @@
 
 # Security headers for every response. The Content-Security-Policy only allows
 # files from the site itself, which is all this project uses (no inline scripts,
-# no inline styles, no third-party requests). qa/headers.js tests the site
-# under exactly these headers.
+# no inline styles, no third-party requests). connect-src 'self' allows the API on /api (the Netlify
+# function). If the site is pointed at an API on another origin (VITE_API_BASE), add that origin to
+# connect-src, e.g. connect-src 'self' https://api.techsphere.example (see docs/SECURITY.md).
+# qa/headers.js tests the site under exactly these headers.
 [[headers]]
   for = "/*"
   [headers.values]
@@ -16,4 +18,4 @@
     X-Frame-Options = "DENY"
     Referrer-Policy = "strict-origin-when-cross-origin"
     Permissions-Policy = "camera=(), microphone=(), geolocation=()"
-    Content-Security-Policy = "default-src 'self'; img-src 'self'; style-src 'self'; script-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; object-src 'none'"
+    Content-Security-Policy = "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; font-src 'self'; connect-src 'self'; form-action 'self'; base-uri 'self'; frame-ancestors 'none'; object-src 'none'; upgrade-insecure-requests"
