@@ -1,0 +1,1510 @@
+{
+  "generatedAt": "2026-11-12T11:31:02.013Z",
+  "baseUrl": "mock-server (random local port)",
+  "rateLimit": 60,
+  "requests": [
+    {
+      "operationId": "listProducts",
+      "method": "GET",
+      "template": "/products",
+      "path": "/products",
+      "note": "defaults: page 1, limit 12",
+      "expected": 200,
+      "status": 200,
+      "errorCode": null,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "59"
+      },
+      "shape": {
+        "data": [
+          {
+            "id": "string",
+            "name": "string",
+            "category": "string",
+            "price": "integer",
+            "compareAtPrice": "null",
+            "currency": "string",
+            "rating": "number",
+            "reviewCount": "integer",
+            "stock": "integer",
+            "image": {
+              "url": "string",
+              "alt": "string"
+            }
+          }
+        ],
+        "meta": {
+          "page": "integer",
+          "limit": "integer",
+          "total": "integer",
+          "totalPages": "integer"
+        }
+      },
+      "request": {
+        "headers": {
+          "X-Client-Id": "contract-run"
+        }
+      }
+    },
+    {
+      "operationId": "listProducts",
+      "method": "GET",
+      "template": "/products",
+      "path": "/products?category=electronics&sort=price_asc&page=1&limit=2",
+      "note": "filter + sort + page size",
+      "expected": 200,
+      "status": 200,
+      "errorCode": null,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "58"
+      },
+      "shape": {
+        "data": [
+          {
+            "id": "string",
+            "name": "string",
+            "category": "string",
+            "price": "integer",
+            "compareAtPrice": "null",
+            "currency": "string",
+            "rating": "number",
+            "reviewCount": "integer",
+            "stock": "integer",
+            "image": {
+              "url": "string",
+              "alt": "string"
+            }
+          }
+        ],
+        "meta": {
+          "page": "integer",
+          "limit": "integer",
+          "total": "integer",
+          "totalPages": "integer"
+        }
+      },
+      "request": {
+        "headers": {
+          "X-Client-Id": "contract-run"
+        }
+      }
+    },
+    {
+      "operationId": "listProducts",
+      "method": "GET",
+      "template": "/products",
+      "path": "/products?q=wool&minPrice=1000&maxPrice=5000&inStock=true",
+      "note": "search + price range + stock",
+      "expected": 200,
+      "status": 200,
+      "errorCode": null,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "57"
+      },
+      "shape": {
+        "data": [
+          {
+            "id": "string",
+            "name": "string",
+            "category": "string",
+            "price": "integer",
+            "compareAtPrice": "null",
+            "currency": "string",
+            "rating": "number",
+            "reviewCount": "integer",
+            "stock": "integer",
+            "image": {
+              "url": "string",
+              "alt": "string"
+            }
+          }
+        ],
+        "meta": {
+          "page": "integer",
+          "limit": "integer",
+          "total": "integer",
+          "totalPages": "integer"
+        }
+      },
+      "request": {
+        "headers": {
+          "X-Client-Id": "contract-run"
+        }
+      }
+    },
+    {
+      "operationId": "listProducts",
+      "method": "GET",
+      "template": "/products",
+      "path": "/products?page=99&limit=12",
+      "note": "page past the end: empty data, not 404",
+      "expected": 200,
+      "status": 200,
+      "errorCode": null,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "56"
+      },
+      "shape": {
+        "data": [],
+        "meta": {
+          "page": "integer",
+          "limit": "integer",
+          "total": "integer",
+          "totalPages": "integer"
+        }
+      },
+      "request": {
+        "headers": {
+          "X-Client-Id": "contract-run"
+        }
+      }
+    },
+    {
+      "operationId": "listProducts",
+      "method": "GET",
+      "template": "/products",
+      "path": "/products?limit=500",
+      "note": "limit above 50",
+      "expected": 400,
+      "status": 400,
+      "errorCode": "VALIDATION_ERROR",
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "55"
+      },
+      "shape": {
+        "error": {
+          "code": "string",
+          "message": "string",
+          "details": [
+            {
+              "field": "string",
+              "message": "string"
+            }
+          ]
+        }
+      },
+      "request": {
+        "headers": {
+          "X-Client-Id": "contract-run"
+        }
+      }
+    },
+    {
+      "operationId": "listProducts",
+      "method": "GET",
+      "template": "/products",
+      "path": "/products?minPrice=9000&maxPrice=1000",
+      "note": "minPrice > maxPrice",
+      "expected": 400,
+      "status": 400,
+      "errorCode": "VALIDATION_ERROR",
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "54"
+      },
+      "shape": {
+        "error": {
+          "code": "string",
+          "message": "string",
+          "details": [
+            {
+              "field": "string",
+              "message": "string"
+            }
+          ]
+        }
+      },
+      "request": {
+        "headers": {
+          "X-Client-Id": "contract-run"
+        }
+      }
+    },
+    {
+      "operationId": "listProducts",
+      "method": "GET",
+      "template": "/products",
+      "path": "/products?category=toys&sort=cheapest",
+      "note": "unknown category and sort (two details)",
+      "expected": 400,
+      "status": 400,
+      "errorCode": "VALIDATION_ERROR",
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "53"
+      },
+      "shape": {
+        "error": {
+          "code": "string",
+          "message": "string",
+          "details": [
+            {
+              "field": "string",
+              "message": "string"
+            }
+          ]
+        }
+      },
+      "request": {
+        "headers": {
+          "X-Client-Id": "contract-run"
+        }
+      }
+    },
+    {
+      "operationId": "getProduct",
+      "method": "GET",
+      "template": "/products/{id}",
+      "path": "/products/headphones-pro",
+      "note": "",
+      "expected": 200,
+      "status": 200,
+      "errorCode": null,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "52"
+      },
+      "shape": {
+        "data": {
+          "id": "string",
+          "name": "string",
+          "category": "string",
+          "price": "integer",
+          "compareAtPrice": "null",
+          "currency": "string",
+          "rating": "number",
+          "reviewCount": "integer",
+          "stock": "integer",
+          "image": {
+            "url": "string",
+            "alt": "string"
+          },
+          "description": "string",
+          "specs": [
+            {
+              "label": "string",
+              "value": "string"
+            }
+          ]
+        }
+      },
+      "request": {
+        "headers": {
+          "X-Client-Id": "contract-run"
+        }
+      }
+    },
+    {
+      "operationId": "getProduct",
+      "method": "GET",
+      "template": "/products/{id}",
+      "path": "/products/does-not-exist",
+      "note": "",
+      "expected": 404,
+      "status": 404,
+      "errorCode": "NOT_FOUND",
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "51"
+      },
+      "shape": {
+        "error": {
+          "code": "string",
+          "message": "string"
+        }
+      },
+      "request": {
+        "headers": {
+          "X-Client-Id": "contract-run"
+        }
+      }
+    },
+    {
+      "operationId": "getProduct",
+      "method": "GET",
+      "template": "/products/{id}",
+      "path": "/products/BAD%20ID",
+      "note": "id breaks the pattern",
+      "expected": 400,
+      "status": 400,
+      "errorCode": "VALIDATION_ERROR",
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "50"
+      },
+      "shape": {
+        "error": {
+          "code": "string",
+          "message": "string",
+          "details": [
+            {
+              "field": "string",
+              "message": "string"
+            }
+          ]
+        }
+      },
+      "request": {
+        "headers": {
+          "X-Client-Id": "contract-run"
+        }
+      }
+    },
+    {
+      "operationId": "login",
+      "method": "POST",
+      "template": "/auth/login",
+      "path": "/auth/login",
+      "note": "missing email and password",
+      "expected": 400,
+      "status": 400,
+      "errorCode": "VALIDATION_ERROR",
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "49"
+      },
+      "shape": {
+        "error": {
+          "code": "string",
+          "message": "string",
+          "details": [
+            {
+              "field": "string",
+              "message": "string"
+            }
+          ]
+        }
+      },
+      "request": {
+        "headers": {
+          "X-Client-Id": "contract-run",
+          "Content-Type": "application/json"
+        },
+        "body": {}
+      }
+    },
+    {
+      "operationId": "login",
+      "method": "POST",
+      "template": "/auth/login",
+      "path": "/auth/login",
+      "note": "malformed JSON",
+      "expected": 400,
+      "status": 400,
+      "errorCode": "INVALID_JSON",
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "48"
+      },
+      "shape": {
+        "error": {
+          "code": "string",
+          "message": "string"
+        }
+      },
+      "request": {
+        "headers": {
+          "X-Client-Id": "contract-run",
+          "Content-Type": "application/json"
+        },
+        "body": "{not json"
+      }
+    },
+    {
+      "operationId": "login",
+      "method": "POST",
+      "template": "/auth/login",
+      "path": "/auth/login",
+      "note": "wrong password",
+      "expected": 401,
+      "status": 401,
+      "errorCode": "INVALID_CREDENTIALS",
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "www-authenticate": "Bearer",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "47"
+      },
+      "shape": {
+        "error": {
+          "code": "string",
+          "message": "string"
+        }
+      },
+      "request": {
+        "headers": {
+          "X-Client-Id": "contract-run",
+          "Content-Type": "application/json"
+        },
+        "body": {
+          "email": "demo@brandstore.test",
+          "password": "wrong"
+        }
+      }
+    },
+    {
+      "operationId": "login",
+      "method": "POST",
+      "template": "/auth/login",
+      "path": "/auth/login",
+      "note": "",
+      "expected": 200,
+      "status": 200,
+      "errorCode": null,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "46"
+      },
+      "shape": {
+        "data": {
+          "token": "string",
+          "tokenType": "string",
+          "expiresIn": "integer",
+          "user": {
+            "id": "string",
+            "name": "string",
+            "email": "string"
+          }
+        }
+      },
+      "request": {
+        "headers": {
+          "X-Client-Id": "contract-run",
+          "Content-Type": "application/json"
+        },
+        "body": {
+          "email": "demo@brandstore.test",
+          "password": "Passw0rd!"
+        }
+      }
+    },
+    {
+      "operationId": "listOrders",
+      "method": "GET",
+      "template": "/account/orders",
+      "path": "/account/orders",
+      "note": "no Authorization header",
+      "expected": 401,
+      "status": 401,
+      "errorCode": "UNAUTHENTICATED",
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "www-authenticate": "Bearer",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "45"
+      },
+      "shape": {
+        "error": {
+          "code": "string",
+          "message": "string"
+        }
+      },
+      "request": {
+        "headers": {
+          "X-Client-Id": "contract-run"
+        }
+      }
+    },
+    {
+      "operationId": "listOrders",
+      "method": "GET",
+      "template": "/account/orders",
+      "path": "/account/orders",
+      "note": "unknown token",
+      "expected": 401,
+      "status": 401,
+      "errorCode": "INVALID_TOKEN",
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "www-authenticate": "Bearer",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "44"
+      },
+      "shape": {
+        "error": {
+          "code": "string",
+          "message": "string"
+        }
+      },
+      "request": {
+        "headers": {
+          "X-Client-Id": "contract-run",
+          "Authorization": "Bearer not-a-real-token"
+        }
+      }
+    },
+    {
+      "operationId": "listOrders",
+      "method": "GET",
+      "template": "/account/orders",
+      "path": "/account/orders",
+      "note": "",
+      "expected": 200,
+      "status": 200,
+      "errorCode": null,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "43"
+      },
+      "shape": {
+        "data": [
+          {
+            "id": "string",
+            "createdAt": "string",
+            "status": "string",
+            "items": [
+              "object"
+            ],
+            "subtotal": "integer",
+            "shipping": "integer",
+            "total": "integer",
+            "currency": "string",
+            "cancellable": "boolean",
+            "cancelledAt": "null",
+            "cancelReason": "null"
+          }
+        ],
+        "meta": {
+          "page": "integer",
+          "limit": "integer",
+          "total": "integer",
+          "totalPages": "integer"
+        }
+      },
+      "request": {
+        "headers": {
+          "X-Client-Id": "contract-run",
+          "Authorization": "Bearer 3ecb3bb1-cb50-4869-967a-cd7f99ba8aa3"
+        }
+      }
+    },
+    {
+      "operationId": "listOrders",
+      "method": "GET",
+      "template": "/account/orders",
+      "path": "/account/orders?status=processing&limit=5",
+      "note": "",
+      "expected": 200,
+      "status": 200,
+      "errorCode": null,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "42"
+      },
+      "shape": {
+        "data": [
+          {
+            "id": "string",
+            "createdAt": "string",
+            "status": "string",
+            "items": [
+              "object"
+            ],
+            "subtotal": "integer",
+            "shipping": "integer",
+            "total": "integer",
+            "currency": "string",
+            "cancellable": "boolean",
+            "cancelledAt": "null",
+            "cancelReason": "null"
+          }
+        ],
+        "meta": {
+          "page": "integer",
+          "limit": "integer",
+          "total": "integer",
+          "totalPages": "integer"
+        }
+      },
+      "request": {
+        "headers": {
+          "X-Client-Id": "contract-run",
+          "Authorization": "Bearer 3ecb3bb1-cb50-4869-967a-cd7f99ba8aa3"
+        }
+      }
+    },
+    {
+      "operationId": "listOrders",
+      "method": "GET",
+      "template": "/account/orders",
+      "path": "/account/orders?status=lost",
+      "note": "",
+      "expected": 400,
+      "status": 400,
+      "errorCode": "VALIDATION_ERROR",
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "41"
+      },
+      "shape": {
+        "error": {
+          "code": "string",
+          "message": "string",
+          "details": [
+            {
+              "field": "string",
+              "message": "string"
+            }
+          ]
+        }
+      },
+      "request": {
+        "headers": {
+          "X-Client-Id": "contract-run",
+          "Authorization": "Bearer 3ecb3bb1-cb50-4869-967a-cd7f99ba8aa3"
+        }
+      }
+    },
+    {
+      "operationId": "cancelOrder",
+      "method": "PATCH",
+      "template": "/account/orders/{id}/cancel",
+      "path": "/account/orders/o-1003/cancel",
+      "note": "",
+      "expected": 401,
+      "status": 401,
+      "errorCode": "UNAUTHENTICATED",
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "www-authenticate": "Bearer",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "40"
+      },
+      "shape": {
+        "error": {
+          "code": "string",
+          "message": "string"
+        }
+      },
+      "request": {
+        "headers": {
+          "X-Client-Id": "contract-run"
+        }
+      }
+    },
+    {
+      "operationId": "cancelOrder",
+      "method": "PATCH",
+      "template": "/account/orders/{id}/cancel",
+      "path": "/account/orders/o-1003/cancel",
+      "note": "reason too long",
+      "expected": 400,
+      "status": 400,
+      "errorCode": "VALIDATION_ERROR",
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "39"
+      },
+      "shape": {
+        "error": {
+          "code": "string",
+          "message": "string",
+          "details": [
+            {
+              "field": "string",
+              "message": "string"
+            }
+          ]
+        }
+      },
+      "request": {
+        "headers": {
+          "X-Client-Id": "contract-run",
+          "Authorization": "Bearer 3ecb3bb1-cb50-4869-967a-cd7f99ba8aa3",
+          "Content-Type": "application/json"
+        },
+        "body": {
+          "reason": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+        }
+      }
+    },
+    {
+      "operationId": "cancelOrder",
+      "method": "PATCH",
+      "template": "/account/orders/{id}/cancel",
+      "path": "/account/orders/o-1003/cancel",
+      "note": "",
+      "expected": 200,
+      "status": 200,
+      "errorCode": null,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "38"
+      },
+      "shape": {
+        "data": {
+          "id": "string",
+          "createdAt": "string",
+          "status": "string",
+          "items": [
+            {
+              "productId": "string",
+              "name": "string",
+              "quantity": "integer",
+              "unitPrice": "integer",
+              "lineTotal": "integer"
+            }
+          ],
+          "subtotal": "integer",
+          "shipping": "integer",
+          "total": "integer",
+          "currency": "string",
+          "cancelledAt": "string",
+          "cancelReason": "string",
+          "cancellable": "boolean"
+        }
+      },
+      "request": {
+        "headers": {
+          "X-Client-Id": "contract-run",
+          "Authorization": "Bearer 3ecb3bb1-cb50-4869-967a-cd7f99ba8aa3",
+          "Content-Type": "application/json"
+        },
+        "body": {
+          "reason": "Ordered by mistake"
+        }
+      }
+    },
+    {
+      "operationId": "cancelOrder",
+      "method": "PATCH",
+      "template": "/account/orders/{id}/cancel",
+      "path": "/account/orders/o-1003/cancel",
+      "note": "already cancelled",
+      "expected": 400,
+      "status": 400,
+      "errorCode": "ORDER_NOT_CANCELLABLE",
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "37"
+      },
+      "shape": {
+        "error": {
+          "code": "string",
+          "message": "string"
+        }
+      },
+      "request": {
+        "headers": {
+          "X-Client-Id": "contract-run",
+          "Authorization": "Bearer 3ecb3bb1-cb50-4869-967a-cd7f99ba8aa3"
+        }
+      }
+    },
+    {
+      "operationId": "cancelOrder",
+      "method": "PATCH",
+      "template": "/account/orders/{id}/cancel",
+      "path": "/account/orders/o-1001/cancel",
+      "note": "delivered order",
+      "expected": 400,
+      "status": 400,
+      "errorCode": "ORDER_NOT_CANCELLABLE",
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "36"
+      },
+      "shape": {
+        "error": {
+          "code": "string",
+          "message": "string"
+        }
+      },
+      "request": {
+        "headers": {
+          "X-Client-Id": "contract-run",
+          "Authorization": "Bearer 3ecb3bb1-cb50-4869-967a-cd7f99ba8aa3"
+        }
+      }
+    },
+    {
+      "operationId": "cancelOrder",
+      "method": "PATCH",
+      "template": "/account/orders/{id}/cancel",
+      "path": "/account/orders/o-9999/cancel",
+      "note": "",
+      "expected": 404,
+      "status": 404,
+      "errorCode": "NOT_FOUND",
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "35"
+      },
+      "shape": {
+        "error": {
+          "code": "string",
+          "message": "string"
+        }
+      },
+      "request": {
+        "headers": {
+          "X-Client-Id": "contract-run",
+          "Authorization": "Bearer 3ecb3bb1-cb50-4869-967a-cd7f99ba8aa3"
+        }
+      }
+    },
+    {
+      "operationId": "listAddresses",
+      "method": "GET",
+      "template": "/account/addresses",
+      "path": "/account/addresses",
+      "note": "",
+      "expected": 401,
+      "status": 401,
+      "errorCode": "UNAUTHENTICATED",
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "www-authenticate": "Bearer",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "34"
+      },
+      "shape": {
+        "error": {
+          "code": "string",
+          "message": "string"
+        }
+      },
+      "request": {
+        "headers": {
+          "X-Client-Id": "contract-run"
+        }
+      }
+    },
+    {
+      "operationId": "listAddresses",
+      "method": "GET",
+      "template": "/account/addresses",
+      "path": "/account/addresses",
+      "note": "",
+      "expected": 200,
+      "status": 200,
+      "errorCode": null,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "33"
+      },
+      "shape": {
+        "data": [
+          {
+            "id": "string",
+            "label": "string",
+            "fullName": "string",
+            "line1": "string",
+            "line2": "null",
+            "city": "string",
+            "postalCode": "string",
+            "country": "string",
+            "phone": "string",
+            "isDefault": "boolean"
+          }
+        ]
+      },
+      "request": {
+        "headers": {
+          "X-Client-Id": "contract-run",
+          "Authorization": "Bearer 3ecb3bb1-cb50-4869-967a-cd7f99ba8aa3"
+        }
+      }
+    },
+    {
+      "operationId": "putAddress",
+      "method": "PUT",
+      "template": "/account/addresses/{id}",
+      "path": "/account/addresses/office",
+      "note": "",
+      "expected": 401,
+      "status": 401,
+      "errorCode": "UNAUTHENTICATED",
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "www-authenticate": "Bearer",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "32"
+      },
+      "shape": {
+        "error": {
+          "code": "string",
+          "message": "string"
+        }
+      },
+      "request": {
+        "headers": {
+          "X-Client-Id": "contract-run",
+          "Content-Type": "application/json"
+        },
+        "body": {
+          "label": "Office",
+          "fullName": "Demo Shopper",
+          "line1": "5 Tahrir Square",
+          "city": "Cairo",
+          "postalCode": "11511",
+          "country": "EG"
+        }
+      }
+    },
+    {
+      "operationId": "putAddress",
+      "method": "PUT",
+      "template": "/account/addresses/{id}",
+      "path": "/account/addresses/office",
+      "note": "new id: created",
+      "expected": 201,
+      "status": 201,
+      "errorCode": null,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "location": "/account/addresses/office",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "31"
+      },
+      "shape": {
+        "data": {
+          "id": "string",
+          "label": "string",
+          "fullName": "string",
+          "line1": "string",
+          "line2": "null",
+          "city": "string",
+          "postalCode": "string",
+          "country": "string",
+          "phone": "null",
+          "isDefault": "boolean"
+        }
+      },
+      "request": {
+        "headers": {
+          "X-Client-Id": "contract-run",
+          "Authorization": "Bearer 3ecb3bb1-cb50-4869-967a-cd7f99ba8aa3",
+          "Content-Type": "application/json"
+        },
+        "body": {
+          "label": "Office",
+          "fullName": "Demo Shopper",
+          "line1": "5 Tahrir Square",
+          "city": "Cairo",
+          "postalCode": "11511",
+          "country": "EG"
+        }
+      }
+    },
+    {
+      "operationId": "putAddress",
+      "method": "PUT",
+      "template": "/account/addresses/{id}",
+      "path": "/account/addresses/office",
+      "note": "same id again: replaced",
+      "expected": 200,
+      "status": 200,
+      "errorCode": null,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "30"
+      },
+      "shape": {
+        "data": {
+          "id": "string",
+          "label": "string",
+          "fullName": "string",
+          "line1": "string",
+          "line2": "string",
+          "city": "string",
+          "postalCode": "string",
+          "country": "string",
+          "phone": "null",
+          "isDefault": "boolean"
+        }
+      },
+      "request": {
+        "headers": {
+          "X-Client-Id": "contract-run",
+          "Authorization": "Bearer 3ecb3bb1-cb50-4869-967a-cd7f99ba8aa3",
+          "Content-Type": "application/json"
+        },
+        "body": {
+          "label": "Office",
+          "fullName": "Demo Shopper",
+          "line1": "5 Tahrir Square",
+          "city": "Cairo",
+          "postalCode": "11511",
+          "country": "EG",
+          "line2": "Floor 3"
+        }
+      }
+    },
+    {
+      "operationId": "putAddress",
+      "method": "PUT",
+      "template": "/account/addresses/{id}",
+      "path": "/account/addresses/office",
+      "note": "",
+      "expected": 400,
+      "status": 400,
+      "errorCode": "VALIDATION_ERROR",
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "29"
+      },
+      "shape": {
+        "error": {
+          "code": "string",
+          "message": "string",
+          "details": [
+            {
+              "field": "string",
+              "message": "string"
+            }
+          ]
+        }
+      },
+      "request": {
+        "headers": {
+          "X-Client-Id": "contract-run",
+          "Authorization": "Bearer 3ecb3bb1-cb50-4869-967a-cd7f99ba8aa3",
+          "Content-Type": "application/json"
+        },
+        "body": {
+          "label": "Office",
+          "fullName": "Demo Shopper",
+          "line1": "5 Tahrir Square",
+          "city": "Cairo",
+          "postalCode": "",
+          "country": "Egypt"
+        }
+      }
+    },
+    {
+      "operationId": "deleteAddress",
+      "method": "DELETE",
+      "template": "/account/addresses/{id}",
+      "path": "/account/addresses/office",
+      "note": "",
+      "expected": 401,
+      "status": 401,
+      "errorCode": "UNAUTHENTICATED",
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "www-authenticate": "Bearer",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "28"
+      },
+      "shape": {
+        "error": {
+          "code": "string",
+          "message": "string"
+        }
+      },
+      "request": {
+        "headers": {
+          "X-Client-Id": "contract-run"
+        }
+      }
+    },
+    {
+      "operationId": "deleteAddress",
+      "method": "DELETE",
+      "template": "/account/addresses/{id}",
+      "path": "/account/addresses/office",
+      "note": "",
+      "expected": 200,
+      "status": 200,
+      "errorCode": null,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "27"
+      },
+      "shape": {
+        "data": {
+          "id": "string",
+          "deleted": "boolean"
+        }
+      },
+      "request": {
+        "headers": {
+          "X-Client-Id": "contract-run",
+          "Authorization": "Bearer 3ecb3bb1-cb50-4869-967a-cd7f99ba8aa3"
+        }
+      }
+    },
+    {
+      "operationId": "deleteAddress",
+      "method": "DELETE",
+      "template": "/account/addresses/{id}",
+      "path": "/account/addresses/office",
+      "note": "already deleted",
+      "expected": 404,
+      "status": 404,
+      "errorCode": "NOT_FOUND",
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "26"
+      },
+      "shape": {
+        "error": {
+          "code": "string",
+          "message": "string"
+        }
+      },
+      "request": {
+        "headers": {
+          "X-Client-Id": "contract-run",
+          "Authorization": "Bearer 3ecb3bb1-cb50-4869-967a-cd7f99ba8aa3"
+        }
+      }
+    },
+    {
+      "operationId": null,
+      "method": "GET",
+      "template": "(unknown route)",
+      "path": "/nothing-here",
+      "note": "not an operation",
+      "expected": 404,
+      "status": 404,
+      "errorCode": "NOT_FOUND",
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "25"
+      },
+      "shape": {
+        "error": {
+          "code": "string",
+          "message": "string"
+        }
+      },
+      "request": {
+        "headers": {
+          "X-Client-Id": "contract-run"
+        }
+      }
+    },
+    {
+      "operationId": null,
+      "method": "DELETE",
+      "template": "/products",
+      "path": "/products",
+      "note": "wrong method; Allow header lists GET",
+      "expected": 405,
+      "status": 405,
+      "errorCode": "METHOD_NOT_ALLOWED",
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "allow": "GET",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "24"
+      },
+      "shape": {
+        "error": {
+          "code": "string",
+          "message": "string"
+        }
+      },
+      "request": {
+        "headers": {
+          "X-Client-Id": "contract-run"
+        }
+      }
+    },
+    {
+      "operationId": "listProducts",
+      "method": "GET",
+      "template": "/products",
+      "path": "/products",
+      "note": "request 61 within 60 s from one client",
+      "expected": 429,
+      "status": 429,
+      "errorCode": "RATE_LIMITED",
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "retry-after": "60",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "0"
+      },
+      "shape": {
+        "error": {
+          "code": "string",
+          "message": "string"
+        }
+      },
+      "request": {
+        "headers": {
+          "X-Client-Id": "burst-listProducts"
+        }
+      }
+    },
+    {
+      "operationId": "getProduct",
+      "method": "GET",
+      "template": "/products/{id}",
+      "path": "/products/headphones-pro",
+      "note": "request 61 within 60 s from one client",
+      "expected": 429,
+      "status": 429,
+      "errorCode": "RATE_LIMITED",
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "retry-after": "60",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "0"
+      },
+      "shape": {
+        "error": {
+          "code": "string",
+          "message": "string"
+        }
+      },
+      "request": {
+        "headers": {
+          "X-Client-Id": "burst-getProduct"
+        }
+      }
+    },
+    {
+      "operationId": "login",
+      "method": "POST",
+      "template": "/auth/login",
+      "path": "/auth/login",
+      "note": "request 61 within 60 s from one client",
+      "expected": 429,
+      "status": 429,
+      "errorCode": "RATE_LIMITED",
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "retry-after": "60",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "0"
+      },
+      "shape": {
+        "error": {
+          "code": "string",
+          "message": "string"
+        }
+      },
+      "request": {
+        "headers": {
+          "X-Client-Id": "burst-login",
+          "Content-Type": "application/json"
+        },
+        "body": {
+          "email": "demo@brandstore.test",
+          "password": "Passw0rd!"
+        }
+      }
+    },
+    {
+      "operationId": "listOrders",
+      "method": "GET",
+      "template": "/account/orders",
+      "path": "/account/orders",
+      "note": "request 61 within 60 s from one client",
+      "expected": 429,
+      "status": 429,
+      "errorCode": "RATE_LIMITED",
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "retry-after": "60",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "0"
+      },
+      "shape": {
+        "error": {
+          "code": "string",
+          "message": "string"
+        }
+      },
+      "request": {
+        "headers": {
+          "X-Client-Id": "burst-listOrders",
+          "Authorization": "Bearer 3ef7edae-ef75-443e-94cc-3a60ce506ec3"
+        }
+      }
+    },
+    {
+      "operationId": "cancelOrder",
+      "method": "PATCH",
+      "template": "/account/orders/{id}/cancel",
+      "path": "/account/orders/o-1003/cancel",
+      "note": "request 61 within 60 s from one client",
+      "expected": 429,
+      "status": 429,
+      "errorCode": "RATE_LIMITED",
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "retry-after": "60",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "0"
+      },
+      "shape": {
+        "error": {
+          "code": "string",
+          "message": "string"
+        }
+      },
+      "request": {
+        "headers": {
+          "X-Client-Id": "burst-cancelOrder",
+          "Authorization": "Bearer 3ef7edae-ef75-443e-94cc-3a60ce506ec3",
+          "Content-Type": "application/json"
+        },
+        "body": {
+          "reason": "Ordered by mistake"
+        }
+      }
+    },
+    {
+      "operationId": "listAddresses",
+      "method": "GET",
+      "template": "/account/addresses",
+      "path": "/account/addresses",
+      "note": "request 61 within 60 s from one client",
+      "expected": 429,
+      "status": 429,
+      "errorCode": "RATE_LIMITED",
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "retry-after": "60",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "0"
+      },
+      "shape": {
+        "error": {
+          "code": "string",
+          "message": "string"
+        }
+      },
+      "request": {
+        "headers": {
+          "X-Client-Id": "burst-listAddresses",
+          "Authorization": "Bearer 3ef7edae-ef75-443e-94cc-3a60ce506ec3"
+        }
+      }
+    },
+    {
+      "operationId": "putAddress",
+      "method": "PUT",
+      "template": "/account/addresses/{id}",
+      "path": "/account/addresses/office",
+      "note": "request 61 within 60 s from one client",
+      "expected": 429,
+      "status": 429,
+      "errorCode": "RATE_LIMITED",
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "retry-after": "60",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "0"
+      },
+      "shape": {
+        "error": {
+          "code": "string",
+          "message": "string"
+        }
+      },
+      "request": {
+        "headers": {
+          "X-Client-Id": "burst-putAddress",
+          "Authorization": "Bearer 3ef7edae-ef75-443e-94cc-3a60ce506ec3",
+          "Content-Type": "application/json"
+        },
+        "body": {
+          "label": "Office",
+          "fullName": "Demo Shopper",
+          "line1": "5 Tahrir Square",
+          "city": "Cairo",
+          "postalCode": "11511",
+          "country": "EG"
+        }
+      }
+    },
+    {
+      "operationId": "deleteAddress",
+      "method": "DELETE",
+      "template": "/account/addresses/{id}",
+      "path": "/account/addresses/office",
+      "note": "request 61 within 60 s from one client",
+      "expected": 429,
+      "status": 429,
+      "errorCode": "RATE_LIMITED",
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "retry-after": "60",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "0"
+      },
+      "shape": {
+        "error": {
+          "code": "string",
+          "message": "string"
+        }
+      },
+      "request": {
+        "headers": {
+          "X-Client-Id": "burst-deleteAddress",
+          "Authorization": "Bearer 3ef7edae-ef75-443e-94cc-3a60ce506ec3"
+        }
+      }
+    },
+    {
+      "operationId": "login",
+      "method": "POST",
+      "template": "/auth/login",
+      "path": "/auth/login",
+      "note": "6th failed login for one email within 60 s",
+      "expected": 429,
+      "status": 429,
+      "errorCode": "TOO_MANY_LOGIN_ATTEMPTS",
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "retry-after": "60",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "54"
+      },
+      "shape": {
+        "error": {
+          "code": "string",
+          "message": "string"
+        }
+      },
+      "request": {
+        "headers": {
+          "X-Client-Id": "lockout",
+          "Content-Type": "application/json"
+        },
+        "body": {
+          "email": "lockout@brandstore.test",
+          "password": "nope"
+        }
+      }
+    }
+  ]
+}
