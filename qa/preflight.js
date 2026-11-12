@@ -6,6 +6,7 @@
 // --release additionally fails while the placeholder site URL is still in the files.
 // Needs: playwright + a Chromium build.
 const { chromium } = require('playwright'); const fs = require('fs'), path = require('path');
+const { siteBase } = require('./serve');
 const root = process.argv.find((a, i) => i >= 2 && !a.startsWith('--')) || path.resolve(__dirname, '..');
 const release = process.argv.includes('--release');
 const PLACEHOLDER_HOST = 'https://brandstore.example';
@@ -21,7 +22,7 @@ const read = (f) => fs.existsSync(path.join(root, f)) ? fs.readFileSync(path.joi
     const tag = pg;
     for (const w of [375, 1280]) {
       const p = await b.newPage({ viewport: { width: w, height: 900 } });
-      await p.goto('file://' + root + '/' + pg); await p.waitForTimeout(500);
+      await p.goto((await siteBase(root)) + '/' + pg); await p.waitForTimeout(500);
       const d = await p.evaluate(() => {
         const q = (s) => [...document.querySelectorAll(s)];
         const named = (el) => (el.getAttribute('aria-label') || '').trim() || (el.getAttribute('aria-labelledby') ? el.getAttribute('aria-labelledby').split(/\s+/).map(i => (document.getElementById(i) || {}).textContent || '').join(' ').trim() : '') || (el.id && document.querySelector(`label[for="${CSS.escape(el.id)}"]`) ? document.querySelector(`label[for="${CSS.escape(el.id)}"]`).textContent.trim() : '') || (el.closest('label') ? el.closest('label').textContent.trim() : '') || (el.textContent || '').trim() || (el.querySelector('img[alt]') ? el.querySelector('img[alt]').alt.trim() : '') || (el.getAttribute('title') || '').trim();
@@ -34,7 +35,7 @@ const read = (f) => fs.existsSync(path.join(root, f)) ? fs.readFileSync(path.joi
         const hiddenFocusable = q('[aria-hidden="true"] a, [aria-hidden="true"] button, [aria-hidden="true"] input').map(e => e.className);
         const imgs = q('img'); const noAlt = imgs.filter(i => !i.hasAttribute('alt')).map(i => i.src);
         const badTab = q('[tabindex]').filter(e => Number(e.getAttribute('tabindex')) > 0).length;
-        const fonts = []; const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT); let total = 0, small = 0;
+        const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT); let total = 0, small = 0;
         while (walker.nextNode()) { const n = walker.currentNode; const t = n.textContent.trim(); if (!t) continue; const el = n.parentElement; if (!visible(el) || el.closest('.u-visually-hidden')) continue; total += t.length; if (parseFloat(getComputedStyle(el).fontSize) < 12) small += t.length; }
         const badLinks = q('a').filter(a => { const h = a.getAttribute('href'); return !h || /^javascript:/i.test(h); }).length;
         const mv = (document.querySelector('meta[name=viewport]') || {}).content || '';
@@ -69,7 +70,7 @@ const read = (f) => fs.existsSync(path.join(root, f)) ? fs.readFileSync(path.joi
     }
     // reflow at 320px and text enlarged to 200%
     for (const [label, vw, fs] of [['320px reflow', 320, null], ['200% text', 1280, '200%']]) {
-      const p = await b.newPage({ viewport: { width: vw, height: 900 } }); await p.goto('file://' + root + '/' + pg); await p.waitForTimeout(400);
+      const p = await b.newPage({ viewport: { width: vw, height: 900 } }); await p.goto((await siteBase(root)) + '/' + pg); await p.waitForTimeout(400);
       if (fs) await p.addStyleTag({ content: `html{font-size:${fs} !important}` });
       await p.waitForTimeout(200);
       const o = await p.evaluate(() => ({ over: document.documentElement.scrollWidth - document.documentElement.clientWidth, clipped: [...document.querySelectorAll('h1,h2,h3,p,a,button,label')].filter(e => { const r = e.getBoundingClientRect(); return r.width && (r.right > innerWidth + 1) && !e.closest('[data-scroll-region], .table-scroll, .deals__viewport'); }).map(e => e.className || e.tagName).slice(0, 3) }));
@@ -105,7 +106,7 @@ const read = (f) => fs.existsSync(path.join(root, f)) ? fs.readFileSync(path.joi
   check(locs.length === pages.length && pages.every(pg => locs.some(l => l.endsWith(pg === 'index.html' ? '/' : '/' + pg) )), 'sitemap.xml lists every page', `${locs.length} urls`);
   check(fs.existsSync(path.join(root, '404.html')), 'custom 404 page present', '');
   // internal links resolve
-  const broken = []; for (const pg of pages) { const h = read(pg); for (const m of h.matchAll(/(?:href|src)="([^"#:][^"]*?)(#[^"]*)?"/g)) { const f = m[1].split('?')[0]; if (/^(https?:|mailto:|tel:)/.test(f)) continue; if (!fs.existsSync(path.join(root, f))) broken.push(pg + ':' + f); } for (const m of h.matchAll(/href="(?:[\w.]+)?#([\w-]+)"/g)) { const tgt = m[0].includes('index.html') || !m[0].includes('comparison') ? 'index.html' : pg; if (!new RegExp(`id="${m[1]}"`).test(read(m[0].match(/href="([\w.]+)#/) ? m[0].match(/href="([\w.]+)#/)[1] : pg) || '')) broken.push(pg + ':#' + m[1]); } }
+  const broken = []; for (const pg of pages) { const h = read(pg); for (const m of h.matchAll(/(?:href|src)="([^"#:][^"]*?)(#[^"]*)?"/g)) { const f = m[1].split('?')[0]; if (/^(https?:|mailto:|tel:)/.test(f)) continue; if (!fs.existsSync(path.join(root, f))) broken.push(pg + ':' + f); } for (const m of h.matchAll(/href="(?:[\w.]+)?#([\w-]+)"/g)) { if (!new RegExp(`id="${m[1]}"`).test(read(m[0].match(/href="([\w.]+)#/) ? m[0].match(/href="([\w.]+)#/)[1] : pg) || '')) broken.push(pg + ':#' + m[1]); } }
   check(broken.length === 0, 'internal links, files and anchors resolve', broken.join(','));
   out.forEach(l => console.log(l)); console.log(`\npassed ${passes}, failed ${fails}`); process.exit(fails ? 1 : 0);
 })();

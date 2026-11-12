@@ -4,15 +4,16 @@
 const { chromium } = require('playwright'); const fs = require('fs'), os = require('os'), path = require('path');
 const root = process.argv[2] || path.resolve(__dirname, '..');
 let fails = 0; const check = (ok, msg, extra = '') => { if (!ok) fails++; console.log(ok ? 'PASS' : 'FAIL', msg, extra); };
-const url = (r, p) => 'file://' + r + '/' + p;
+const { siteBase } = require('./serve');
+const url = async (r, p) => (await siteBase(r)) + '/' + p; // ES modules need http, not file://
 
 (async () => {
   const b = await chromium.launch();
-  const open = async (r, page = 'index.html', w = 1280) => { const p = await b.newPage({ viewport: { width: w, height: 900 } }); p.errs = []; p.on('console', m => m.type() === 'error' && p.errs.push(m.text())); p.on('pageerror', e => p.errs.push(String(e))); await p.goto(url(r, page)); await p.waitForTimeout(400); return p; };
+  const open = async (r, page = 'index.html', w = 1280) => { const p = await b.newPage({ viewport: { width: w, height: 900 } }); p.errs = []; p.on('console', m => m.type() === 'error' && p.errs.push(m.text())); p.on('pageerror', e => p.errs.push(String(e))); await p.goto(await url(r, page)); await p.waitForTimeout(400); return p; };
 
   // 1. rendering from data
   let p = await open(root);
-  const data = await p.evaluate(() => JSON.parse(JSON.stringify(BrandStore.data)));
+  const data = await p.evaluate(() => import('/src/state/content.js').then((m) => JSON.parse(JSON.stringify({ products: m.products, testimonials: m.testimonials }))));
   const dom = await p.evaluate(() => ({
     names: [...document.querySelectorAll('.product-card__title')].map(e => e.textContent),
     prices: [...document.querySelectorAll('.product-card__price')].map(e => e.textContent),
@@ -23,9 +24,9 @@ const url = (r, p) => 'file://' + r + '/' + p;
     srcset: document.querySelector('.product-card__image').getAttribute('srcset'),
     containersEmptyInSource: true }));
   const src = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
-  check(JSON.stringify(dom.names) === JSON.stringify(data.products.map(x => x.name)), 'product names come from data.js', dom.names.length + ' cards');
+  check(JSON.stringify(dom.names) === JSON.stringify(data.products.map(x => x.name)), 'product names come from src/state/content.js', dom.names.length + ' cards');
   check(dom.prices.join() === '$199.99,$149.99,$89.99', 'prices formatted by Intl.NumberFormat', dom.prices.join(' '));
-  check(dom.quotes.length === data.testimonials.length && dom.quotes[0].includes(data.testimonials[0].quote), 'testimonials come from data.js', dom.quotes.length + ' cards');
+  check(dom.quotes.length === data.testimonials.length && dom.quotes[0].includes(data.testimonials[0].quote), 'testimonials come from src/state/content.js', dom.quotes.length + ' cards');
   check(dom.filters.join() === 'All Products:true,Electronics:false,Accessories:false', 'filter buttons derived from product categories', dom.filters.join(' | '));
   check(!/Wireless Headphones Pro|Sarah M\./.test(src.replace(/<noscript>[\s\S]*?<\/noscript>/g, '')), 'index.html source contains no product or testimonial text');
   check(p.errs.length === 0, 'no console errors on index', p.errs.join('|'));
@@ -33,9 +34,9 @@ const url = (r, p) => 'file://' + r + '/' + p;
 
   // 2. injection probe: markup-looking data must stay text
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'bs-')); fs.cpSync(root, tmp, { recursive: true, filter: s => !s.includes('.git') });
-  let d = fs.readFileSync(path.join(tmp, 'js/data.js'), 'utf8');
+  let d = fs.readFileSync(path.join(tmp, 'src/state/content.js'), 'utf8');
   d = d.replace("name: 'Wireless Headphones Pro'", "name: '<img src=x onerror=\"window.__pwned=1\">Bold <b>name</b>'").replace("author: 'Sarah M.'", "author: '<script>window.__pwned=2<\\/script>Sarah'");
-  fs.writeFileSync(path.join(tmp, 'js/data.js'), d);
+  fs.writeFileSync(path.join(tmp, 'src/state/content.js'), d);
   p = await open(tmp); await p.waitForTimeout(300);
   const x = await p.evaluate(() => ({ pwned: window.__pwned, title: document.querySelector('.product-card__title').textContent, kids: document.querySelector('.product-card__title').children.length, authorKids: document.querySelector('.testimonial cite').children.length, scriptsInCite: document.querySelectorAll('.testimonial script').length }));
   check(x.pwned === undefined && x.kids === 0 && x.authorKids === 0 && x.scriptsInCite === 0 && x.title.startsWith('<img'), 'markup in data is shown as text, never executed', JSON.stringify(x));
@@ -69,7 +70,7 @@ const url = (r, p) => 'file://' + r + '/' + p;
   // 5. newsletter
   p = await open(root, 'index.html', 375);
   const cases = [['', 'Enter your email address.'], ['   ', 'Enter your email address.'], ['abc', 'Add an “@” to the email address, like name@example.com.'], ['a@', 'Add the part after the “@”, like example.com.'], ['@b.com', 'Add the part before the “@”, like name.'], ['a@@b.com', 'Use only one “@” in the email address.'], ['a b@c.com', 'Remove the spaces from the email address.'], ['a@b', 'The part after the “@” needs a dot, like example.com.'], ['a@b..com', 'Check the domain after the “@”: no empty parts between dots and no unusual characters.'], ['a@b.com.', 'Check the domain after the “@”: no empty parts between dots and no unusual characters.'], ['a'.repeat(115) + '@b.com', 'That address is too long. Use 120 characters or fewer.'], ['ahmed@example.com', ''], ['first.last+tag@sub.example.co.uk', '']];
-  for (const [input, expected] of cases) { const got = await p.evaluate(v => BrandStore.newsletter.getEmailError(v), input); check(got === expected, `validator ${JSON.stringify(input.length > 20 ? input.slice(0, 8) + '…' : input)}`, got === expected ? '' : `got ${JSON.stringify(got)}`); }
+  for (const [input, expected] of cases) { const got = await p.evaluate(async v => (await import('/src/utils/validate.js')).getEmailError(v), input); check(got === expected, `validator ${JSON.stringify(input.length > 20 ? input.slice(0, 8) + '…' : input)}`, got === expected ? '' : `got ${JSON.stringify(got)}`); }
   await p.locator('#newsletter').scrollIntoViewIfNeeded();
   await p.fill('#newsletter-email', 'abc'); await p.click('.newsletter__form .btn'); await p.waitForTimeout(200);
   let f = await p.evaluate(() => ({ err: document.querySelector('#newsletter-error').textContent, invalid: document.querySelector('#newsletter-email').getAttribute('aria-invalid'), focus: document.activeElement.id, role: document.querySelector('#newsletter-error').getAttribute('role'), desc: document.querySelector('#newsletter-email').getAttribute('aria-describedby'), visible: !!document.querySelector('#newsletter-error').offsetHeight, noValidate: document.querySelector('.newsletter__form').noValidate }));

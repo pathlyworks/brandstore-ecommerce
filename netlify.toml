@@ -1,7 +1,9 @@
-# Netlify settings. The site is plain HTML, CSS and JavaScript: no build step.
-# GitHub Pages ignores this file; the site works there too (see docs/RUNBOOK.md).
+# Netlify settings. The site is plain HTML, CSS and ES modules. `npm run build` copies the
+# deployable files into dist/ and checks every page reference and module import (scripts/build.mjs).
+# GitHub Pages ignores this file; deploy dist/ there (see docs/RUNBOOK.md).
 [build]
-  publish = "."
+  command = "npm run build"
+  publish = "dist"
 
 # Security headers for every response. The Content-Security-Policy only allows
 # files from the site itself, which is all this project uses (no inline scripts,

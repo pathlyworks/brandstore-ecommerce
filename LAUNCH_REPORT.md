@@ -6,7 +6,7 @@
 | Date | 2026-11-12 |
 | Author | Ahmed |
 | Live demo URL | Pending: added after deployment (steps in `docs/RUNBOOK.md`) |
-| Repository | this folder (`.git` included); technical detail in `README.md` sections 7, 12, 13 and 20–25 |
+| Repository | this folder (`.git` included); technical detail in `docs/phase1/README.md` sections 7, 12, 13 and 20–25 |
 
 ## 1. What Was Built
 BrandStore is a small online-shop front end with three pages: a landing page (hero offer, four categories, a filterable list of

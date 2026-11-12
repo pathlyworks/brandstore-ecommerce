@@ -19,7 +19,7 @@ const server = http.createServer((req, res) => {
 server.listen(0, async () => {
   const base = 'http://localhost:' + server.address().port; const b = await chromium.launch();
   for (const w of [375, 1280]) for (const pg of ['/', '/comparison.html', '/no-such-page']) {
-    const p = await b.newPage({ viewport: { width: w, height: 900 } }); const errs = [], viol = [];
+    const p = await b.newPage({ viewport: { width: w, height: 900 } }); const errs = [];
     p.on('console', m => m.type() === 'error' && errs.push(m.text())); p.on('pageerror', e => errs.push(String(e)));
     await p.addInitScript(() => document.addEventListener('securitypolicyviolation', e => (window.__v = window.__v || []).push(e.violatedDirective + ' ' + e.blockedURI)));
     const r = await p.goto(base + pg); await p.waitForTimeout(500);

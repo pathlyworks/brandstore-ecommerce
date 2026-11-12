@@ -1,0 +1,1008 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "BrandStore API",
+    "version": "1.0.0",
+    "description": "Contract for the BrandStore storefront (Phase 2). Written by the project team because no official specification file was supplied with the task; the mock server in mock-server/ implements it and scripts/contract.mjs checks the two against each other. Money is integer cents. Success bodies are { data, meta? }; error bodies are { error: { code, message, details? } }. Every response carries X-RateLimit-Limit and X-RateLimit-Remaining; 429 responses carry Retry-After (seconds)."
+  },
+  "servers": [
+    {
+      "url": "http://127.0.0.1:4010",
+      "description": "Local mock server (npm run mock)"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Catalog"
+    },
+    {
+      "name": "Auth"
+    },
+    {
+      "name": "Orders"
+    },
+    {
+      "name": "Addresses"
+    }
+  ],
+  "paths": {
+    "/products": {
+      "get": {
+        "tags": ["Catalog"],
+        "operationId": "listProducts",
+        "summary": "List products with filters, sorting and pagination",
+        "parameters": [
+          {
+            "name": "category",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/Category"
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "description": "Case-insensitive match on the product name",
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100
+            }
+          },
+          {
+            "name": "minPrice",
+            "in": "query",
+            "description": "Cents, inclusive",
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "maxPrice",
+            "in": "query",
+            "description": "Cents, inclusive; must be >= minPrice",
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "inStock",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": ["true", "false"]
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "Omitted = catalogue order",
+            "schema": {
+              "type": "string",
+              "enum": ["price_asc", "price_desc", "rating_desc", "name_asc"]
+            }
+          },
+          {
+            "$ref": "#/components/parameters/page"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50,
+              "default": 12
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A page of products. A page past the end returns an empty data array (not 404).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["data", "meta"],
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/ProductSummary"
+                      }
+                    },
+                    "meta": {
+                      "$ref": "#/components/schemas/PageMeta"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          }
+        }
+      }
+    },
+    "/products/{id}": {
+      "get": {
+        "tags": ["Catalog"],
+        "operationId": "getProduct",
+        "summary": "Get one product",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-z0-9-]{1,64}$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The product with detail fields",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["data"],
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/ProductDetail"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "tags": ["Auth"],
+        "operationId": "login",
+        "summary": "Exchange email and password for a bearer token",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Signed in",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["data"],
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Session"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          }
+        },
+        "description": "401 code INVALID_CREDENTIALS. After 5 failed attempts for one email within 60 s the endpoint returns 429 TOO_MANY_LOGIN_ATTEMPTS until the window ends, even with the right password. Body that is not a JSON object = 400 INVALID_JSON."
+      }
+    },
+    "/account/orders": {
+      "get": {
+        "tags": ["Orders"],
+        "operationId": "listOrders",
+        "summary": "List the signed-in user's orders, newest first",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/OrderStatus"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/page"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 20,
+              "default": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A page of orders",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["data", "meta"],
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Order"
+                      }
+                    },
+                    "meta": {
+                      "$ref": "#/components/schemas/PageMeta"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          }
+        }
+      }
+    },
+    "/account/orders/{id}/cancel": {
+      "patch": {
+        "tags": ["Orders"],
+        "operationId": "cancelOrder",
+        "summary": "Cancel an order that is still processing",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "reason": {
+                    "type": "string",
+                    "maxLength": 200
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The cancelled order",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["data"],
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Order"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          }
+        },
+        "description": "400 with code ORDER_NOT_CANCELLABLE when the order is shipped, delivered or already cancelled; 400 VALIDATION_ERROR for a bad reason. 404 for an unknown order or one that belongs to someone else (the API does not reveal which)."
+      }
+    },
+    "/account/addresses": {
+      "get": {
+        "tags": ["Addresses"],
+        "operationId": "listAddresses",
+        "summary": "List saved addresses",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "All addresses (no pagination; small list)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["data"],
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Address"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          }
+        }
+      }
+    },
+    "/account/addresses/{id}": {
+      "put": {
+        "tags": ["Addresses"],
+        "operationId": "putAddress",
+        "summary": "Create or replace the address with this client-chosen id (idempotent)",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/addressId"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddressInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Replaced an existing address",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["data"],
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Address"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created a new address",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["data"],
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Address"
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "Location": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "/account/addresses/{id}"
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          }
+        },
+        "description": "Setting isDefault true clears it on the others. The first address is always the default."
+      },
+      "delete": {
+        "tags": ["Addresses"],
+        "operationId": "deleteAddress",
+        "summary": "Delete an address",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/addressId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deleted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["data"],
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "required": ["id", "deleted"],
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "deleted": {
+                          "type": "boolean",
+                          "enum": [true]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          }
+        },
+        "description": "Returns 200 with a body (not 204) so the client can confirm which id was removed. Deleting the default promotes the next address."
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "Token from POST /auth/login, valid for expiresIn seconds (3600). Missing header = 401 UNAUTHENTICATED; unknown or expired token = 401 INVALID_TOKEN."
+      }
+    },
+    "parameters": {
+      "page": {
+        "name": "page",
+        "in": "query",
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 1
+        }
+      },
+      "addressId": {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "pattern": "^[a-z0-9-]{1,40}$"
+        }
+      }
+    },
+    "responses": {
+      "ValidationError": {
+        "description": "Invalid input. code is VALIDATION_ERROR (with details) or INVALID_JSON.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "BadRequest": {
+        "description": "Invalid input or a business rule was broken (see the operation description for codes).",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "Unauthorized": {
+        "description": "Not signed in, token invalid or expired, or wrong credentials (login).",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        },
+        "headers": {
+          "WWW-Authenticate": {
+            "schema": {
+              "type": "string",
+              "enum": ["Bearer"]
+            }
+          }
+        }
+      },
+      "NotFound": {
+        "description": "Resource does not exist. code is NOT_FOUND.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "RateLimited": {
+        "description": "Too many requests: more than 60 per 60 s per client (X-Client-Id header, else IP), or too many failed logins. code is RATE_LIMITED or TOO_MANY_LOGIN_ATTEMPTS.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        },
+        "headers": {
+          "Retry-After": {
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Seconds to wait"
+          }
+        }
+      }
+    },
+    "schemas": {
+      "Error": {
+        "type": "object",
+        "required": ["error"],
+        "properties": {
+          "error": {
+            "type": "object",
+            "required": ["code", "message"],
+            "properties": {
+              "code": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              },
+              "details": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": ["field", "message"],
+                  "properties": {
+                    "field": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "PageMeta": {
+        "type": "object",
+        "required": ["page", "limit", "total", "totalPages"],
+        "properties": {
+          "page": {
+            "type": "integer"
+          },
+          "limit": {
+            "type": "integer"
+          },
+          "total": {
+            "type": "integer"
+          },
+          "totalPages": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      },
+      "Category": {
+        "type": "string",
+        "enum": ["electronics", "apparel", "home-living", "accessories"]
+      },
+      "Money": {
+        "type": "integer",
+        "minimum": 0,
+        "description": "Amount in cents"
+      },
+      "ProductSummary": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "category",
+          "price",
+          "compareAtPrice",
+          "currency",
+          "rating",
+          "reviewCount",
+          "stock",
+          "image"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "category": {
+            "$ref": "#/components/schemas/Category"
+          },
+          "price": {
+            "$ref": "#/components/schemas/Money"
+          },
+          "compareAtPrice": {
+            "type": "integer",
+            "nullable": true
+          },
+          "currency": {
+            "type": "string",
+            "enum": ["USD"]
+          },
+          "rating": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 5
+          },
+          "reviewCount": {
+            "type": "integer"
+          },
+          "stock": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "image": {
+            "type": "object",
+            "required": ["url", "alt"],
+            "properties": {
+              "url": {
+                "type": "string"
+              },
+              "alt": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "ProductDetail": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ProductSummary"
+          },
+          {
+            "type": "object",
+            "required": ["description", "specs"],
+            "properties": {
+              "description": {
+                "type": "string"
+              },
+              "specs": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": ["label", "value"],
+                  "properties": {
+                    "label": {
+                      "type": "string"
+                    },
+                    "value": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "LoginRequest": {
+        "type": "object",
+        "required": ["email", "password"],
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "Session": {
+        "type": "object",
+        "required": ["token", "tokenType", "expiresIn", "user"],
+        "properties": {
+          "token": {
+            "type": "string"
+          },
+          "tokenType": {
+            "type": "string",
+            "enum": ["Bearer"]
+          },
+          "expiresIn": {
+            "type": "integer"
+          },
+          "user": {
+            "type": "object",
+            "required": ["id", "name", "email"],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "email": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "OrderStatus": {
+        "type": "string",
+        "enum": ["processing", "shipped", "delivered", "cancelled"]
+      },
+      "Order": {
+        "type": "object",
+        "required": [
+          "id",
+          "createdAt",
+          "status",
+          "items",
+          "subtotal",
+          "shipping",
+          "total",
+          "currency",
+          "cancellable",
+          "cancelledAt",
+          "cancelReason"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "status": {
+            "$ref": "#/components/schemas/OrderStatus"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["productId", "name", "quantity", "unitPrice", "lineTotal"],
+              "properties": {
+                "productId": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "quantity": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "unitPrice": {
+                  "$ref": "#/components/schemas/Money"
+                },
+                "lineTotal": {
+                  "$ref": "#/components/schemas/Money"
+                }
+              }
+            }
+          },
+          "subtotal": {
+            "$ref": "#/components/schemas/Money"
+          },
+          "shipping": {
+            "$ref": "#/components/schemas/Money"
+          },
+          "total": {
+            "$ref": "#/components/schemas/Money"
+          },
+          "currency": {
+            "type": "string",
+            "enum": ["USD"]
+          },
+          "cancellable": {
+            "type": "boolean"
+          },
+          "cancelledAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "cancelReason": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "AddressInput": {
+        "type": "object",
+        "required": ["label", "fullName", "line1", "city", "postalCode", "country"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Optional; must equal the path id"
+          },
+          "label": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 40
+          },
+          "fullName": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80
+          },
+          "line1": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "line2": {
+            "type": "string",
+            "nullable": true
+          },
+          "city": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 60
+          },
+          "postalCode": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9 -]{3,10}$"
+          },
+          "country": {
+            "type": "string",
+            "pattern": "^[A-Z]{2}$"
+          },
+          "phone": {
+            "type": "string",
+            "nullable": true
+          },
+          "isDefault": {
+            "type": "boolean"
+          }
+        }
+      },
+      "Address": {
+        "type": "object",
+        "required": [
+          "id",
+          "label",
+          "fullName",
+          "line1",
+          "line2",
+          "city",
+          "postalCode",
+          "country",
+          "phone",
+          "isDefault"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "fullName": {
+            "type": "string"
+          },
+          "line1": {
+            "type": "string"
+          },
+          "line2": {
+            "type": "string",
+            "nullable": true
+          },
+          "city": {
+            "type": "string"
+          },
+          "postalCode": {
+            "type": "string"
+          },
+          "country": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string",
+            "nullable": true
+          },
+          "isDefault": {
+            "type": "boolean"
+          }
+        }
+      }
+    }
+  }
+}

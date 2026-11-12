@@ -56,7 +56,8 @@
 
 /* --------------------------------------------------------------------------
    Navigation — Flexbox list. Without JavaScript the list simply wraps under
-   the logo; the collapsible mobile menu only exists once .js is present.
+   the logo; the collapsible mobile menu only exists when scripting is enabled
+   (@media (scripting: enabled), so no script is needed before first paint).
    -------------------------------------------------------------------------- */
 .nav__toggle {
     display: none;
@@ -72,8 +73,10 @@
     transition: var(--transition-colors);
 }
 
-.js .nav__toggle {
-    display: inline-flex;
+@media (scripting: enabled) {
+    .nav__toggle {
+        display: inline-flex;
+    }
 }
 
 .nav__toggle:hover {
@@ -143,31 +146,35 @@
     list-style: none;
 }
 
-.js .nav__list {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    flex-direction: column;
-    flex-wrap: nowrap;
-    padding: var(--space-xs) var(--space-md) var(--space-md);
-    border-bottom: var(--border-thin) solid var(--color-border);
-    background: var(--color-surface);
-    box-shadow: var(--shadow-md);
-    visibility: hidden;
-    opacity: 0;
-    transform: translateY(calc(-1 * var(--space-xs)));
-    transition:
-        opacity var(--duration-base) var(--ease-standard),
-        transform var(--duration-base) var(--ease-out),
-        visibility 0s linear var(--duration-base);
+@media (scripting: enabled) {
+    .nav__list {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        flex-direction: column;
+        flex-wrap: nowrap;
+        padding: var(--space-xs) var(--space-md) var(--space-md);
+        border-bottom: var(--border-thin) solid var(--color-border);
+        background: var(--color-surface);
+        box-shadow: var(--shadow-md);
+        visibility: hidden;
+        opacity: 0;
+        transform: translateY(calc(-1 * var(--space-xs)));
+        transition:
+            opacity var(--duration-base) var(--ease-standard),
+            transform var(--duration-base) var(--ease-out),
+            visibility 0s linear var(--duration-base);
+    }
 }
 
-.js .nav__toggle[aria-expanded="true"] + .nav__list {
-    visibility: visible;
-    opacity: 1;
-    transform: none;
-    transition-delay: 0s;
+@media (scripting: enabled) {
+    .nav__toggle[aria-expanded="true"] + .nav__list {
+        visibility: visible;
+        opacity: 1;
+        transform: none;
+        transition-delay: 0s;
+    }
 }
 
 .nav__link {
@@ -215,26 +222,30 @@
 }
 
 @media (min-width: 64em) {
-    .js .nav__toggle {
-        display: none;
+    @media (scripting: enabled) {
+        .nav__toggle {
+            display: none;
+        }
     }
 
     /* flex-wrap: if text is enlarged without the viewport growing, the links
        drop to a second line instead of being clipped off-screen. */
-    .js .nav__list {
-        position: static;
-        flex-direction: row;
-        flex-wrap: wrap;
-        justify-content: flex-end;
-        column-gap: var(--space-lg);
-        padding: 0;
-        border-bottom: 0;
-        background: none;
-        box-shadow: none;
-        visibility: visible;
-        opacity: 1;
-        transform: none;
-        transition: none;
+    @media (scripting: enabled) {
+        .nav__list {
+            position: static;
+            flex-direction: row;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            column-gap: var(--space-lg);
+            padding: 0;
+            border-bottom: 0;
+            background: none;
+            box-shadow: none;
+            visibility: visible;
+            opacity: 1;
+            transform: none;
+            transition: none;
+        }
     }
 
     .nav__list {

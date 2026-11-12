@@ -4,6 +4,7 @@
 // Firefox, Safari and Edge are NOT run here: those engines are not installed in this environment.
 // Usage: node qa/matrix.js [projectRoot] [--md]     Needs: playwright
 const { chromium, devices } = require('playwright'); const path = require('path');
+const { siteBase } = require('./serve');
 const root = process.argv[2] && !process.argv[2].startsWith('--') ? process.argv[2] : path.resolve(__dirname, '..');
 const md = process.argv.includes('--md');
 const exe = process.env.CHROME_BIN || (require('fs').existsSync('/usr/bin/google-chrome') ? '/usr/bin/google-chrome' : undefined);
@@ -22,7 +23,7 @@ const VIEWPORTS = [
     const ctx = await b.newContext(o); const p = await ctx.newPage(); const notes = []; const errs = [];
     p.on('console', m => { if (m.type() === 'error') errs.push(m.text()); }); p.on('pageerror', e => errs.push(String(e)));
     const T = (ok, msg) => { if (!ok) notes.push(msg); };
-    await p.goto('file://' + root + '/index.html'); await p.waitForTimeout(400);
+    await p.goto((await siteBase(root)) + '/index.html'); await p.waitForTimeout(400);
     T(errs.length === 0, 'console errors on load: ' + errs.join(' | '));
     T(await p.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth), 'index: horizontal overflow');
     const cards = await p.locator('.product-card').count(); T(cards === 3, 'index: expected 3 product cards, got ' + cards + ' product cards');
@@ -53,11 +54,11 @@ const VIEWPORTS = [
     await p.reload(); await p.keyboard.press('Tab');
     T(await p.evaluate(() => document.activeElement.getAttribute('href') === '#main-content'), 'first Tab is not the skip link');
     // comparison page
-    await p.goto('file://' + root + '/comparison.html'); await p.waitForTimeout(300);
+    await p.goto((await siteBase(root)) + '/comparison.html'); await p.waitForTimeout(300);
     T(await p.locator('.comparison-table tbody tr').count() > 0, 'comparison: table has no rows');
     T(await p.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth), 'comparison: horizontal page overflow');
     // 404 page
-    await p.goto('file://' + root + '/404.html'); T(await p.locator('h1').count() === 1, '404: h1 count != 1');
+    await p.goto((await siteBase(root)) + '/404.html'); T(await p.locator('h1').count() === 1, '404: h1 count != 1');
     const ok = notes.length === 0; if (!ok) fails++; rows.push([name, ok ? 'PASS' : 'FAIL', ok ? 'all checks passed' : notes.join('; ')]);
     await ctx.close();
   }

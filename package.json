@@ -1,0 +1,37 @@
+{
+  "name": "brandstore",
+  "version": "2.0.0-alpha.0",
+  "private": true,
+  "description": "BrandStore storefront: static pages (index.html, comparison.html, 404.html) driven by ES modules in src/, with the Phase 2 REST contract in api/openapi.json and a mock server in mock-server/.",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "node scripts/build.mjs",
+    "preview": "node scripts/serve.mjs dist 4173",
+    "start": "node scripts/serve.mjs . 8080",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "e2e": "node tests/e2e/run.mjs",
+    "test:e2e": "npm run e2e",
+    "mock": "node mock-server/server.mjs",
+    "contract": "node scripts/contract.mjs",
+    "qa": "node qa/js-rules.js && node qa/preflight.js && node qa/behaviour.js",
+    "branch:check": "node scripts/check-branch.mjs",
+    "check": "npm run branch:check && npm run lint && npm run format:check && npm run test && npm run build && npm run e2e && npm run contract"
+  },
+  "devDependencies": {
+    "eslint": "^10.1.0",
+    "jsdom": "^26.1.0",
+    "msw": "^2.7.0",
+    "playwright": "^1.55.0",
+    "prettier": "^3.8.1",
+    "vite": "^7.0.0",
+    "vitest": "^3.2.0"
+  }
+}

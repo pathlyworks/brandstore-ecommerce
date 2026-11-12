@@ -2,6 +2,7 @@
 // deals previous/next buttons, mobile menu. Usage: node qa/keyboard.js [projectRoot]
 // Needs: npm i -D playwright (and a Chromium build)
 const { chromium } = require('playwright');
+const { siteBase } = require('./serve');
 const root = process.argv[2] || require('path').resolve(__dirname, '..');
 const desc = () => {
   const e = document.activeElement; if (!e || e === document.body) return null;
@@ -16,7 +17,7 @@ const desc = () => {
   for (const [pg, w] of [['index', 375], ['index', 1280], ['comparison', 375], ['comparison', 1280]]) {
     console.log(`\n== ${pg} @${w}`);
     const p = await b.newPage({ viewport: { width: w, height: 800 } });
-    await p.goto('file://' + root + '/' + pg + '.html'); await p.waitForTimeout(900);
+    await p.goto((await siteBase(root)) + '/' + pg + '.html'); await p.waitForTimeout(900);
     const order = []; const seen = new Set();
     for (let i = 0; i < 60; i++) {
       await p.keyboard.press('Tab'); await p.waitForTimeout(450); const d = await p.evaluate(desc);
@@ -36,7 +37,7 @@ const desc = () => {
   // skip link
   for (const pg of ['index', 'comparison']) {
     const p = await b.newPage({ viewport: { width: 375, height: 800 } });
-    await p.goto('file://' + root + '/' + pg + '.html');
+    await p.goto((await siteBase(root)) + '/' + pg + '.html');
     await p.keyboard.press('Tab'); await p.waitForTimeout(300);
     const s = await p.evaluate(() => { const e = document.activeElement, r = e.getBoundingClientRect(); return { cls: e.className, onScreen: r.top >= 0 && r.left >= 0 && r.bottom <= innerHeight, text: e.textContent.trim() }; });
     await p.keyboard.press('Enter'); await p.waitForTimeout(200);
@@ -51,7 +52,7 @@ const desc = () => {
   // deals controls by keyboard
   for (const [w, rm] of [[375, 'no-preference'], [1280, 'no-preference'], [1280, 'reduce']]) {
     const p = await b.newPage({ viewport: { width: w, height: 800 }, reducedMotion: rm });
-    await p.goto('file://' + root + '/index.html'); await p.waitForTimeout(600);
+    await p.goto((await siteBase(root)) + '/index.html'); await p.waitForTimeout(600);
     const vis = await p.locator('[data-deals-controls]').isVisible();
     const nextB = p.locator('[data-deals-step="1"]'), prevB = p.locator('[data-deals-step="-1"]');
     const sl = () => p.evaluate(() => Math.round(document.querySelector('#deals-viewport').scrollLeft));
@@ -71,7 +72,7 @@ const desc = () => {
   }
   // mobile nav keyboard
   const p = await b.newPage({ viewport: { width: 375, height: 800 } });
-  await p.goto('file://' + root + '/index.html');
+  await p.goto((await siteBase(root)) + '/index.html');
   const closedTabbable = await p.evaluate(() => [...document.querySelectorAll('.nav__link')].map(a => getComputedStyle(a).visibility));
   await p.locator('.nav__toggle').focus(); await p.keyboard.press('Enter'); await p.waitForTimeout(400);
   await p.keyboard.press('Tab'); const first = await p.evaluate(desc);

@@ -5,16 +5,17 @@
 // To reproduce the bug itself, check out the commit before the fix.
 // Usage: node qa/debug-newsletter.js [projectRoot]    Needs: playwright
 const { chromium } = require('playwright'); const root = process.argv[2] || require('path').resolve(__dirname, '..');
+const { siteBase } = require('./serve');
 const lineOf = (src, needle) => src.split('\n').findIndex(l => l.includes(needle));
 (async () => {
-  const src = require('fs').readFileSync(root + '/js/newsletter.js', 'utf8');
+  const src = require('fs').readFileSync(root + '/src/components/newsletter.js', 'utf8');
   const bps = [
     ['B1 showError(): clearMessages + schedule timer', lineOf(src, "window.setTimeout(function () {")],
     ['B2 showSuccess(): confirm subscription', lineOf(src, "parts.success.textContent = 'Thanks")],
     ['B3 timer callback fires', lineOf(src, "parts.error.textContent = message;")],
   ];
   const b = await chromium.launch(); const ctx = await b.newContext({ viewport: { width: 1280, height: 800 } }); const p = await ctx.newPage();
-  await p.goto('file://' + root + '/index.html'); await p.waitForTimeout(300);
+  await p.goto((await siteBase(root)) + '/index.html'); await p.waitForTimeout(300);
   const cdp = await ctx.newCDPSession(p); await cdp.send('Debugger.enable');
   const watch = ['message', 'parts.input.value', 'parts.error.textContent', 'parts.success.textContent', 'parts.input.getAttribute("aria-invalid")'];
   for (const [, line] of bps) await cdp.send('Debugger.setBreakpointByUrl', { urlRegex: 'newsletter\\.js$', lineNumber: line });
