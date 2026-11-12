@@ -144,4 +144,50 @@ document.addEventListener('DOMContentLoaded', () => {
         syncScrollRegions();
         window.addEventListener('resize', syncScrollRegions);
     }
+
+    // 6. Deals strip previous / next controls (keyboard and pointer).
+    //    Hidden in the HTML and revealed here, so they never appear without
+    //    the script that makes them work.
+    const dealsViewport = document.querySelector('#deals-viewport');
+    const dealsControls = document.querySelector('[data-deals-controls]');
+
+    if (dealsViewport && dealsControls) {
+        const stepButtons = dealsControls.querySelectorAll('[data-deals-step]');
+        const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+        const EDGE_TOLERANCE = 2; // px of sub-pixel rounding allowed at either end
+
+        const stepSize = () => {
+            const track = dealsViewport.querySelector('.deals__track');
+            const item = track.querySelector('.deals__item');
+            return item.getBoundingClientRect().width + parseFloat(getComputedStyle(track).columnGap || 0);
+        };
+
+        const syncStepButtons = () => {
+            const maxScroll = dealsViewport.scrollWidth - dealsViewport.clientWidth;
+            dealsControls.hidden = maxScroll <= EDGE_TOLERANCE;
+            stepButtons.forEach((button) => {
+                const forward = Number(button.dataset.dealsStep) > 0;
+                const atEdge = forward
+                    ? dealsViewport.scrollLeft >= maxScroll - EDGE_TOLERANCE
+                    : dealsViewport.scrollLeft <= EDGE_TOLERANCE;
+                button.setAttribute('aria-disabled', String(atEdge));
+            });
+        };
+
+        stepButtons.forEach((button) => {
+            button.addEventListener('click', () => {
+                if (button.getAttribute('aria-disabled') === 'true') {
+                    return;
+                }
+                dealsViewport.scrollBy({
+                    left: Number(button.dataset.dealsStep) * stepSize(),
+                    behavior: reduceMotion.matches ? 'auto' : 'smooth',
+                });
+            });
+        });
+
+        dealsViewport.addEventListener('scroll', syncStepButtons, { passive: true });
+        window.addEventListener('resize', syncStepButtons);
+        syncStepButtons();
+    }
 });

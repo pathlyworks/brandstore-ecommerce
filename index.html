@@ -34,7 +34,7 @@
         </div>
     </header>
 
-    <main id="main-content">
+    <main id="main-content" tabindex="-1">
         <section class="hero" aria-labelledby="hero-heading">
             <div class="container hero__inner">
                 <div class="hero__content">
@@ -65,20 +65,28 @@
                 <h2 id="categories-heading" class="section__title">Shop by Category</h2>
                 <div class="grid grid--categories">
                     <article class="category-card">
-                        <h3 class="category-card__title"><a href="#featured" class="category-card__link" data-filter-link="Electronics">Electronics</a></h3>
-                        <p class="category-card__text">Studio audio, smartwatches, and everyday tech essentials.</p>
+                        <a href="#featured" class="category-card__link" data-filter-link="Electronics">
+                            <h3 class="category-card__title">Electronics</h3>
+                            <p class="category-card__text">Studio audio, smartwatches, and everyday tech essentials.</p>
+                        </a>
                     </article>
                     <article class="category-card">
-                        <h3 class="category-card__title"><a href="#featured" class="category-card__link" data-filter-link="Apparel">Apparel</a></h3>
-                        <p class="category-card__text">Minimalist outerwear and breathable daily staples.</p>
+                        <a href="#featured" class="category-card__link" data-filter-link="Apparel">
+                            <h3 class="category-card__title">Apparel</h3>
+                            <p class="category-card__text">Minimalist outerwear and breathable daily staples.</p>
+                        </a>
                     </article>
                     <article class="category-card">
-                        <h3 class="category-card__title"><a href="#featured" class="category-card__link" data-filter-link="Home &amp; Living">Home &amp; Living</a></h3>
-                        <p class="category-card__text">Thoughtful desk organizers and ambient lighting.</p>
+                        <a href="#featured" class="category-card__link" data-filter-link="Home &amp; Living">
+                            <h3 class="category-card__title">Home &amp; Living</h3>
+                            <p class="category-card__text">Thoughtful desk organizers and ambient lighting.</p>
+                        </a>
                     </article>
                     <article class="category-card">
-                        <h3 class="category-card__title"><a href="#featured" class="category-card__link" data-filter-link="Accessories">Accessories</a></h3>
-                        <p class="category-card__text">Weatherproof backpacks, sleeves, and modular carry.</p>
+                        <a href="#featured" class="category-card__link" data-filter-link="Accessories">
+                            <h3 class="category-card__title">Accessories</h3>
+                            <p class="category-card__text">Weatherproof backpacks, sleeves, and modular carry.</p>
+                        </a>
                     </article>
                 </div>
             </div>
@@ -162,10 +170,22 @@
         <section id="deals" class="deals" aria-labelledby="deals-heading">
             <div class="container">
                 <div class="deals__header">
-                    <h2 id="deals-heading" class="deals__title">Limited Time Launch Offers</h2>
-                    <p class="deals__lead">Browse this week&rsquo;s codes and apply one at checkout.</p>
+                    <div class="deals__intro">
+                        <h2 id="deals-heading" class="deals__title">Limited Time Launch Offers</h2>
+                        <p class="deals__lead">Browse this week&rsquo;s codes and apply one at checkout.</p>
+                    </div>
+                    <div class="deals__controls" role="group" aria-label="Scroll launch offers" hidden data-deals-controls>
+                        <button type="button" class="deals__control" aria-controls="deals-viewport" aria-disabled="true" data-deals-step="-1">
+                            <span aria-hidden="true">&larr;</span>
+                            <span class="u-visually-hidden">Previous offers</span>
+                        </button>
+                        <button type="button" class="deals__control" aria-controls="deals-viewport" aria-disabled="false" data-deals-step="1">
+                            <span aria-hidden="true">&rarr;</span>
+                            <span class="u-visually-hidden">Next offers</span>
+                        </button>
+                    </div>
                 </div>
-                <div class="deals__viewport" role="region" aria-label="Launch offers, scrollable list" tabindex="0" data-scroll-region>
+                <div id="deals-viewport" class="deals__viewport" role="region" aria-label="Launch offers, scrollable list" tabindex="0" data-scroll-region>
                     <ul class="deals__track">
                     <li class="deals__item">
                         <h3 class="deals__offer">20% off launch orders</h3>
@@ -186,6 +206,16 @@
                         <h3 class="deals__offer">5% welcome discount</h3>
                         <p class="deals__terms">For first-time newsletter subscribers.</p>
                         <p class="deals__code">Code: <strong>WELCOME5</strong></p>
+                    </li>
+                    <li class="deals__item">
+                        <h3 class="deals__offer">15% off accessories</h3>
+                        <p class="deals__terms">On backpacks, sleeves, and modular carry.</p>
+                        <p class="deals__code">Code: <strong>CARRY15</strong></p>
+                    </li>
+                    <li class="deals__item">
+                        <h3 class="deals__offer">Extended 3-year warranty</h3>
+                        <p class="deals__terms">Free upgrade on any electronics order.</p>
+                        <p class="deals__code">Code: <strong>CARE3</strong></p>
                     </li>
                     </ul>
                 </div>

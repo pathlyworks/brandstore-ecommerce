@@ -90,6 +90,7 @@
 
     /* Sizing */
     --container-max: 1440px;
+    --size-page-min: 100vh;
     --size-tap-target: 2.75rem;
     --size-header: 4.25rem;
     --size-form-max: 32rem;
@@ -192,7 +193,7 @@ html {
 body {
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
+    min-height: var(--size-page-min);
     overflow-x: clip;
     font-family: var(--font-sans);
     font-size: var(--text-base);
@@ -203,6 +204,12 @@ body {
 
 main {
     flex: 1;
+}
+
+/* <main> is focusable (tabindex="-1") only so the skip link can move focus
+   to it. It is a non-interactive container, so it shows no ring itself. */
+main:focus {
+    outline: none;
 }
 
 h1,
