@@ -40,18 +40,20 @@ Checked on 2026-11-12 by adding two probe files that break the rules: lint repor
 
 ### 3.1 Live today (what the site runs)
 
-| Page              | Entry module              | Features started (in order)                                                        |
-| :---------------- | :------------------------ | :--------------------------------------------------------------------------------- |
-| `index.html`      | `src/pages/home.js`       | `catalog-render`, `product-filter`, `nav`, `newsletter`, `deals`, `scroll-regions` |
-| `comparison.html` | `src/pages/comparison.js` | `nav`, `scroll-regions`, `comparison-table`                                        |
-| `404.html`        | `src/pages/not-found.js`  | `nav`, `scroll-regions`                                                            |
+| Page              | Entry module              | Features started (in order)                                                                                                                                                                                       |
+| :---------------- | :------------------------ | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `index.html`      | `src/pages/home.js`       | `catalog-render`, `product-filter`, `nav`, `newsletter`, `deals`, `scroll-regions`                                                                                                                                |
+| `comparison.html` | `src/pages/comparison.js` | `nav`, `scroll-regions`, `comparison-table`                                                                                                                                                                       |
+| `404.html`        | `src/pages/not-found.js`  | `nav`, `scroll-regions`                                                                                                                                                                                           |
+| `catalog.html`    | `src/pages/catalog.js`    | `nav`, `catalog` (mounts `components/catalog-view.js`: `filter-bar`, `product-list` + `product-card`, `pagination`, `status-message`, `demo-controls`; uses `api/http.js`, `api/products.js`, `state/catalog.js`) |
+| `product.html`    | `src/pages/product.js`    | `nav`, `product` (mounts `components/product-detail.js`)                                                                                                                                                          |
 
 Shared live modules: `src/main.js` (`start`), `src/utils/dom.js` (`el`, `clear`, `qs`, `qsa`),
 `src/utils/validate.js` (`getEmailError`), `src/state/content.js` (the 3 products and 2 testimonials
-the home page renders). 15 modules in total are reachable from the pages (`npm run build` checks
+the home page renders). 38 modules in total are reachable from the pages (Task 2 made the catalog modules live) (`npm run build` checks
 that every import resolves).
 
-### 3.2 Planned for the API (documented stubs)
+### 3.2 Planned for the API (documented stubs; the catalog modules above are now implemented)
 
 Each planned function has its JSDoc signature and throws "planned but not implemented" until it is
 built, so the boundaries can be reviewed, linted and imported before feature code is written.
