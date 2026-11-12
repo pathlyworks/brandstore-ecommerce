@@ -35,6 +35,10 @@ const browser = Object.fromEntries(
     'clearTimeout',
     'requestAnimationFrame',
     'HTMLElement',
+    'IntersectionObserver',
+    'getComputedStyle',
+    'setInterval',
+    'clearInterval',
     'Node',
     'Event',
     'CustomEvent',
@@ -133,31 +137,15 @@ export default [
     },
   },
   {
-    files: [
-      '**/*.mjs',
-      'tests/**/*.js',
-      'vite.config.js',
-      'vitest.config.js',
-      'playwright.config.js',
-    ],
+    files: ['**/*.mjs', 'tests/**/*.js', 'vite.config.js', 'vitest.config.js'],
     languageOptions: { sourceType: 'module', globals: { ...node, ...browser } },
   },
   {
-    // Phase 1 site scripts: classic browser scripts on the window.BrandStore namespace.
-    files: ['js/**/*.js'],
-    languageOptions: {
-      sourceType: 'script',
-      globals: {
-        ...browser,
-        BrandStore: 'writable',
-        IntersectionObserver: 'readonly',
-        getComputedStyle: 'readonly',
-        clearInterval: 'readonly',
-        setInterval: 'readonly',
-      },
-    },
-    rules: { 'no-var': 'off', 'prefer-const': 'off' },
+    // The one classic script: runs in <head> before first paint (adds the "js" class).
+    files: ['src/boot.js'],
+    languageOptions: { sourceType: 'script' },
   },
+
   {
     // Phase 1 QA scripts and the URL setter: CommonJS Node scripts.
     // qa/ scripts also pass callbacks to page.evaluate(), which run in the browser.

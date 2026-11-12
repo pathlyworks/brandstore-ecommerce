@@ -1,8 +1,7 @@
 # Phase 1 static site: hand-formatted, unchanged in Phase 2 so its history stays readable.
-# (Lint still runs on js/ and qa/.) Remove a line here once that file is migrated to src/.
+# (Lint still runs on qa/.) Remove a line here once that file is migrated to src/.
 *.html
 css/
-js/
 qa/
 assets/
 scripts/set-site-url.js
