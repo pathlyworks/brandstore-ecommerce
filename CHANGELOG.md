@@ -1,5 +1,21 @@
 # Changelog
 
+## Unreleased — Phase 2, Task 5: automated testing and CI (branch `feature/automated-tests-ci`)
+### Added
+- `tests/unit/edge-cases.test.js`: zero/negative/invalid quantities, above stock and limit, floating-point totals, price-string parser, currency formatting, awkward query strings, missing/blocked/full/corrupted storage.
+- `tests/dom/`: catalog and cart rendered in jsdom against Mock Service Worker (200, empty, 401, 429, 500, 404), asserting on roles, names and text; `utils/dom.js` tests.
+- Playwright Test: `playwright.config.mjs` and two specs (filter the catalog and add to cart; sign in with a wrong password first and view orders) against the TechSphere API; `npm run e2e:prove` breaks four features and checks the tests fail.
+- Coverage thresholds (80% of lines in `src/state` and `src/utils`), `scripts/coverage-summary.mjs`.
+- CI: three jobs (lint/format/build/contract; unit + integration with coverage; end-to-end) on every pull request.
+- Stand-ins for machines without the packages: `test:browser`, `e2e:local`, `coverage:node`.
+### Changed
+- `npm run e2e` runs Playwright Test; the journey suite moved to `npm run e2e:journeys`.
+### Fixed
+- A 401 on the catalog said "Could not reach the store"; it now says "Please sign in again".
+- The cart now says when prices could not be re-checked (401, 429, 5xx, network) instead of staying silent.
+- `validateQuantity(null)` is "not a number" rather than quantity 0.
+- TechSphere category slugs are shown as readable labels.
+
 ## Unreleased — Phase 2, Task 4: login, account area, web security (branch `feature/auth-account-security`)
 ### Added
 - `login.html`, `register.html`: accessible forms (labels, `aria-invalid`, error summary with focus), client-side validation, distinct 401 (wrong credentials) and 400 (already registered / invalid) messages.
