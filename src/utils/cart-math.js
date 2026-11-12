@@ -68,15 +68,36 @@ export function totals(lines) {
 }
 
 /**
- * A whole quantity between 1 and min(stock, MAX_PER_LINE). NaN, decimals, text and values below 1
- * become 1 (a line is removed with "Remove", never by typing 0).
+ * Check a requested quantity against the bounds: at least 1, at most the stock, at most MAX_PER_LINE.
+ * Returns the quantity to use and, when the request was changed, a message saying why.
+ * @param {unknown} requested what the shopper typed or asked for
+ * @param {number} stock units available
+ * @returns {{ quantity: number, status: 'ok' | 'invalid' | 'min' | 'stock' | 'limit' | 'out', message: string }}
+ */
+export function validateQuantity(requested, stock) {
+  const most = Math.min(stock, MAX_PER_LINE);
+  if (stock <= 0) return { quantity: 0, status: 'out', message: 'Out of stock.' };
+  const wanted = Number(requested);
+  if (!Number.isFinite(wanted) || String(requested).trim() === '') {
+    return { quantity: 1, status: 'invalid', message: 'Enter a whole number of items.' };
+  }
+  const whole = Math.floor(wanted);
+  if (whole < 1) return { quantity: 1, status: 'min', message: 'The smallest quantity is 1.' };
+  if (whole > stock && stock <= MAX_PER_LINE) {
+    return { quantity: most, status: 'stock', message: `Only ${stock} in stock.` };
+  }
+  if (whole > MAX_PER_LINE) {
+    return { quantity: most, status: 'limit', message: `The limit is ${MAX_PER_LINE} per item.` };
+  }
+  return { quantity: whole, status: 'ok', message: '' };
+}
+
+/**
+ * A whole quantity between 1 and min(stock, MAX_PER_LINE) (validateQuantity without the message).
  * @param {unknown} quantity requested quantity
  * @param {number} stock units available
  * @returns {number}
  */
 export function clampQuantity(quantity, stock) {
-  const wanted = Math.floor(Number(quantity));
-  const most = Math.max(1, Math.min(stock, MAX_PER_LINE));
-  if (!Number.isFinite(wanted) || wanted < 1) return 1;
-  return Math.min(wanted, most);
+  return Math.max(1, validateQuantity(quantity, stock).quantity);
 }

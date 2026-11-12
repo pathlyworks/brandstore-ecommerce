@@ -1,22 +1,24 @@
 /**
  * src/state/cart.js
  *
- * The cart as pure functions over a state object, plus a small store that persists it.
+ * The cart as PURE functions over a state object `{ lines: CartLine[] }`: no DOM, no storage, no
+ * network, no clock (ESLint forbids them in this file). Every update destructures its input and
+ * returns a NEW state built with spread; the old state is never changed. `cartReducer` dispatches
+ * named actions to the same functions. Persistence lives in state/stores.js.
  *
- * Pure functions (no side effects; every update uses destructuring and spread and returns a NEW
- * state, the old one is never changed): addToCart, updateQuantity, removeFromCart, clearCart,
- * canAdd. The store (createCart) saves every new state to localStorage "brandstore:cart:v1" and
- * rehydrates it on load, so the cart survives refresh, closing the tab and return visits.
+ * Quantity rules: at least 1, at most the stock, at most MAX_PER_LINE (10). Setting a line's quantity
+ * to 0 (or less) removes the line. Out-of-stock products are refused with a reason.
  */
-import { clampQuantity, MAX_PER_LINE, totals } from '../utils/cart-math.js';
-import { KEYS } from '../utils/storage.js';
-import { createStore } from './store.js';
+import { MAX_PER_LINE, totals, validateQuantity } from '../utils/cart-math.js';
 
 /** @typedef {import('../utils/cart-math.js').CartLine} CartLine */
 /** @typedef {{ lines: CartLine[] }} CartState */
 
 /** @type {CartState} */
-export const EMPTY_CART = Object.freeze({ lines: [] });
+export const EMPTY_CART = Object.freeze({ lines: Object.freeze([]) });
+
+/** Shown when a stored line has no usable image. */
+export const PLACEHOLDER_IMAGE = Object.freeze({ url: '/assets/product-placeholder.svg', alt: '' });
 
 /**
  * Turn an API product (GET /products or /products/{id}) into a cart line.
@@ -24,19 +26,24 @@ export const EMPTY_CART = Object.freeze({ lines: [] });
  * @param {number} quantity
  * @returns {CartLine}
  */
-export function toLine({ id, name, price, currency, stock, image }, quantity) {
+export function toLine(
+  { id, name, price, currency = 'USD', stock, image = PLACEHOLDER_IMAGE },
+  quantity,
+) {
   return { productId: id, name, unitPrice: price, currency, stock, quantity, image: { ...image } };
 }
 
 /**
- * Can this product be added (again)? Explains why not.
+ * Can `quantity` more of this product go into the cart? Explains why not.
  * @param {CartState} cart
  * @param {{ id: string, stock: number }} product
+ * @param {number} [quantity]
  * @returns {{ ok: boolean, reason: string }}
  */
-export function canAdd({ lines }, { id, stock }) {
+export function canAdd({ lines }, { id, stock }, quantity = 1) {
   if (stock <= 0)
     return { ok: false, reason: 'Out of stock: this item cannot be added to the cart right now.' };
+  if (!(Number(quantity) >= 1)) return { ok: false, reason: 'Choose a quantity of at least 1.' };
   const inCart = lines.find((line) => line.productId === id)?.quantity || 0;
   const most = Math.min(stock, MAX_PER_LINE);
   if (inCart >= most) {
@@ -46,39 +53,38 @@ export function canAdd({ lines }, { id, stock }) {
 }
 
 /**
- * Add a product (or more of it). Refused (state returned unchanged) when canAdd says no.
+ * Add a product (or more of it), never beyond min(stock, 10). Refused (same state back) when canAdd says no.
  * @param {CartState} cart
  * @param {object} product API product
  * @param {number} [quantity]
  * @returns {CartState}
  */
 export function addToCart(cart, product, quantity = 1) {
-  if (!canAdd(cart, product).ok) return cart;
+  if (!canAdd(cart, product, quantity).ok) return cart;
   const { lines } = cart;
-  const existing = lines.find((line) => line.productId === product.id);
+  const existing = lines.find(({ productId }) => productId === product.id);
   if (!existing) {
-    return { ...cart, lines: [...lines, toLine(product, clampQuantity(quantity, product.stock))] };
+    const { quantity: allowed } = validateQuantity(quantity, product.stock);
+    return { ...cart, lines: [...lines, toLine(product, allowed)] };
   }
-  return updateQuantity(
-    cart,
-    product.id,
-    existing.quantity + clampQuantity(quantity, product.stock),
-  );
+  return updateQuantity(cart, product.id, existing.quantity + Math.floor(Number(quantity)));
 }
 
 /**
- * Set a line's quantity (clamped to 1..min(stock, 10)).
+ * Set a line's quantity: 0 or less removes the line; above the stock or the limit is reduced to it.
  * @param {CartState} cart
  * @param {string} productId
  * @param {number} quantity
  * @returns {CartState}
  */
 export function updateQuantity(cart, productId, quantity) {
+  if (Number(quantity) <= 0) return removeFromCart(cart, productId);
+  const { lines } = cart;
   return {
     ...cart,
-    lines: cart.lines.map((line) =>
+    lines: lines.map((line) =>
       line.productId === productId
-        ? { ...line, quantity: clampQuantity(quantity, line.stock) }
+        ? { ...line, quantity: Math.max(1, validateQuantity(quantity, line.stock).quantity) }
         : line,
     ),
   };
@@ -91,7 +97,8 @@ export function updateQuantity(cart, productId, quantity) {
  * @returns {CartState}
  */
 export function removeFromCart(cart, productId) {
-  return { ...cart, lines: cart.lines.filter((line) => line.productId !== productId) };
+  const { lines } = cart;
+  return { ...cart, lines: lines.filter((line) => line.productId !== productId) };
 }
 
 /**
@@ -104,11 +111,29 @@ export function clearCart(cart) {
 }
 
 /**
- * Bring stored lines up to date with the catalog: current price, stock and name (spread, never
- * mutation). A product the API no longer has (missing from `products`) gets stock 0. Returns the
- * same array when nothing changed.
+ * Lines that can be bought now; out-of-stock lines stay visible but are not charged or counted.
+ * @param {CartState} cart
+ * @returns {CartLine[]}
+ */
+export function availableLines({ lines }) {
+  return lines.filter(({ stock }) => stock > 0);
+}
+
+/**
+ * The numbers the cart page AND the menu badge show (one function, so they always agree).
+ * @param {CartState} cart
+ * @returns {import('../utils/cart-math.js').CartTotals & { currency: string }}
+ */
+export function cartSummary(cart) {
+  const lines = availableLines(cart);
+  return { ...totals(lines), currency: lines[0]?.currency || 'USD' };
+}
+
+/**
+ * Bring stored lines up to date with the catalog (price, stock, name). A product the API no longer
+ * has (null in `products`) gets stock 0. Returns the same array when nothing changed.
  * @param {CartLine[]} lines
- * @param {Record<string, object | null>} products by id; null = not found
+ * @param {Record<string, object | null>} products by id
  * @returns {CartLine[]}
  */
 export function syncLines(lines, products) {
@@ -118,19 +143,14 @@ export function syncLines(lines, products) {
     const { price = line.unitPrice, stock = 0, name = line.name } = products[line.productId] || {};
     if (price === line.unitPrice && stock === line.stock && name === line.name) return line;
     changed = true;
-    return {
-      ...line,
-      unitPrice: price,
-      stock,
-      name,
-      quantity: Math.min(line.quantity, Math.max(1, Math.min(stock, MAX_PER_LINE))),
-    };
+    const quantity = Math.min(line.quantity, Math.max(1, Math.min(stock, MAX_PER_LINE)));
+    return { ...line, unitPrice: price, stock, name, quantity };
   });
   return changed ? next : lines;
 }
 
 /**
- * Human-readable price changes between stored lines and the catalog.
+ * Price changes between stored lines and the catalog.
  * @param {CartLine[]} lines
  * @param {Record<string, object | null>} products
  * @returns {{ name: string, from: number, to: number, currency: string }[]}
@@ -149,16 +169,7 @@ export function priceChanges(lines, products) {
 }
 
 /**
- * Lines that can be bought now (in stock); out-of-stock lines stay in the cart but are not charged.
- * @param {CartState} cart
- * @returns {CartLine[]}
- */
-export function availableLines({ lines }) {
-  return lines.filter(({ stock }) => stock > 0);
-}
-
-/**
- * Apply catalog data to the whole cart (a pure state update for cart.apply).
+ * Apply catalog data to the whole cart.
  * @param {CartState} cart
  * @param {Record<string, object | null>} products
  * @returns {CartState}
@@ -169,52 +180,61 @@ export function syncWithCatalog(cart, products) {
 }
 
 /**
- * Keep only well-formed lines from stored data (it may be old, edited or corrupt).
- * @param {unknown} data
- * @returns {CartState}
+ * Repair one stored line, or null when it cannot be trusted (missing id/name/price).
+ * Numeric strings are accepted; a bad image or currency gets a safe default.
+ * @param {unknown} raw
+ * @returns {CartLine | null}
  */
-export function rehydrate(data) {
-  const lines = Array.isArray(data?.lines) ? data.lines : [];
-  const valid = lines.filter(
-    (l) =>
-      l &&
-      typeof l.productId === 'string' &&
-      Number.isInteger(l.unitPrice) &&
-      l.unitPrice >= 0 &&
-      Number.isInteger(l.quantity) &&
-      l.quantity > 0 &&
-      Number.isInteger(l.stock) &&
-      typeof l.name === 'string',
-  );
+export function sanitizeLine(raw) {
+  if (!raw || typeof raw !== 'object') return null;
+  const { productId, name, unitPrice, quantity, stock, currency, image } = raw;
+  const [price, qty, units] = [unitPrice, quantity, stock].map(Number);
+  if (typeof productId !== 'string' || !productId || typeof name !== 'string') return null;
+  if (!Number.isInteger(price) || price < 0 || !Number.isInteger(units) || units < 0) return null;
+  if (!Number.isFinite(qty) || qty < 1) return null;
+  const goodImage =
+    image && typeof image.url === 'string'
+      ? { url: image.url, alt: String(image.alt ?? '') }
+      : PLACEHOLDER_IMAGE;
   return {
-    lines: valid.map((line) => ({ ...line, quantity: clampQuantity(line.quantity, line.stock) })),
+    productId,
+    name,
+    unitPrice: price,
+    currency: /^[A-Z]{3}$/.test(currency) ? currency : 'USD',
+    stock: units,
+    quantity: Math.min(Math.floor(qty), Math.max(1, Math.min(units, MAX_PER_LINE))),
+    image: { ...goodImage },
   };
 }
 
 /**
- * A persisted cart store. `storage` is utils/storage.js (injected so tests can use a fake).
- * @param {{ readJson: Function, writeJson: Function }} storage
- * @param {Window} [win] for the cross-tab "storage" event
- * @returns {{ get: () => CartState, totals: () => object, apply: (fn: Function, ...args: any[]) => CartState,
- *   subscribe: Function }}
+ * Rebuild a cart from stored data that may be old, edited or corrupt: bad lines are dropped,
+ * duplicates merged into the first, quantities re-clamped.
+ * @param {unknown} data
+ * @returns {CartState}
  */
-export function createCart(storage, win = window) {
-  const store = createStore(rehydrate(storage.readJson('local', KEYS.cart, EMPTY_CART)));
-  win.addEventListener('storage', (event) => {
-    if (event.key === KEYS.cart)
-      store.set(rehydrate(storage.readJson('local', KEYS.cart, EMPTY_CART)));
-  });
-  return {
-    get: store.get,
-    totals: () => totals(store.get().lines),
-    apply(fn, ...args) {
-      const next = fn(store.get(), ...args);
-      if (next !== store.get()) {
-        storage.writeJson('local', KEYS.cart, next);
-        store.set(next);
-      }
-      return next;
-    },
-    subscribe: store.subscribe,
-  };
+export function rehydrate(data) {
+  const raw = Array.isArray(data?.lines) ? data.lines : [];
+  const lines = raw
+    .map(sanitizeLine)
+    .filter(Boolean)
+    .filter((line, i, all) => all.findIndex((l) => l.productId === line.productId) === i);
+  return { lines };
+}
+
+/**
+ * Reducer form of the same pure functions, for callers that prefer actions.
+ * @param {CartState} state
+ * @param {{ type: 'add' | 'update' | 'remove' | 'clear' | 'sync', product?: object, productId?: string,
+ *   quantity?: number, products?: object }} action
+ * @returns {CartState}
+ */
+export function cartReducer(state, action) {
+  const { type, product, productId, quantity, products } = action;
+  if (type === 'add') return addToCart(state, product, quantity);
+  if (type === 'update') return updateQuantity(state, productId, quantity);
+  if (type === 'remove') return removeFromCart(state, productId);
+  if (type === 'clear') return clearCart(state);
+  if (type === 'sync') return syncWithCatalog(state, products);
+  return state;
 }

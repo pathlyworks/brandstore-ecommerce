@@ -1,11 +1,10 @@
 /**
  * src/state/recent.js
  *
- * Recently viewed products for this visit: sessionStorage "brandstore:recent:v1" (survives refresh,
- * ends with the tab). Viewing a product moves it to the front; the list has no duplicates and is
- * capped at RECENT_LIMIT entries.
+ * Recently viewed products as PURE functions over an array (no DOM, storage or network). Viewing a
+ * product moves it to the front; no duplicates; at most RECENT_LIMIT entries. Persistence
+ * (sessionStorage) lives in state/stores.js.
  */
-import { KEYS } from '../utils/storage.js';
 
 export const RECENT_LIMIT = 6;
 
@@ -14,7 +13,7 @@ export const RECENT_LIMIT = 6;
  * @param {object} product API product
  * @returns {{ id: string, name: string, price: number, currency: string, image: object }}
  */
-export function toRecent({ id, name, price, currency, image }) {
+export function toRecent({ id, name, price, currency = 'USD', image }) {
   return { id, name, price, currency, image: { ...image } };
 }
 
@@ -31,27 +30,25 @@ export function addRecent(list, product, limit = RECENT_LIMIT) {
 }
 
 /**
- * Read the list (well-formed entries only).
- * @param {{ readJson: Function }} storage
+ * Rebuild the list from stored data that may be corrupt: keep well-formed entries, first of each id,
+ * at most RECENT_LIMIT.
+ * @param {unknown} data
  * @returns {object[]}
  */
-export function readRecent(storage) {
-  const list = storage.readJson('session', KEYS.recent, []);
-  return Array.isArray(list)
-    ? list
-        .filter((p) => p && typeof p.id === 'string' && Number.isInteger(p.price))
-        .slice(0, RECENT_LIMIT)
-    : [];
-}
-
-/**
- * Record a view and return the new list.
- * @param {{ readJson: Function, writeJson: Function }} storage
- * @param {object} product
- * @returns {object[]}
- */
-export function recordView(storage, product) {
-  const next = addRecent(readRecent(storage), product);
-  storage.writeJson('session', KEYS.recent, next);
-  return next;
+export function rehydrateRecent(data) {
+  if (!Array.isArray(data)) return [];
+  return data
+    .filter(
+      (p) =>
+        p &&
+        typeof p.id === 'string' &&
+        typeof p.name === 'string' &&
+        Number.isInteger(p.price) &&
+        p.price >= 0 &&
+        p.image &&
+        typeof p.image.url === 'string',
+    )
+    .filter((p, i, all) => all.findIndex((x) => x.id === p.id) === i)
+    .slice(0, RECENT_LIMIT)
+    .map(toRecent);
 }

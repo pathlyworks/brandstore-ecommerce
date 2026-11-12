@@ -14,60 +14,53 @@ export const KEYS = Object.freeze({
 });
 
 /**
- * The Storage object for an area, or null when the browser blocks it.
- * @param {'local' | 'session'} area
- * @returns {Storage | null}
+ * Build the storage helpers over a way to get each Storage area. Tests pass in-memory fakes; the
+ * browser version is exported below.
+ * @param {(area: 'local' | 'session') => Storage | null} getArea may throw (blocked storage)
+ * @returns {{ readJson: Function, writeJson: Function, remove: Function }}
  */
-function areaOf(area) {
-  try {
-    return area === 'session' ? window.sessionStorage : window.localStorage;
-  } catch {
-    return null;
+export function createStorage(getArea) {
+  /** The Storage object for an area, or null when the browser blocks it. */
+  function areaOf(area) {
+    try {
+      return getArea(area);
+    } catch {
+      return null;
+    }
   }
+  return {
+    /** Read and parse a value; `fallback` when missing, unreadable or corrupt. Never throws. */
+    readJson(area, key, fallback) {
+      try {
+        const text = areaOf(area)?.getItem(key);
+        return text ? JSON.parse(text) : fallback;
+      } catch {
+        return fallback;
+      }
+    },
+    /** Serialise and store a value; false when storage is unavailable or full. Never throws. */
+    writeJson(area, key, value) {
+      try {
+        areaOf(area).setItem(key, JSON.stringify(value));
+        return true;
+      } catch {
+        return false;
+      }
+    },
+    /** Delete a value. Never throws. */
+    remove(area, key) {
+      try {
+        areaOf(area)?.removeItem(key);
+      } catch {
+        // nothing to do: storage is unavailable
+      }
+    },
+  };
 }
 
-/**
- * Read and parse a value. Never throws.
- * @template T
- * @param {'local' | 'session'} area
- * @param {string} key
- * @param {T} fallback returned when missing, unreadable or corrupt
- * @returns {T}
- */
-export function readJson(area, key, fallback) {
-  try {
-    const text = areaOf(area)?.getItem(key);
-    return text ? JSON.parse(text) : fallback;
-  } catch {
-    return fallback;
-  }
-}
+const browserStorage = createStorage((area) =>
+  area === 'session' ? window.sessionStorage : window.localStorage,
+);
 
-/**
- * Serialise and store a value. Never throws.
- * @param {'local' | 'session'} area
- * @param {string} key
- * @param {unknown} value
- * @returns {boolean} false when storage is unavailable or full
- */
-export function writeJson(area, key, value) {
-  try {
-    areaOf(area).setItem(key, JSON.stringify(value));
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-/**
- * Delete a value. Never throws.
- * @param {'local' | 'session'} area
- * @param {string} key
- */
-export function remove(area, key) {
-  try {
-    areaOf(area)?.removeItem(key);
-  } catch {
-    // nothing to do: storage is unavailable
-  }
-}
+/** Browser helpers: readJson(area, key, fallback), writeJson(area, key, value), remove(area, key). */
+export const { readJson, writeJson, remove } = browserStorage;

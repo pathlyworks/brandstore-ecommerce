@@ -112,6 +112,55 @@ export default [
     },
   },
   { files: ['src/api/http.js'], rules: { 'no-restricted-globals': 'off' } },
+  {
+    // Pure state logic: no DOM, storage, network or clock. Persistence is in src/state/stores.js.
+    files: [
+      'src/state/cart.js',
+      'src/state/saved.js',
+      'src/state/recent.js',
+      'src/utils/cart-math.js',
+      'src/utils/money.js',
+    ],
+    rules: {
+      'no-restricted-globals': [
+        'error',
+        ...[
+          'window',
+          'document',
+          'localStorage',
+          'sessionStorage',
+          'fetch',
+          'XMLHttpRequest',
+          'navigator',
+          'location',
+          'history',
+          'Date',
+        ].map((name) => ({
+          name,
+          message: 'Pure state logic: no DOM, storage, network or clock here.',
+        })),
+      ],
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: [
+                '../utils/storage.js',
+                '../utils/dom.js',
+                '../api/*',
+                './stores.js',
+                './storage.js',
+                './dom.js',
+              ],
+              message: 'Pure state logic must not import storage, DOM or API modules.',
+            },
+          ],
+        },
+      ],
+    },
+  },
+
   { files: ['src/utils/storage.js'], rules: { 'no-restricted-globals': 'off' } },
   {
     files: ['src/utils/**/*.js'],
