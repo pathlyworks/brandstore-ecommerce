@@ -14,6 +14,7 @@ import { existsSync } from 'node:fs';
 import { serve } from '../../scripts/serve.mjs';
 import { registerCatalogJourneys } from './catalog-journeys.mjs';
 import { registerCartJourneys } from './cart-journeys.mjs';
+import { auditRequest } from './request-audit.mjs';
 
 const ENGINES = { chromium, firefox, webkit };
 const engines = (process.env.E2E_BROWSERS || 'chromium').split(',');
@@ -166,6 +167,7 @@ registerCartJourneys({ journey, expect, url: site.url });
 
 let failures = 0;
 let runs = 0;
+const apiRequests = []; // every /api request from every journey, checked against the spec at the end
 for (const name of engines) {
   const engine = ENGINES[name];
   const options =
@@ -180,6 +182,12 @@ for (const name of engines) {
     )) {
       const context = await browser.newContext({ viewport }); // fresh storage for every journey
       const page = await context.newPage();
+      context.on(
+        'request',
+        (r) =>
+          new URL(r.url()).pathname.startsWith('/api/') &&
+          apiRequests.push({ method: r.method(), url: r.url(), headers: r.headers() }),
+      );
       const errors = [];
       page.on('pageerror', (e) => errors.push(String(e)));
       page.on('console', (m) => {
@@ -203,5 +211,12 @@ for (const name of engines) {
   await browser.close();
 }
 site.close();
+const audit = apiRequests.flatMap(auditRequest);
+const distinct = [...new Set(audit)];
+console.log(
+  `\nAPI requests checked against api/openapi.json: ${apiRequests.length}, problems: ${audit.length}`,
+);
+distinct.slice(0, 20).forEach((p) => console.log(`  - ${p}`));
 console.log(`\n${runs - failures} of ${runs} journey runs passed (${engines.join(', ')})`);
+if (audit.length) failures += 1; // a request that breaks the spec fails the whole run
 process.exit(failures ? 1 : 0);

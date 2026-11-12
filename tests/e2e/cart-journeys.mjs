@@ -240,4 +240,111 @@ export function registerCartJourneys({ journey, expect, url }) {
       `${texts.length} prices, not in $1,234.56 format: ${bad.join(' | ')}`,
     );
   });
+
+  journey(
+    'cart: quantity bounds — 0, above the stock and above the limit are corrected and explained',
+    async (page) => {
+      await openProduct(page, url, 'desk-lamp');
+      const hint = page.locator('#quantity-hint');
+      for (const [typed, shown, message] of [
+        ['0', '1', 'The smallest quantity is 1.'],
+        ['99', '3', 'Only 3 in stock.'],
+      ]) {
+        await page.fill('#quantity', typed);
+        await page.locator('#quantity').press('Tab');
+        expect(
+          (await page.inputValue('#quantity')) === shown && (await hint.innerText()) === message,
+          `${typed}: ${await hint.innerText()}`,
+        );
+      }
+      await openProduct(page, url, 'headphones-pro');
+      await page.fill('#quantity', '25');
+      await page.locator('#quantity').press('Tab');
+      expect((await page.inputValue('#quantity')) === '10', 'limit 10');
+      expect((await hint.innerText()) === 'The limit is 10 per item.', 'limit message');
+      await page.getByRole('button', { name: 'Add to cart' }).click();
+      await page.goto(`${url}/cart.html`);
+      await page.fill('#qty-headphones-pro', '0');
+      await page.locator('#qty-headphones-pro').press('Tab');
+      await page.waitForSelector('#cart-empty:not([hidden])');
+      expect(
+        (await page.locator('[data-cart-link]').textContent()) === 'Cart (0)',
+        'typing 0 removed the line',
+      );
+    },
+  );
+
+  journey(
+    'cart: the menu badge always equals the page (items) — including an out-of-stock line',
+    async (page) => {
+      await addProduct(page, url, 'smartwatch', 2);
+      await page.goto(`${url}/cart.html`);
+      await page.evaluate(() => {
+        const cart = JSON.parse(localStorage.getItem('brandstore:cart:v1'));
+        cart.lines.push({
+          productId: 'usb-c-hub',
+          name: 'USB-C 7-in-1 Hub',
+          unitPrice: 3999,
+          currency: 'USD',
+          quantity: 1,
+          stock: 5,
+          image: { url: '/assets/product-placeholder.svg', alt: '' },
+        });
+        localStorage.setItem('brandstore:cart:v1', JSON.stringify(cart));
+      });
+      await page.reload();
+      await page.waitForSelector('.cart-line__warning'); // the API says the hub is out of stock now
+      const badge = (await page.locator('[data-cart-link]').textContent()).match(/\d+/)[0];
+      const items = await page.locator('[data-total="items"]').innerText();
+      expect(badge === items && items === '2', `badge ${badge} vs page ${items}`);
+      await page.getByRole('button', { name: 'Increase quantity of Ergonomic Smartwatch' }).click();
+      const badge2 = (await page.locator('[data-cart-link]').textContent()).match(/\d+/)[0];
+      expect(
+        badge2 === (await page.locator('[data-total="items"]').innerText()) && badge2 === '3',
+        'badge follows the page',
+      );
+    },
+  );
+
+  journey(
+    'cart: corrupted cart, saved and recently viewed data never breaks a page',
+    async (page) => {
+      await page.goto(`${url}/cart.html`);
+      const line = {
+        productId: 'smartwatch',
+        name: 'Ergonomic Smartwatch',
+        unitPrice: 14999,
+        currency: 'USD',
+        quantity: 2,
+        stock: 25,
+        image: { url: '/assets/smartwatch-800.svg', alt: '' },
+      };
+      await page.evaluate((good) => {
+        localStorage.setItem(
+          'brandstore:cart:v1',
+          JSON.stringify({ lines: [good, { productId: 'x' }, 'junk', { ...good, image: null }] }),
+        );
+        localStorage.setItem('brandstore:saved:v1', '{not json');
+        sessionStorage.setItem('brandstore:recent:v1', JSON.stringify([{ id: 'broken' }, 7]));
+      }, line);
+      for (const path of ['/cart.html', '/product.html?id=smartwatch', '/catalog.html', '/']) {
+        await page.goto(`${url}${path}`);
+        await page.waitForTimeout(400);
+        expect(
+          (await page.locator('[data-cart-link]').textContent()) === 'Cart (2)',
+          `${path}: badge`,
+        );
+      }
+      await page.goto(`${url}/cart.html`);
+      expect(
+        (await page.locator('.cart-line').count()) === 1 &&
+          (await page.locator('.saved-item').count()) === 0,
+        'repaired lists',
+      );
+      const stored = await page.evaluate(
+        () => JSON.parse(localStorage.getItem('brandstore:cart:v1')).lines.length,
+      );
+      expect(stored === 1, 'repaired cart written back');
+    },
+  );
 }

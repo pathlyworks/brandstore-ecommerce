@@ -1,19 +1,21 @@
 /**
- * Unit tests for the cart: pure functions (never mutate their input), totals against the
- * fixture reference calculations, the shipping rule, quantity limits and out-of-stock refusal.
+ * Unit tests for the cart: pure functions (deep-frozen inputs, so a mutation would throw), totals and
+ * currency formatting against the fixture reference calculations, the shipping rule, quantity bounds
+ * (0, above stock, above the limit), out-of-stock refusal, the reducer and badge/page agreement.
  */
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { PRODUCTS } from '../../mock-server/data.mjs';
-import { clampQuantity, shippingFor, totals } from '../../src/utils/cart-math.js';
+import { formatMoney } from '../../src/utils/money.js';
+import { MAX_PER_LINE, shippingFor, totals, validateQuantity } from '../../src/utils/cart-math.js';
 import {
   addToCart,
-  availableLines,
   canAdd,
+  cartReducer,
+  cartSummary,
   clearCart,
   EMPTY_CART,
   priceChanges,
-  rehydrate,
   removeFromCart,
   syncWithCatalog,
   updateQuantity,
@@ -30,76 +32,125 @@ function freeze(value) {
   return Object.freeze(value);
 }
 
-describe('cart totals match the fixture reference calculations', () => {
+/** Build a cart from fixture lines with the pure functions only. */
+function cartFrom(lines) {
+  return lines.reduce(
+    (cart, { productId, quantity }) => addToCart(freeze(cart), byId[productId], quantity),
+    EMPTY_CART,
+  );
+}
+
+describe('totals and formatting match the fixture reference calculations', () => {
   for (const c of fixtures.cases) {
     it(c.name, () => {
-      const cart = c.lines.reduce(
-        (acc, { productId, quantity }) => addToCart(acc, byId[productId], quantity),
-        EMPTY_CART,
-      );
-      const t = totals(cart.lines);
+      const t = totals(cartFrom(c.lines).lines);
       expect(t.itemCount).toBe(c.expected.itemCount);
       for (const key of ['subtotal', 'shipping', 'total']) {
-        const diff = Math.abs(t[key] / 100 - c.expected[key]);
-        expect(diff <= fixtures.tolerance).toBe(true);
+        expect(Math.abs(t[key] / 100 - c.expected[key]) <= fixtures.tolerance).toBe(true);
+        expect(formatMoney(t[key], 'USD')).toBe(c.formatted[key]);
       }
     });
   }
 });
 
-describe('shipping rule and quantity limits', () => {
+describe('shipping rule', () => {
   it('charges $7.99 below $100.00, nothing from $100.00, nothing for an empty cart', () => {
     expect([shippingFor(0), shippingFor(9999), shippingFor(10000), shippingFor(25000)]).toEqual([
       0, 799, 0, 0,
     ]);
-  });
-  it('clamps quantities to 1..min(stock, 10)', () => {
-    expect([0, -2, 1.7, 'abc', 4, 50].map((q) => clampQuantity(q, 25))).toEqual([
-      1, 1, 1, 1, 4, 10,
-    ]);
-    expect(clampQuantity(9, 3)).toBe(3);
   });
   it('says how much more buys free shipping', () => {
     expect(totals([{ unitPrice: 2400, quantity: 1 }]).freeShippingRemaining).toBe(7600);
   });
 });
 
-describe('pure cart functions', () => {
-  const start = freeze(addToCart(EMPTY_CART, byId.smartwatch, 1));
-  it('add: a new line, then more of the same line (same object never changed)', () => {
-    const twice = addToCart(start, byId.smartwatch, 2);
-    expect(twice.lines[0].quantity).toBe(3);
-    expect(start.lines[0].quantity).toBe(1);
+describe('quantity bounds: 0, above stock, above the limit', () => {
+  it('validateQuantity explains every correction', () => {
+    expect(validateQuantity(0, 25)).toEqual({
+      quantity: 1,
+      status: 'min',
+      message: 'The smallest quantity is 1.',
+    });
+    expect(validateQuantity(-3, 25).status).toBe('min');
+    expect(validateQuantity(9, 3)).toEqual({
+      quantity: 3,
+      status: 'stock',
+      message: 'Only 3 in stock.',
+    });
+    expect(validateQuantity(25, 25)).toEqual({
+      quantity: MAX_PER_LINE,
+      status: 'limit',
+      message: 'The limit is 10 per item.',
+    });
+    expect(validateQuantity('abc', 25).status).toBe('invalid');
+    expect(validateQuantity(2.7, 25)).toEqual({ quantity: 2, status: 'ok', message: '' });
+    expect(validateQuantity(1, 0).status).toBe('out');
   });
-  it('update quantity, remove, clear', () => {
-    expect(updateQuantity(start, 'smartwatch', 5).lines[0].quantity).toBe(5);
-    expect(removeFromCart(start, 'smartwatch').lines).toEqual([]);
-    expect(clearCart(start).lines).toEqual([]);
+  const start = freeze(addToCart(EMPTY_CART, byId.smartwatch, 2));
+  it('setting a quantity to 0 (or less) removes the line', () => {
+    expect(updateQuantity(start, 'smartwatch', 0).lines).toEqual([]);
+    expect(updateQuantity(start, 'smartwatch', -1).lines).toEqual([]);
   });
-  it('refuses out-of-stock products and explains why', () => {
-    const hub = byId['usb-c-hub'];
-    expect(canAdd(EMPTY_CART, hub).ok).toBe(false);
-    expect(canAdd(EMPTY_CART, hub).reason).toContain('Out of stock');
-    expect(addToCart(EMPTY_CART, hub, 1)).toBe(EMPTY_CART);
-  });
-  it('refuses more than the stock allows (desk lamp: 3 in stock)', () => {
-    const full = addToCart(EMPTY_CART, byId['desk-lamp'], 3);
-    expect(canAdd(full, byId['desk-lamp']).ok).toBe(false);
+  it('above the stock is reduced to the stock (desk lamp: 3)', () => {
     expect(addToCart(EMPTY_CART, byId['desk-lamp'], 9).lines[0].quantity).toBe(3);
+    const lamp = freeze(addToCart(EMPTY_CART, byId['desk-lamp'], 1));
+    expect(updateQuantity(lamp, 'desk-lamp', 50).lines[0].quantity).toBe(3);
+  });
+  it('above the limit is reduced to 10', () => {
+    expect(addToCart(EMPTY_CART, byId['headphones-pro'], 25).lines[0].quantity).toBe(10);
+    expect(updateQuantity(start, 'smartwatch', 11).lines[0].quantity).toBe(10);
+  });
+  it('adding 0 is refused with a reason', () => {
+    expect(canAdd(EMPTY_CART, byId.smartwatch, 0)).toEqual({
+      ok: false,
+      reason: 'Choose a quantity of at least 1.',
+    });
+    expect(addToCart(EMPTY_CART, byId.smartwatch, 0)).toBe(EMPTY_CART);
   });
 });
 
-describe('stored data and catalog sync', () => {
-  it('rehydrate keeps only well-formed lines and clamps quantities', () => {
-    const stored = {
-      lines: [
-        { productId: 'a', name: 'A', unitPrice: 100, quantity: 50, stock: 4 },
-        { productId: 'b' },
-        null,
-      ],
-    };
-    expect(rehydrate(stored).lines.map((l) => [l.productId, l.quantity])).toEqual([['a', 4]]);
-    expect(rehydrate('garbage')).toEqual({ lines: [] });
+describe('out of stock', () => {
+  it('cannot be added, and canAdd explains why', () => {
+    const hub = byId['usb-c-hub'];
+    expect(canAdd(EMPTY_CART, hub)).toEqual({
+      ok: false,
+      reason: 'Out of stock: this item cannot be added to the cart right now.',
+    });
+    expect(addToCart(EMPTY_CART, hub, 1)).toBe(EMPTY_CART);
+  });
+  it('cannot go beyond what is in stock across several adds', () => {
+    const full = freeze(addToCart(EMPTY_CART, byId['desk-lamp'], 3));
+    expect(canAdd(full, byId['desk-lamp']).reason).toContain('the most we can sell');
+    expect(addToCart(full, byId['desk-lamp'], 1)).toBe(full);
+  });
+});
+
+describe('pure cart functions and the reducer', () => {
+  const start = freeze(addToCart(EMPTY_CART, byId.smartwatch, 1));
+  it('return new states and never change the old one', () => {
+    const more = addToCart(start, byId.smartwatch, 2);
+    expect([more.lines[0].quantity, start.lines[0].quantity]).toEqual([3, 1]);
+    expect(removeFromCart(start, 'smartwatch').lines).toEqual([]);
+    expect(clearCart(start).lines).toEqual([]);
+  });
+  it('cartReducer dispatches the same functions', () => {
+    let state = cartReducer(EMPTY_CART, { type: 'add', product: byId.smartwatch, quantity: 2 });
+    state = cartReducer(freeze(state), { type: 'update', productId: 'smartwatch', quantity: 4 });
+    expect(state.lines[0].quantity).toBe(4);
+    expect(cartReducer(freeze(state), { type: 'remove', productId: 'smartwatch' }).lines).toEqual(
+      [],
+    );
+    expect(cartReducer(state, { type: 'unknown' })).toBe(state);
+  });
+  it('the badge and the page use one summary: out-of-stock lines are neither counted nor charged', () => {
+    const cart = freeze(
+      syncWithCatalog(
+        addToCart(addToCart(EMPTY_CART, byId.smartwatch, 2), byId['card-wallet'], 1),
+        { 'card-wallet': { ...byId['card-wallet'], stock: 0 } },
+      ),
+    );
+    const summary = cartSummary(cart);
+    expect([summary.itemCount, summary.subtotal, summary.currency]).toEqual([2, 29998, 'USD']);
   });
   it('sync applies new prices and stock; a missing product becomes unavailable', () => {
     const cart = freeze({
@@ -109,8 +160,7 @@ describe('stored data and catalog sync', () => {
       { name: 'Ergonomic Smartwatch', from: 100, to: 14999, currency: 'USD' },
     ]);
     expect(syncWithCatalog(cart, { smartwatch: byId.smartwatch }).lines[0].unitPrice).toBe(14999);
-    const gone = syncWithCatalog(cart, { smartwatch: null });
-    expect([gone.lines[0].stock, availableLines(gone).length]).toEqual([0, 0]);
+    expect(syncWithCatalog(cart, { smartwatch: null }).lines[0].stock).toBe(0);
     expect(syncWithCatalog(cart, {})).toBe(cart);
   });
 });

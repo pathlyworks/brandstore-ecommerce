@@ -1,5 +1,5 @@
 {
-  "description": "Reference cart totals in DOLLARS, computed with Python's Decimal from the catalog prices (independent of the app's integer-cent code). Shipping rule: free from $100.00 subtotal, else $7.99; empty cart 0. Tests compare the app's totals (cents / 100) within a tolerance of $0.005.",
+  "description": "Reference cart totals in DOLLARS, computed with Python's Decimal from the catalog prices (independent of the app's integer-cent code). Shipping rule: free from $100.00 subtotal, else $7.99; empty cart 0. Tests compare the app's totals (cents / 100) within a tolerance of $0.005. `formatted` is the reference display string (en-US, USD) for each amount.",
   "tolerance": 0.005,
   "cases": [
     {
@@ -10,6 +10,11 @@
         "subtotal": 0.0,
         "shipping": 0.0,
         "total": 0.0
+      },
+      "formatted": {
+        "subtotal": "$0.00",
+        "shipping": "$0.00",
+        "total": "$0.00"
       }
     },
     {
@@ -25,6 +30,11 @@
         "subtotal": 24.0,
         "shipping": 7.99,
         "total": 31.99
+      },
+      "formatted": {
+        "subtotal": "$24.00",
+        "shipping": "$7.99",
+        "total": "$31.99"
       }
     },
     {
@@ -40,6 +50,11 @@
         "subtotal": 89.97,
         "shipping": 7.99,
         "total": 97.96
+      },
+      "formatted": {
+        "subtotal": "$89.97",
+        "shipping": "$7.99",
+        "total": "$97.96"
       }
     },
     {
@@ -63,6 +78,11 @@
         "subtotal": 98.99,
         "shipping": 7.99,
         "total": 106.98
+      },
+      "formatted": {
+        "subtotal": "$98.99",
+        "shipping": "$7.99",
+        "total": "$106.98"
       }
     },
     {
@@ -86,6 +106,11 @@
         "subtotal": 101.0,
         "shipping": 0.0,
         "total": 101.0
+      },
+      "formatted": {
+        "subtotal": "$101.00",
+        "shipping": "$0.00",
+        "total": "$101.00"
       }
     },
     {
@@ -105,6 +130,11 @@
         "subtotal": 499.97,
         "shipping": 0.0,
         "total": 499.97
+      },
+      "formatted": {
+        "subtotal": "$499.97",
+        "shipping": "$0.00",
+        "total": "$499.97"
       }
     },
     {
@@ -120,6 +150,11 @@
         "subtotal": 1999.9,
         "shipping": 0.0,
         "total": 1999.9
+      },
+      "formatted": {
+        "subtotal": "$1,999.90",
+        "shipping": "$0.00",
+        "total": "$1,999.90"
       }
     },
     {
@@ -147,6 +182,11 @@
         "subtotal": 499.48,
         "shipping": 0.0,
         "total": 499.48
+      },
+      "formatted": {
+        "subtotal": "$499.48",
+        "shipping": "$0.00",
+        "total": "$499.48"
       }
     }
   ]
