@@ -1,0 +1,398 @@
+openapi: 3.0.3
+info:
+  title: TechSphere Store API (mock)
+  version: '1.1'
+  description: |
+    The API of the TechSphere storefront, served locally by the mock server in this kit:
+
+        python server.py          # http://localhost:4010
+
+    Test accounts: student@techsphere.test / Passw0rd!   (shopper)
+                   admin@techsphere.test   / Admin123!   (admin)
+
+    Like a real backend, the data is not perfectly clean. Call the endpoints and record what you actually observe;
+    do not assume the responses always match the schemas below exactly.
+servers:
+  - url: http://localhost:4010
+tags:
+  - name: catalog
+  - name: auth
+  - name: account
+  - name: orders
+  - name: admin
+
+paths:
+  /categories:
+    get:
+      tags: [catalog]
+      summary: List product categories
+      parameters:
+        - $ref: '#/components/parameters/locale'
+      responses:
+        '200':
+          description: The categories
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Category' }
+
+  /products:
+    get:
+      tags: [catalog]
+      summary: Search and filter the catalog (paginated by page, 8 per page)
+      parameters:
+        - {
+            name: category,
+            in: query,
+            schema: { type: string, enum: [laptops, phones, audio, smart-home] },
+          }
+        - { name: brand, in: query, schema: { type: string } }
+        - {
+            name: search,
+            in: query,
+            description: Case-insensitive match on the product name,
+            schema: { type: string },
+          }
+        - { name: min_price, in: query, schema: { type: number } }
+        - { name: max_price, in: query, schema: { type: number } }
+        - { name: min_rating, in: query, schema: { type: number } }
+        - { name: sort, in: query, schema: { type: string, enum: [price_asc, price_desc, rating] } }
+        - { name: page, in: query, schema: { type: integer, minimum: 1, default: 1 } }
+        - $ref: '#/components/parameters/locale'
+      responses:
+        '200':
+          description: One page of products
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items, page, total_pages, total]
+                properties:
+                  items: { type: array, items: { $ref: '#/components/schemas/Product' } }
+                  page: { type: integer }
+                  total_pages: { type: integer }
+                  total: { type: integer }
+        '400': { $ref: '#/components/responses/BadRequest' }
+
+  /products/{id}:
+    get:
+      tags: [catalog]
+      summary: One product
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, example: p-001 } }
+        - $ref: '#/components/parameters/locale'
+      responses:
+        '200':
+          description: The product
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Product' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /images/{file}:
+    get:
+      tags: [catalog]
+      summary: A product image (the mock answers with a small JSON placeholder instead of image bytes)
+      parameters:
+        - { name: file, in: path, required: true, schema: { type: string, example: p-001.webp } }
+      responses:
+        '200': { description: The image }
+        '404': { description: Image not found }
+
+  /auth/register:
+    post:
+      tags: [auth]
+      summary: Create a shopper account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email: { type: string, format: email }
+                password: { type: string, minLength: 8 }
+                name: { type: string }
+      responses:
+        '201':
+          description: Registered and signed in
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Session' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+
+  /auth/login:
+    post:
+      tags: [auth]
+      summary: Sign in
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email: { type: string, format: email }
+                password: { type: string }
+      responses:
+        '200':
+          description: Signed in
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Session' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /account/orders:
+    get:
+      tags: [account]
+      summary: The signed-in shopper's orders (paginated by offset)
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - { name: offset, in: query, schema: { type: integer, minimum: 0, default: 0 } }
+        - { name: limit, in: query, schema: { type: integer, minimum: 1, default: 5 } }
+      responses:
+        '200':
+          description: One page of orders
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items, offset, limit, total]
+                properties:
+                  items: { type: array, items: { $ref: '#/components/schemas/Order' } }
+                  offset: { type: integer }
+                  limit: { type: integer }
+                  total: { type: integer }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /account/orders/{id}/cancel:
+    patch:
+      tags: [account]
+      summary: Cancel an order that has not shipped yet
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, example: o-001 } }
+      responses:
+        '200':
+          description: The cancelled order
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Order' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409':
+          description: The order is already shipped, delivered or cancelled
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+
+  /account/addresses:
+    get:
+      tags: [account]
+      summary: The signed-in shopper's saved addresses
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200':
+          description: The addresses
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Address' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /account/addresses/{id}:
+    put:
+      tags: [account]
+      summary: Update a saved address
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, example: a-1 } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [city]
+              properties:
+                city: { type: string }
+                street: { type: string }
+      responses:
+        '200':
+          description: The updated address
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Address' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    delete:
+      tags: [account]
+      summary: Delete a saved address
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, example: a-1 } }
+      responses:
+        '204': { description: Deleted (no body) }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /orders:
+    post:
+      tags: [orders]
+      summary: Place an order
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [items]
+              properties:
+                items:
+                  type: array
+                  minItems: 1
+                  items:
+                    type: object
+                    properties:
+                      productId: { type: string }
+                      qty: { type: integer, minimum: 1 }
+      responses:
+        '201':
+          description: The order was placed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id: { type: string }
+                  number: { type: string, example: TS-1001 }
+                  status: { type: string, example: processing }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /admin/summary:
+    get:
+      tags: [admin]
+      summary: Store totals (admin accounts only)
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200':
+          description: The totals
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  revenue: { type: number }
+                  orders: { type: integer }
+                  products: { type: integer }
+                  out_of_stock: { type: integer }
+                  currency: { type: string, example: EGP }
+                  note: { type: string }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403':
+          description: Signed in, but not an admin
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: The token from /auth/login or /auth/register. It expires after one hour.
+
+  parameters:
+    locale:
+      name: locale
+      in: query
+      description: Language of names (ar or en)
+      schema: { type: string, enum: [en, ar], default: en }
+
+  responses:
+    BadRequest:
+      description: The request is not valid
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    Unauthorized:
+      description: Missing, invalid or expired token, or wrong sign-in details
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    NotFound:
+      description: No such item
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+
+  schemas:
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error: { type: string }
+    Category:
+      type: object
+      required: [id, name]
+      properties:
+        id: { type: string, example: laptops }
+        name: { type: string, example: Laptops }
+    Product:
+      type: object
+      required: [id, name, brand, category, price, currency, rating, reviews_count, images]
+      properties:
+        id: { type: string, example: p-001 }
+        name: { type: string }
+        brand: { type: string, example: Nova }
+        category: { type: string, example: laptops }
+        price: { type: number, example: 32999 }
+        currency: { type: string, example: EGP }
+        stock_status: { type: string, enum: [in_stock, low, out_of_stock] }
+        rating: { type: number, example: 4.5 }
+        reviews_count: { type: integer }
+        images:
+          type: array
+          items: { type: string, example: /images/p-001.webp }
+        specs:
+          type: object
+          additionalProperties: { type: string }
+    Session:
+      type: object
+      required: [token, user]
+      properties:
+        token: { type: string }
+        user:
+          type: object
+          properties:
+            email: { type: string }
+            name: { type: string }
+            role: { type: string, enum: [shopper, admin] }
+    Order:
+      type: object
+      required: [id, items, total, status, created_at]
+      properties:
+        id: { type: string, example: o-001 }
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              productId: { type: string }
+              qty: { type: integer }
+        total: { type: number }
+        status: { type: string, enum: [processing, shipped, delivered, cancelled] }
+        created_at: { type: string, format: date-time }
+    Address:
+      type: object
+      required: [id, city]
+      properties:
+        id: { type: string, example: a-1 }
+        city: { type: string }
+        street: { type: string }

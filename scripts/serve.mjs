@@ -6,12 +6,14 @@
  * Requests to /api/* go to the mock API (mock-server/server.mjs) in the same process, so the site and
  * the API share one origin, exactly like the Netlify function in production (netlify/functions/api.mjs).
  * API_RATE_LIMIT sets the mock's requests-per-minute limit (default 60, as in the spec).
+ * VITE_API_BASE (e.g. http://localhost:4010, the TechSphere API kit) is passed to src/config.js, as Vite would.
  */
 import { createServer } from 'node:http';
 import { readFile, stat } from 'node:fs/promises';
 import { extname, join, resolve, sep } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { createApp } from '../mock-server/server.mjs';
+import { injectEnv, viteEnv } from './lib/env.mjs';
 
 const TYPES = {
   '.html': 'text/html; charset=utf-8',
@@ -41,7 +43,7 @@ async function findFile(root, urlPath) {
 export function serve(
   dir = '.',
   port = 8080,
-  { apiRateLimit = Number(process.env.API_RATE_LIMIT || 60) } = {},
+  { apiRateLimit = Number(process.env.API_RATE_LIMIT || 60), env = viteEnv(process.env) } = {},
 ) {
   const root = resolve(dir);
   const api = createApp({ rateLimitMax: apiRateLimit });
@@ -52,7 +54,8 @@ export function serve(
     }
     const file = await findFile(root, req.url);
     const target = file || join(root, '404.html');
-    const body = await readFile(target).catch(() => Buffer.from('Not found'));
+    let body = await readFile(target).catch(() => Buffer.from('Not found'));
+    if (target.endsWith(`${sep}src${sep}config.js`)) body = injectEnv(String(body), env);
     res.writeHead(file ? 200 : 404, {
       'Content-Type': TYPES[extname(target)] || 'application/octet-stream',
     });
