@@ -83,6 +83,8 @@ This is a static front end, so there are no API endpoints. The table lists every
 | `/index.html#testimonials` | `<section id="testimonials">` | Anchor | Nav link (landing page only). |
 | `/index.html#newsletter` | `<section id="newsletter">` | Anchor | Footer link. |
 | `#main-content` | `<main id="main-content" tabindex="-1">` | Anchor | Skip link and "Back to Top" on both pages. |
+| `/404.html` | `404.html` | Page | Not-found page (Netlify serves it for unknown paths; `noindex`). Added in Task 5. |
+| `/robots.txt`, `/sitemap.xml` | same names | Crawler files | Added in Task 5; sitemap lists the two indexable pages. |
 | Newsletter form | `action="#" method="POST"` | Form | `submit` is intercepted by `js/newsletter.js` (`preventDefault`); no request is sent. |
 | API / backend endpoints | none | n/a | Out of scope (section 6). |
 
@@ -289,7 +291,7 @@ Run the checks: `npm i -D playwright`, then `node qa/js-rules.js && node qa/toke
 | Demo | static site, deployable as is | Submit the deployed URL in the assessment form. |
 | Deck | not part of this task | — |
 
-Figures used across the files and kept in sync: 2 pages (plus a 404 page), 4 categories, 3 products, 6 offers, 2 testimonials, 6 comparison rows, 4 breakpoints, 3 animations, 4 CSS files, 12 JS files, 46 commented functions, 11 QA scripts.
+Figures used across the files and kept in sync: 2 pages (plus a 404 page), 4 categories, 3 products, 6 offers, 2 testimonials, 6 comparison rows, 4 breakpoints, 3 animations, 4 CSS files, 12 JS files, 46 commented functions, 11 QA scripts, 3 HTML pages (2 content + 404).
 
 ## 15. Project Structure
 ```text
