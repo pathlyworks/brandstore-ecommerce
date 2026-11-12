@@ -46,6 +46,7 @@
                     <li class="nav__item"><a href="index.html#categories" class="nav__link">Categories</a></li>
                     <li class="nav__item"><a href="index.html#deals" class="nav__link">Deals</a></li>
                     <li class="nav__item"><a href="comparison.html" class="nav__link">Compare Products</a></li>
+                    <li class="nav__item"><a href="cart.html" class="nav__link" data-cart-link>Cart (0)</a></li>
                 </ul>
             </nav>
         </div>
@@ -59,6 +60,10 @@
                 <div id="product-body" class="product-detail__body" aria-busy="true">Loading product…</div>
                 <div id="product-error" class="catalog__error" role="alert" hidden></div>
             </article>
+            <section id="recently-viewed" class="recent" aria-labelledby="recent-title" hidden>
+                <h2 id="recent-title" class="recent__title">Recently viewed</h2>
+                <ul class="recent__list"></ul>
+            </section>
         </div>
     </main>
 

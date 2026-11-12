@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Your BrandStore cart and saved-for-later items, with totals, shipping and recently viewed products. Kept on this device between visits.">
+    <title>Your Cart — BrandStore</title>
+    <link rel="canonical" href="https://brandstore.example/cart.html">
+    <meta name="theme-color" content="#2563eb">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="BrandStore">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:title" content="Your Cart — BrandStore">
+    <meta property="og:description" content="Your BrandStore cart and saved-for-later items, with totals, shipping and recently viewed products. Kept on this device between visits.">
+    <meta property="og:url" content="https://brandstore.example/cart.html">
+    <meta property="og:image" content="https://brandstore.example/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="BrandStore: curated electronics, apparel and modern essentials, with a headphones, smartwatch and backpack illustration.">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Your Cart — BrandStore">
+    <meta name="twitter:description" content="Your BrandStore cart and saved-for-later items, with totals, shipping and recently viewed products. Kept on this device between visits.">
+    <meta name="twitter:image" content="https://brandstore.example/og-image.png">
+    <!-- Cascade order: tokens/reset -> page skeleton -> BEM components -> utilities -->
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/utilities.css">
+    <script type="module" src="src/pages/cart.js"></script>
+</head>
+<body>
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+
+    <header class="site-header">
+        <div class="container site-header__inner">
+            <a href="index.html" class="logo">BrandStore</a>
+            <nav class="nav" aria-label="Main Navigation">
+                <button type="button" class="nav__toggle" aria-expanded="false" aria-controls="nav-menu" aria-label="Toggle navigation menu">
+                    <span class="nav__toggle-icon" aria-hidden="true"></span>
+                </button>
+                <ul id="nav-menu" class="nav__list">
+                    <li class="nav__item"><a href="index.html" class="nav__link">Home</a></li>
+                    <li class="nav__item"><a href="catalog.html" class="nav__link">Shop</a></li>
+                    <li class="nav__item"><a href="index.html#categories" class="nav__link">Categories</a></li>
+                    <li class="nav__item"><a href="index.html#deals" class="nav__link">Deals</a></li>
+                    <li class="nav__item"><a href="comparison.html" class="nav__link">Compare Products</a></li>
+                    <li class="nav__item"><a href="cart.html" class="nav__link nav__link--current" aria-current="page" data-cart-link>Cart (0)</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+            <main id="main-content" tabindex="-1" class="section section--compact">
+        <div class="container">
+            <section class="page-header" aria-labelledby="cart-title">
+                <h1 id="cart-title" class="page-header__title">Your Cart</h1>
+                <p class="page-header__lead">Your cart and saved items stay on this device, even after you close the browser.</p>
+            </section>
+            <p id="cart-message" class="cart__message" role="status"></p>
+
+            <div class="cart">
+                <section class="cart__lines" aria-labelledby="cart-heading">
+                    <h2 id="cart-heading" class="catalog__heading" tabindex="-1">Items in your cart</h2>
+                    <ul id="cart-lines" class="cart__list"></ul>
+                    <div id="cart-empty" class="catalog__empty" hidden>
+                        <p>Your cart is empty.</p>
+                        <a href="catalog.html" class="btn btn--secondary">Browse products</a>
+                    </div>
+                    <button type="button" id="cart-clear" class="btn btn--ghost" hidden>Clear cart</button>
+                </section>
+
+                <aside id="cart-totals" class="cart__totals" aria-labelledby="totals-title">
+                    <h2 id="totals-title" class="catalog__heading">Order summary</h2>
+                    <dl class="totals">
+                        <dt>Items</dt><dd data-total="items">0</dd>
+                        <dt>Subtotal</dt><dd data-total="subtotal">$0.00</dd>
+                        <dt>Shipping</dt><dd data-total="shipping">$0.00</dd>
+                        <dt class="totals__total">Total</dt><dd class="totals__total" data-total="total">$0.00</dd>
+                    </dl>
+                    <p class="totals__hint" data-total="hint"></p>
+                    <p class="totals__note">Shipping is free on orders of $100.00 or more, otherwise $7.99. No tax is charged.</p>
+                    <button type="button" class="btn btn--secondary" disabled aria-describedby="checkout-note">Checkout</button>
+                    <p id="checkout-note" class="totals__note">Checkout arrives in a later release.</p>
+                </aside>
+            </div>
+
+            <section class="saved" aria-labelledby="saved-title">
+                <h2 id="saved-title" class="catalog__heading">Saved for later <span id="saved-count">(0)</span></h2>
+                <ul id="saved-items" class="cart__list"></ul>
+                <p id="saved-empty" class="saved__empty">Nothing saved yet. Use "Save for later" on a product or a cart line.</p>
+            </section>
+
+            <section id="recently-viewed" class="recent" aria-labelledby="recent-title" hidden>
+                <h2 id="recent-title" class="recent__title">Recently viewed</h2>
+                <ul class="recent__list"></ul>
+            </section>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container site-footer__inner">
+            <p>&copy; 2026 BrandStore. All rights reserved.</p>
+            <nav class="footer-nav" aria-label="Footer Navigation">
+                <ul class="footer-nav__list">
+                    <li class="footer-nav__item"><a href="index.html" class="footer-nav__link">Home</a></li>
+                    <li class="footer-nav__item"><a href="catalog.html" class="footer-nav__link">Shop All Products</a></li>
+                    <li class="footer-nav__item"><a href="index.html#newsletter" class="footer-nav__link">Newsletter</a></li>
+                </ul>
+            </nav>
+        </div>
+    </footer>
+
+</body>
+</html>
