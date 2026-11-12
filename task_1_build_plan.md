@@ -1,78 +1,69 @@
-# E-Commerce Storefront — Build Plan & Layout Architecture (FE-001 & FE-002)
+# BrandStore — Task 1 Build Plan
 
-This repository delivers the complete build plan (Task 1) and the semantic HTML5 + mobile-first responsive CSS3 implementation (Task 2) for **BrandStore**.
+This file is sections 1–6 of `README.md`, kept identical to it.
 
 ## 1. Scope & Overview
-- **Pages Built:**
-  - `index.html` — Landing page featuring header and navigation, hero banner with positioned badge overlay, category grid, featured products with positioned status/discount badges, deals strip, customer testimonials, newsletter subscription form with client-side validation attributes, and global footer.
-  - `comparison.html` — Product comparison page featuring global header/nav, comparison intro, responsive mobile-friendly semantic HTML `<table>` (`<caption>`, `<thead>`, `<tbody>`, `<th scope="col|row">`), and global footer.
-- **Explicit Scope Exclusion:** Backend work (server APIs, database persistence, authentication, payment processing) is explicitly excluded from scope.
+- **Pages built:**
+  - `index.html` — skip link, header and navigation, hero with a positioned offer badge, four category cards (each links to the featured grid, pre-filtered when a matching filter exists), three featured products with positioned badges and a category filter, a deals strip of six promo offers with previous/next controls, two testimonials, a newsletter form with client-side validation, and the footer.
+  - `comparison.html` — header and navigation, page intro with a "Highlight Differences" toggle, a semantic comparison `<table>` (`<caption>`, `<thead>`, `<tbody>`, `<th scope="col|row">`; 6 specification rows x 3 products), and the footer.
+- **Explicit scope exclusion:** backend work (server APIs, database persistence, authentication, payments) is excluded. The newsletter form is validated and answered in the browser only; it makes no network request.
 
 ---
 
 ## 2. Page & Section Inventory with Semantic Justifications
 
-| Page | Section | Semantic Element(s) | Justification |
+| Page | Section | Semantic element(s) | Justification |
 | :--- | :--- | :--- | :--- |
-| **Landing (`index.html`)** | Header & Nav | `<header>`, `<nav>` | Establishes the top-level site banner landmark and wraps primary site navigation links (`<ul>`, `<li>`, `<a>`) and accessible menu toggle (`<button>`). |
-| **Landing (`index.html`)** | Hero | `<section>` | Groups the introductory promotional banner, primary `<h1>` headline, value proposition, CTAs, and responsive hero showcase graphic (`<figure>`). |
-| **Landing (`index.html`)** | Category Grid | `<section>`, `<article>` | Defines the thematic "Shop by Category" section (`<section>`) containing four self-contained merchandising cards (`<article>`). |
-| **Landing (`index.html`)** | Featured Products | `<section>`, `<article>` | Houses curated product cards (`<article>`) with positioned badges (`position: absolute` inside `position: relative` media containers) and responsive `<img srcset sizes width height>`. |
-| **Landing (`index.html`)** | Deals Strip | `<section>` | Isolates time-sensitive promotional messaging and discount code (`LAUNCH20`) as a distinct thematic banner. |
-| **Landing (`index.html`)** | Testimonials | `<section>`, `<article>`, `<blockquote>` | Presents verified customer quotes using semantic `<article>` cards, `<blockquote>`, and `<cite>` attributions. |
-| **Landing (`index.html`)** | Newsletter Form | `<section>`, `<form>` | Encapsulates explicit `<label>`, `<input type="email" required>`, and `<button type="submit">` inside a semantic `<form>` landmark. |
-| **Landing (`index.html`)** | Footer | `<footer>`, `<nav>` | Closing document landmark containing copyright notice and secondary utility links. |
-| **Comparison (`comparison.html`)** | Header & Nav | `<header>`, `<nav>` | Consistent global header and navigation across pages. |
-| **Comparison (`comparison.html`)** | Comparison Table | `<main>`, `<section>`, `<table>` | Uses semantic `<table>`, `<caption>`, `<thead>`, `<tbody>`, `<th scope="col">`, `<th scope="row">`, and `<td>` for true two-dimensional tabular product specifications. |
-| **Comparison (`comparison.html`)** | Footer | `<footer>`, `<nav>` | Consistent global footer across pages. |
+| **Both** | Skip link | `<a href="#main-content">` | First focusable element; moves keyboard users past the header to `<main tabindex="-1">`. |
+| **Both** | Header & Nav | `<header>`, `<nav>`, `<ul>`, `<button>` | Banner landmark; the nav wraps the link list and the menu toggle (`aria-expanded`, `aria-controls`). |
+| **Landing** | Hero | `<section>`, `<figure>` | Introductory banner with the page's single `<h1>`, two calls to action and a responsive illustration. |
+| **Landing** | Category cards | `<section>`, `<article>`, `<a>` | Four self-contained merchandising cards; each card is one block link. |
+| **Landing** | Featured products | `<section>`, `<article>`, `role="group"` | Product cards with `<img srcset sizes width height>`; the filter buttons are a labelled group using `aria-pressed`. |
+| **Landing** | Deals strip | `<section>`, `<ul>`, `role="group"`, `role="region"` | Six offers are a list (`<ul>/<li>`). The scrolling area is a labelled, focusable region with previous/next buttons (`aria-controls`). |
+| **Landing** | Testimonials | `<section>`, `<article>`, `<blockquote>`, `<cite>` | Quotes with attribution. |
+| **Landing** | Newsletter | `<section>`, `<form>`, `<label>` | Email field with `required`, `minlength`, `maxlength`, `autocomplete`; hint and live feedback linked by `aria-describedby`. |
+| **Comparison** | Table | `<main>`, `<table>`, `<caption>`, `<th scope>` | True two-dimensional data; scrolls horizontally inside a labelled region on narrow screens. |
+| **Both** | Footer | `<footer>`, `<nav>` | Contentinfo landmark with a second labelled navigation. |
 
 ---
 
 ## 3. Layout Strategy: CSS Grid vs. Flexbox (With Reasons Stated)
 
-| Component | Layout Model | Reason Stated |
+| Component | Model | Reason |
 | :--- | :--- | :--- |
-| **Header Bar (`.header-container`)** | **Flexbox** (`display: flex`) | One-dimensional horizontal strip aligning brand logo on the left and navigation items on the right along a single main axis (`justify-content: space-between; align-items: center`). |
-| **Navigation Link List (`.nav-list`)** | **Flexbox** (`display: flex`) | One-dimensional list of links flowing vertically on mobile (`flex-direction: column`) and horizontally on desktop (`flex-direction: row`) with uniform `gap`. |
-| **Hero Actions & Filter Bar (`.hero-actions`, `.filter-bar`)** | **Flexbox** (`display: flex; flex-wrap: wrap`) | One-dimensional row of action buttons that wraps cleanly onto new lines on narrow `375px` viewports without overflowing. |
-| **Deals Strip (`.deals-content`)** | **Flexbox** (`display: flex`) | One-dimensional promotional banner aligning headline, offer details, and promo code pill along a single flow axis. |
-| **Newsletter Form (`.newsletter-form`)** | **Flexbox** (`display: flex`) | One-dimensional control strip stacking input and submit button vertically on mobile (`375px`) and placing them side-by-side (`flex: 1` on input) from `768px` upward. |
-| **Footer Bar (`.footer-container`, `.footer-links`)** | **Flexbox** (`display: flex`) | One-dimensional strip stacking copyright and links on mobile and distributing them horizontally on tablet/desktop. |
-| **Category Grid (`.category-grid`)** | **CSS Grid** (`display: grid`) | Two-dimensional card matrix requiring simultaneous control over row tracks and column tracks (`1fr` at `375px` -> `repeat(2, 1fr)` at `768px` -> `repeat(4, 1fr)` at `1024px+`). |
-| **Featured Product Grid (`.product-grid`)** | **CSS Grid** (`display: grid`) | Two-dimensional multi-row product catalog ensuring equal-height cards across rows and responsive column expansion (`1` -> `2` -> `3` columns). |
-| **Testimonials Grid (`.testimonial-grid`)** | **CSS Grid** (`display: grid`) | Two-dimensional balanced layout aligning customer quote cards across columns with consistent row heights. |
+| Site header (`.site-header__inner`) | **Flexbox** | One-dimensional strip: logo left, navigation right (`justify-content: space-between`). |
+| Navigation list (`.nav__list`) | **Flexbox** | One axis: a column dropdown on mobile, a row from 1024px. |
+| Hero action row (`.hero__actions`), filter (`.filter`) | **Flexbox** + `flex-wrap` | A row of buttons that wraps on a 375px screen. |
+| Product card (`.product-card`) | **Flexbox** (column) | Stacks media and body; `margin-top: auto` pins the price and button to the bottom so cards in a row align. |
+| Deals header (`.deals__header`), controls (`.deals__controls`) | **Flexbox** | Title block and the two buttons on one axis, wrapping under the title on narrow screens. |
+| Deals track (`.deals__track`) | **Flexbox** (row, scroll-snap) | A single horizontal run of items; sizing via `--deals-visible`. |
+| Newsletter form (`.newsletter__form`) | **Flexbox** | Input and button stacked on mobile, side by side from 768px. |
+| Footer (`.site-footer__inner`, `.footer-nav__list`) | **Flexbox** | One-dimensional bars. |
+| Hero split (`.hero__inner`) | **CSS Grid** | Two named columns (`1.15fr / 0.85fr`) from 1024px, one column below. |
+| Categories, products, testimonials (`.grid--*`) | **CSS Grid** | Two-dimensional card matrices; columns are set by `--grid-columns` (1 -> 2 -> 4 for categories, 1 -> 2 -> 3 for products, 1 -> 2 for testimonials). |
 
 ---
 
-## 4. CSS Custom Properties, Box Model, Positioning, Fluid Type & Responsive Images
-- **CSS Custom Properties (`:root`):** Centralizes brand colors (`--color-primary`, `--color-accent`, `--color-surface`, `--color-text`), spacing scale (`--space-xs` through `--space-3xl`), typography tokens (`--font-sans`, `--text-h1`, `--text-h2`, `--text-h3`, `--text-body`), radii, and shadows.
-- **Deliberate Box Model:** Global `box-sizing: border-box` reset, explicit padding/margin rhythm via spacing variables, structured borders (`1px solid var(--color-border)`), and `.container` width constraints (`width: min(100% - 2 * var(--space-md), var(--container-max))`) preventing horizontal overflow at `375px`, `768px`, `1024px`, and `1440px`.
-- **Positioning for Badges & Overlays:**
-  - `.site-header` uses `position: sticky; top: 0; z-index: 100` for persistent navigation.
-  - `.product-media` and `.hero-media` use `position: relative` so `.product-badge` ("Best Seller", "New", "20% Off") and `.hero-overlay-badge` ("Phase 1 Launch") are anchored cleanly with `position: absolute; top: var(--space-sm); left/right: var(--space-sm)`.
-- **Fluid Typography (`clamp()`):** Headings scale smoothly across viewports without abrupt jumps:
-  - `--text-h1: clamp(1.875rem, 1.35rem + 2.2vw, 3rem)`
-  - `--text-h2: clamp(1.5rem, 1.2rem + 1.2vw, 2.125rem)`
-  - `--text-h3: clamp(1.125rem, 1.05rem + 0.4vw, 1.35rem)`
-- **Responsive Images:** Every `<img>` specifies `src`, `srcset` (`400w` / `800w` or `600w` / `1200w`), `sizes`, explicit intrinsic `width` and `height` attributes (preventing Cumulative Layout Shift), and `max-width: 100%; height: auto; object-fit: cover` so images never stretch or clip unexpectedly.
+## 4. Custom Properties, Box Model, Positioning, Fluid Type & Responsive Images
+- **Custom properties** (`css/base.css`, 110 declared): colour, spacing, type scale, weights, leading, radii, shadows, z-index layers, motion durations/easing, sizes. Rules elsewhere only reference `var(--token)`.
+- **Box model:** global `box-sizing: border-box` with margin/padding reset; `.container` is `width: 100%; max-width: var(--container-max)` with token padding.
+- **Positioning:** `.site-header` is `position: sticky`. `.product-card__media` and `.hero__media` are `position: relative`, anchoring the absolutely positioned `.product-card__badge` and `.hero__badge` (`top`/`left` or `right` from `--space-sm`).
+- **Fluid typography:** `--text-h1`, `--text-h2`, `--text-h3`, `--text-base`, `--text-lg` use `clamp()`.
+- **Responsive images:** every `<img>` has `src`, `srcset` (`400w/800w` or `600w/1200w`), `sizes`, intrinsic `width`/`height` (no layout shift) and `max-width: 100%; height: auto`.
 
 ---
 
-## 5. Responsive Breakpoints & Acceptance Checklist
-- **Breakpoints:** `375px` (Mobile Small), `768px` (Tablet), `1024px` (Desktop Standard), `1440px` (Desktop Wide).
-- [x] **Responsive:** Zero horizontal scrolling at `375px`, `768px`, `1024px`, and `1440px`.
-- [x] **Accessible:** Valid landmark outline (`<header>`, `<nav>`, `<main>`, `<section>`, `<article>`, `<footer>`), logical heading hierarchy (`<h1>` -> `<h2>` -> `<h3>`), semantic `<table>` with `scope`, associated form `<label>`, and `:focus-visible` rings.
-- [x] **SEO Basics:** Unique `<title>`, `<meta name="description">`, single `<h1>` per page, and descriptive `alt` text.
-- [x] **Deployed:** Static HTML5/CSS3/JS architecture ready for GitHub Pages or Netlify.
+## 5. Responsive Breakpoints
+`375px` (base, mobile small), `768px` (tablet), `1024px` (desktop, desktop navigation), `1440px` (wide, larger container padding). Media queries are written mobile-first as `min-width` in `em`: `48em`, `64em`, `90em`. Whether each page overflows at those widths is recorded in the QA matrix (section 13), not asserted here.
 
 ---
 
 ## 6. Clarifying Questions & Scope Limitations
-### Clarifying Questions
-1. Should product prices remain fixed in USD (`$`) or support a client-side currency toggle (e.g., USD / AED / EUR)?
-2. How many products should the comparison matrix support simultaneously in future iterations (fixed 3 vs. up to 5)?
-3. Which email service provider webhook will connect to the newsletter `<form>` once backend work begins?
+### Clarifying questions
+1. Should prices stay fixed in USD or support a client-side currency toggle (USD / AED / EUR)?
+2. How many products should the comparison table support in future (fixed 3, or up to 5)?
+3. Which email service provider will receive newsletter submissions once backend work begins?
 
-### Scope Limitations
-1. **Backend Work Excluded:** No server-side authentication, database storage, cart checkout, or payment processing is included in this frontend phase.
-2. **Static Catalog Data:** Product listings, pricing, and promo code (`LAUNCH20`) are static frontend content without live CMS/inventory API calls.
+### Scope limitations
+1. **No backend:** no authentication, database, checkout or payment processing.
+2. **Static catalogue:** products, prices and the six promo codes (`LAUNCH20`, `SHIPFREE`, `BUNDLE10`, `WELCOME5`, `CARRY15`, `CARE3`) are static content; no code is validated.
