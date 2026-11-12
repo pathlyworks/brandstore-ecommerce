@@ -11,6 +11,8 @@ export const KEYS = Object.freeze({
   cart: 'brandstore:cart:v1',
   saved: 'brandstore:saved:v1',
   recent: 'brandstore:recent:v1',
+  session: 'brandstore:session:v1',
+  flags: 'brandstore:flags:v1',
 });
 
 /**

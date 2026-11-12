@@ -4,8 +4,9 @@
  */
 import { start } from '../main.js';
 import * as storage from '../utils/storage.js';
-import { createCartStore } from '../state/stores.js';
+import { createCartStore, createSessionStore } from '../state/stores.js';
 import { mountCartBadge } from '../components/cart-badge.js';
+import { mountAccountLink } from '../components/account-link.js';
 import { init as renderCatalog } from '../components/catalog-render.js';
 import { init as productFilter } from '../components/product-filter.js';
 import { init as nav } from '../components/nav.js';
@@ -15,6 +16,7 @@ import { init as scrollRegions } from '../components/scroll-regions.js';
 
 start([
   ['cart-badge', () => mountCartBadge(createCartStore(storage))],
+  ['account-link', () => mountAccountLink(createSessionStore(storage))],
   ['catalog-render', renderCatalog],
   ['product-filter', productFilter],
   ['nav', nav],

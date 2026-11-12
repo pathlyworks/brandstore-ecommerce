@@ -7,7 +7,7 @@
  * ignore it.
  */
 import { ApiError } from './errors.js';
-import { fromTechsphere, toAppError, toTechsphereRequest } from './techsphere.js';
+import { fromTechsphere, toAppError, toTechsphereBody, toTechsphereRequest } from './techsphere.js';
 
 /**
  * Parse a JSON body; null when there is none or it is not JSON.
@@ -70,8 +70,9 @@ export function createHttpClient({
 }) {
   const techsphere = dialect === 'techsphere';
   /** Send one request; resolve with the parsed JSON body or reject with ApiError / AbortError. */
-  async function request(method, appPath, { signal, headers = {}, body } = {}) {
+  async function request(method, appPath, { signal, headers = {}, body: appBody } = {}) {
     const path = techsphere ? toTechsphereRequest(appPath) : appPath;
+    const body = techsphere ? toTechsphereBody(method, path, appBody) : appBody;
     const token = getToken();
     let response;
     try {
