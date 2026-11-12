@@ -41,6 +41,7 @@ Planned (designed in `task_1_api_plan.md`, not built yet): checkout, sign-in, or
 | `build` | Copy the site into `dist/` and check every page reference and module import |
 | `lint` / `format` / `format:check` | ESLint / Prettier |
 | `test` | Vitest unit and integration tests (`tests/unit`, `tests/integration`) |
+| `test:node` | The same test files on Node's built-in runner (no packages needed) |
 | `e2e` | Browser journeys with Playwright (`tests/e2e`) |
 | `mock` / `contract` | Mock API alone on port 4010 / check the API against the spec |
 | `vendor` | Copy Axios's ES-module build into `src/vendor/` (no bundler) |

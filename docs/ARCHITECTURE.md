@@ -103,3 +103,8 @@ Components: `product-list`, `filter-bar`, `pagination`, `product-detail`, `cart-
 All prices are integer cents end to end (API and client); formatting happens only in
 `utils/money.formatMoney`. Product ids are slugs; address ids are chosen by the client (slug of
 the label plus a short random suffix), which makes `PUT /account/addresses/{id}` safe to retry.
+
+## 6. Pure state vs persistence (Phase 2, Task 3 revision)
+
+`src/state/cart.js`, `saved.js` and `recent.js` are pure (no DOM, storage, network or clock; ESLint rule).
+`src/state/stores.js` wraps them: read from storage, repair (`rehydrate*`), write back, notify, follow other tabs.

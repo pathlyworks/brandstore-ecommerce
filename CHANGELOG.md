@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased — Phase 2, Task 3, revision 2 (after review)
+### Changed
+- Pure state modules (`state/cart.js`, `saved.js`, `recent.js`) contain no storage, DOM or network; persistence moved to `state/stores.js`; ESLint enforces it. Added `cartReducer` and `cartSummary` (shared by the menu badge and the cart page).
+- Quantity bounds: `validateQuantity` corrects 0, above-stock and above-limit requests and the reason is shown next to the stepper; setting a cart line to 0 removes it.
+- Stored data is repaired on load (bad entries dropped, duplicates merged, defaults for image/currency) and written back.
+- Spec declares `X-Client-Id` and the mock-only test headers; the e2e run audits every `/api` request against the spec.
+- Tests run in Node (`environment: 'node'`); new `npm run test:node` runs them with no installed packages.
+
 ## Unreleased — Phase 2, Task 3: product detail, cart, save for later (branch `feature/product-detail-cart-save-for-later`)
 ### Added
 - Product page: image gallery, specs table, stock status, quantity stepper limited by stock, add to cart, save for later, recently viewed strip; out-of-stock products cannot be added and say why.
