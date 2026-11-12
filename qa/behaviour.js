@@ -86,6 +86,12 @@ const url = (r, p) => 'file://' + r + '/' + p;
   // same error twice is re-announced (text cleared then set again)
   await p.fill('#newsletter-email', 'abc'); const changes = await p.evaluate(() => new Promise(res => { const e = document.querySelector('#newsletter-error'); let n = 0; new MutationObserver(() => n++).observe(e, { childList: true, characterData: true, subtree: true }); const btn = document.querySelector('.newsletter__form .btn'); btn.click(); setTimeout(() => { btn.click(); setTimeout(() => res(n), 300); }, 250); }));
   check(changes >= 3, 'identical error submitted twice is re-announced (live-region mutations)', changes + ' mutations');
+  // regression: an invalid submit followed by a valid one inside the re-announce window
+  await p.reload(); await p.waitForTimeout(300);
+  const raced = await p.evaluate(() => new Promise(res => { const f = document.querySelector('.newsletter__form'), i = document.querySelector('#newsletter-email'); i.value = 'bad'; f.requestSubmit(); i.value = 'ok@example.com'; f.requestSubmit(); setTimeout(() => res({ err: document.querySelector('#newsletter-error').textContent, ok: document.querySelector('#newsletter-success').textContent }), 300); }));
+  check(raced.err === '' && raced.ok.startsWith('Thanks'), 'regression: stale error never appears after a successful submit', JSON.stringify(raced));
+  const typed = await p.evaluate(() => new Promise(res => { const f = document.querySelector('.newsletter__form'), i = document.querySelector('#newsletter-email'); i.value = 'bad'; f.requestSubmit(); i.value = 'fixed@example.com'; i.dispatchEvent(new Event('input', { bubbles: true })); setTimeout(() => res(document.querySelector('#newsletter-error').textContent), 300); }));
+  check(typed === '', 'regression: fixing the field inside the window leaves no stale error', JSON.stringify(typed));
   check(p.errs.length === 0, 'no console errors during form use', p.errs.join('|'));
   await p.close();
 

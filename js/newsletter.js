@@ -80,14 +80,17 @@
         if (!form || !input || !error || !success || !button) {
             return null;
         }
-        return { form: form, input: input, error: error, success: success, button: button, label: button.textContent };
+        return { form: form, input: input, error: error, success: success, button: button, label: button.textContent, errorTimer: null };
     }
 
     /**
-     * Empty both live regions and clear the invalid flag.
+     * Empty both live regions, clear the invalid flag and cancel any error
+     * that is still waiting to be shown (see showError). Cancelling matters:
+     * without it a late timer could write a stale error after a success.
      * @param {object} parts
      */
     function clearMessages(parts) {
+        window.clearTimeout(parts.errorTimer);
         parts.error.textContent = '';
         parts.success.textContent = '';
         parts.input.removeAttribute('aria-invalid');
@@ -104,8 +107,11 @@
         clearMessages(parts);
         parts.input.setAttribute('aria-invalid', 'true');
         parts.input.focus();
-        window.setTimeout(function () {
-            parts.error.textContent = message;
+        parts.errorTimer = window.setTimeout(function () {
+            // Defence in depth: only write while the field is still flagged.
+            if (parts.input.getAttribute('aria-invalid') === 'true') {
+                parts.error.textContent = message;
+            }
         }, REANNOUNCE_DELAY_MS);
     }
 
