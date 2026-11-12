@@ -34,7 +34,7 @@ const read = (f) => fs.existsSync(path.join(root, f)) ? fs.readFileSync(path.joi
         const hiddenFocusable = q('[aria-hidden="true"] a, [aria-hidden="true"] button, [aria-hidden="true"] input').map(e => e.className);
         const imgs = q('img'); const noAlt = imgs.filter(i => !i.hasAttribute('alt')).map(i => i.src);
         const badTab = q('[tabindex]').filter(e => Number(e.getAttribute('tabindex')) > 0).length;
-        const fonts = []; const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT); let total = 0, small = 0;
+        const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT); let total = 0, small = 0;
         while (walker.nextNode()) { const n = walker.currentNode; const t = n.textContent.trim(); if (!t) continue; const el = n.parentElement; if (!visible(el) || el.closest('.u-visually-hidden')) continue; total += t.length; if (parseFloat(getComputedStyle(el).fontSize) < 12) small += t.length; }
         const badLinks = q('a').filter(a => { const h = a.getAttribute('href'); return !h || /^javascript:/i.test(h); }).length;
         const mv = (document.querySelector('meta[name=viewport]') || {}).content || '';
@@ -105,7 +105,7 @@ const read = (f) => fs.existsSync(path.join(root, f)) ? fs.readFileSync(path.joi
   check(locs.length === pages.length && pages.every(pg => locs.some(l => l.endsWith(pg === 'index.html' ? '/' : '/' + pg) )), 'sitemap.xml lists every page', `${locs.length} urls`);
   check(fs.existsSync(path.join(root, '404.html')), 'custom 404 page present', '');
   // internal links resolve
-  const broken = []; for (const pg of pages) { const h = read(pg); for (const m of h.matchAll(/(?:href|src)="([^"#:][^"]*?)(#[^"]*)?"/g)) { const f = m[1].split('?')[0]; if (/^(https?:|mailto:|tel:)/.test(f)) continue; if (!fs.existsSync(path.join(root, f))) broken.push(pg + ':' + f); } for (const m of h.matchAll(/href="(?:[\w.]+)?#([\w-]+)"/g)) { const tgt = m[0].includes('index.html') || !m[0].includes('comparison') ? 'index.html' : pg; if (!new RegExp(`id="${m[1]}"`).test(read(m[0].match(/href="([\w.]+)#/) ? m[0].match(/href="([\w.]+)#/)[1] : pg) || '')) broken.push(pg + ':#' + m[1]); } }
+  const broken = []; for (const pg of pages) { const h = read(pg); for (const m of h.matchAll(/(?:href|src)="([^"#:][^"]*?)(#[^"]*)?"/g)) { const f = m[1].split('?')[0]; if (/^(https?:|mailto:|tel:)/.test(f)) continue; if (!fs.existsSync(path.join(root, f))) broken.push(pg + ':' + f); } for (const m of h.matchAll(/href="(?:[\w.]+)?#([\w-]+)"/g)) { if (!new RegExp(`id="${m[1]}"`).test(read(m[0].match(/href="([\w.]+)#/) ? m[0].match(/href="([\w.]+)#/)[1] : pg) || '')) broken.push(pg + ':#' + m[1]); } }
   check(broken.length === 0, 'internal links, files and anchors resolve', broken.join(','));
   out.forEach(l => console.log(l)); console.log(`\npassed ${passes}, failed ${fails}`); process.exit(fails ? 1 : 0);
 })();

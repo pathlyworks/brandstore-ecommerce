@@ -7,7 +7,7 @@ const { chromium } = require('playwright'); const root = process.argv[2] || requ
   await p.goto('file://' + root + '/' + pg + '.html'); await p.waitForTimeout(500);
   if (w === 375) { await p.click('.nav__toggle'); await p.waitForTimeout(100); }
   const res = await p.evaluate(() => {
-    const parse = (s) => { const m = s.match(/rgba?\(([^)]+)\)/); if (!m) return [0,0,0,0]; const a = m[1].split(/[ ,\/]+/).map(Number); return [a[0], a[1], a[2], a[3] === undefined ? 1 : a[3]]; };
+    const parse = (s) => { const m = s.match(/rgba?\(([^)]+)\)/); if (!m) return [0,0,0,0]; const a = m[1].split(/[ ,/]+/).map(Number); return [a[0], a[1], a[2], a[3] === undefined ? 1 : a[3]]; };
     const over = (top, bot) => { const a = top[3]; return [top[0]*a+bot[0]*(1-a), top[1]*a+bot[1]*(1-a), top[2]*a+bot[2]*(1-a), 1]; };
     const lum = (c) => { const f = c.slice(0,3).map(v => { v/=255; return v<=.03928 ? v/12.92 : ((v+.055)/1.055)**2.4; }); return .2126*f[0]+.7152*f[1]+.0722*f[2]; };
     const ratio = (a, b) => { const x = lum(a), y = lum(b); return (Math.max(x,y)+.05)/(Math.min(x,y)+.05); };

@@ -5,13 +5,13 @@ const fs = require('fs'), path = require('path');
 const root = process.argv[2] || path.resolve(__dirname, '..');
 const files = fs.readdirSync(path.join(root, 'css')).filter(f => f.endsWith('.css'));
 const strip = (s) => s.replace(/\/\*[\s\S]*?\*\//g, '');
-let css = {}; files.forEach(f => css[f] = strip(fs.readFileSync(path.join(root, 'css', f), 'utf8')));
+const css = {}; files.forEach(f => css[f] = strip(fs.readFileSync(path.join(root, 'css', f), 'utf8')));
 const all = Object.values(css).join('\n');
 const declared = new Set([...all.matchAll(/(--[\w-]+)\s*:/g)].map(m => m[1]));
 const used = new Set([...all.matchAll(/var\((--[\w-]+)/g)].map(m => m[1]));
 const unresolved = [...used].filter(v => !declared.has(v));
 console.log('custom properties declared:', declared.size, '| var() references resolved:', unresolved.length === 0 ? 'all' : 'MISSING ' + unresolved);
-let literals = [];
+const literals = [];
 for (const [f, t0] of Object.entries(css)) {
   let t = t0; if (f === 'base.css') t = t.replace(/:root\s*\{[^}]*\}/g, '');
   t = t.replace(/@media[^{]*\{/g, '{');
