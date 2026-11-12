@@ -15,7 +15,7 @@ if (!m) { console.error('Could not find the canonical link in index.html'); proc
 const current = m[1].replace(/\/+$/, '');
 if (current === target) { console.log('Already set to ' + target); process.exit(0); }
 let files = 0, hits = 0;
-for (const f of ['index.html', 'comparison.html', '404.html', 'robots.txt', 'sitemap.xml']) {
+for (const f of ['index.html', 'comparison.html', 'catalog.html', 'product.html', '404.html', 'robots.txt', 'sitemap.xml']) {
   const p = path.join(root, f); const before = fs.readFileSync(p, 'utf8'); const n = before.split(current).length - 1;
   if (n) { fs.writeFileSync(p, before.split(current).join(target)); files++; hits += n; }
 }

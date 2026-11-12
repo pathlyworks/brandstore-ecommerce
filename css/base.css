@@ -94,6 +94,7 @@
     --size-tap-target: 2.75rem;
     --size-header: 4.25rem;
     --size-form-max: 32rem;
+    --size-sidebar: 16rem;          /* catalog filter panel column */
     --size-table-min: 38rem;
     --size-icon-bar: 1.25rem;
     --size-icon-gap: 0.375rem;
