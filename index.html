@@ -10,7 +10,17 @@
     <link rel="stylesheet" href="css/layout.css">
     <link rel="stylesheet" href="css/components.css">
     <link rel="stylesheet" href="css/utilities.css">
-    <script>document.documentElement.classList.add('js');</script>
+    <script src="js/boot.js"></script>
+    <script defer src="js/app.js"></script>
+    <script defer src="js/dom.js"></script>
+    <script defer src="js/data.js"></script>
+    <script defer src="js/render.js"></script>
+    <script defer src="js/filter.js"></script>
+    <script defer src="js/nav.js"></script>
+    <script defer src="js/newsletter.js"></script>
+    <script defer src="js/deals.js"></script>
+    <script defer src="js/regions.js"></script>
+    <script defer src="js/main.js"></script>
 </head>
 <body>
     <a class="skip-link" href="#main-content">Skip to main content</a>
@@ -95,75 +105,10 @@
         <section id="featured" class="section section--surface" aria-labelledby="featured-heading">
             <div class="container">
                 <h2 id="featured-heading" class="section__title">Featured Products</h2>
-                <div class="filter" role="group" aria-label="Filter featured products by category">
-                    <button type="button" class="filter__btn" data-filter="all" aria-pressed="true">All Products</button>
-                    <button type="button" class="filter__btn" data-filter="Electronics" aria-pressed="false">Electronics</button>
-                    <button type="button" class="filter__btn" data-filter="Accessories" aria-pressed="false">Accessories</button>
-                </div>
-                <div class="grid grid--products">
-                    <article class="product-card" data-category="Electronics">
-                        <div class="product-card__media">
-                            <span class="product-card__badge product-card__badge--bestseller">Best Seller</span>
-                            <img
-                                src="assets/headphones-400.svg"
-                                srcset="assets/headphones-400.svg 400w, assets/headphones-800.svg 800w"
-                                sizes="(max-width: 767px) 90vw, (max-width: 1023px) 44vw, 380px"
-                                width="400"
-                                height="300"
-                                alt="Wireless Headphones Pro with cobalt earcups"
-                                class="product-card__image">
-                        </div>
-                        <div class="product-card__body">
-                            <span class="product-card__tag">Electronics</span>
-                            <h3 class="product-card__title">Wireless Headphones Pro</h3>
-                            <p class="product-card__text">Active noise cancellation with 40-hour battery life and studio-grade drivers.</p>
-                            <p class="product-card__price">$199.99</p>
-                            <a href="comparison.html" class="btn btn--secondary">Compare Specs<span class="u-visually-hidden">: Wireless Headphones Pro</span></a>
-                        </div>
-                    </article>
-
-                    <article class="product-card" data-category="Electronics">
-                        <div class="product-card__media">
-                            <span class="product-card__badge product-card__badge--new">New Arrival</span>
-                            <img
-                                src="assets/smartwatch-400.svg"
-                                srcset="assets/smartwatch-400.svg 400w, assets/smartwatch-800.svg 800w"
-                                sizes="(max-width: 767px) 90vw, (max-width: 1023px) 44vw, 380px"
-                                width="400"
-                                height="300"
-                                alt="Ergonomic Smartwatch with blue strap and crisp display"
-                                class="product-card__image">
-                        </div>
-                        <div class="product-card__body">
-                            <span class="product-card__tag">Electronics</span>
-                            <h3 class="product-card__title">Ergonomic Smartwatch</h3>
-                            <p class="product-card__text">7-day battery, IP68 swimproof rating, and continuous wellness tracking.</p>
-                            <p class="product-card__price">$149.99</p>
-                            <a href="comparison.html" class="btn btn--secondary">Compare Specs<span class="u-visually-hidden">: Ergonomic Smartwatch</span></a>
-                        </div>
-                    </article>
-
-                    <article class="product-card" data-category="Accessories">
-                        <div class="product-card__media">
-                            <span class="product-card__badge product-card__badge--deal">Save 15%</span>
-                            <img
-                                src="assets/backpack-400.svg"
-                                srcset="assets/backpack-400.svg 400w, assets/backpack-800.svg 800w"
-                                sizes="(max-width: 767px) 90vw, (max-width: 1023px) 44vw, 380px"
-                                width="400"
-                                height="300"
-                                alt="Minimalist Leather Backpack in deep blue"
-                                class="product-card__image">
-                        </div>
-                        <div class="product-card__body">
-                            <span class="product-card__tag">Accessories</span>
-                            <h3 class="product-card__title">Minimalist Leather Backpack</h3>
-                            <p class="product-card__text">Water-resistant full-grain finish with padded 16-inch laptop compartment.</p>
-                            <p class="product-card__price">$89.99</p>
-                            <a href="comparison.html" class="btn btn--secondary">Compare Specs<span class="u-visually-hidden">: Minimalist Leather Backpack</span></a>
-                        </div>
-                    </article>
-                </div>
+                <div class="filter" id="product-filter" role="group" aria-label="Filter featured products by category"></div>
+                <p class="filter-status" id="filter-status" role="status" aria-live="polite"></p>
+                <div class="grid grid--products" id="product-grid"></div>
+                <noscript><p class="noscript-note">The featured products are loaded with JavaScript. Enable it, or open the <a href="comparison.html">product comparison</a> page to see every product and its specifications.</p></noscript>
             </div>
         </section>
 
@@ -225,20 +170,8 @@
         <section id="testimonials" class="section" aria-labelledby="testimonials-heading">
             <div class="container">
                 <h2 id="testimonials-heading" class="section__title">What Our Customers Say</h2>
-                <div class="grid grid--testimonials">
-                    <article class="testimonial">
-                        <blockquote class="testimonial__quote">
-                            <p>&ldquo;The build quality exceeded my expectations. Shipping was fast and the headphones last all week on a single charge.&rdquo;</p>
-                        </blockquote>
-                        <p class="testimonial__author">&mdash; <cite>Sarah M.</cite>, Verified Buyer</p>
-                    </article>
-                    <article class="testimonial">
-                        <blockquote class="testimonial__quote">
-                            <p>&ldquo;Clean design, zero clutter, and reliable everyday performance. The side-by-side comparison made choosing effortless.&rdquo;</p>
-                        </blockquote>
-                        <p class="testimonial__author">&mdash; <cite>David K.</cite>, Verified Buyer</p>
-                    </article>
-                </div>
+                <div class="grid grid--testimonials" id="testimonial-grid"></div>
+                <noscript><p class="noscript-note">Customer testimonials are loaded with JavaScript.</p></noscript>
             </div>
         </section>
 
@@ -259,12 +192,15 @@
                             minlength="5"
                             maxlength="120"
                             autocomplete="email"
-                            aria-describedby="newsletter-hint newsletter-feedback">
+                            aria-describedby="newsletter-hint newsletter-error">
                     </div>
                     <button type="submit" class="btn btn--primary">Subscribe</button>
                 </form>
                 <p id="newsletter-hint" class="newsletter__hint">Enter a valid email address. Unsubscribe anytime.</p>
-                <p id="newsletter-feedback" class="newsletter__feedback" role="status" aria-live="polite"></p>
+                <div class="newsletter__messages">
+                    <p id="newsletter-error" class="newsletter__feedback newsletter__feedback--error" role="alert"></p>
+                    <p id="newsletter-success" class="newsletter__feedback newsletter__feedback--success" role="status"></p>
+                </div>
             </div>
         </section>
     </main>
@@ -282,6 +218,5 @@
         </div>
     </footer>
 
-    <script src="js/main.js"></script>
 </body>
 </html>
