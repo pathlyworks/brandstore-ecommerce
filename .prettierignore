@@ -24,3 +24,5 @@ package-lock.json
 
 # Third-party code copied as published (npm run vendor).
 src/vendor/
+# The official TechSphere kit, copied as published (server.py regenerates fixtures/).
+api/techsphere/

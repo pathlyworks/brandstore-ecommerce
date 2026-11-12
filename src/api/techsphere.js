@@ -12,6 +12,9 @@
  * string such as "EGP 33,999") -> integer cents; stock_status -> a stock count (in_stock 25, low 3,
  * out_of_stock 0; missing -> treated as in stock); reviews_count -> reviewCount; specs object -> [{ label, value }];
  * { error: "text" } -> { error: { code, message } }.
+ * Account (Task 4): /account/orders pages by offset (page/limit -> offset/limit); orders have `total` in
+ * pounds and `created_at` in mixed formats; addresses are { id, city, street }; PUT bodies are cut to city and
+ * street; DELETE answers 204. Sign-in bodies ({ token, user }) are read by state/session.js as they are.
  * Pure functions: no fetch, DOM or storage.
  */
 
@@ -59,12 +62,59 @@ export function toAppProduct(p) {
 }
 
 /**
+ * GET /account/orders pages by offset in the TechSphere API; the app asks by page.
+ * @param {string} search e.g. "limit=5&page=2"
+ * @returns {string} e.g. "/account/orders?limit=5&offset=5"
+ */
+function toTechsphereOrdersQuery(search) {
+  const from = new URLSearchParams(search);
+  const limit = Math.max(1, Number(from.get('limit')) || 5);
+  const page = Math.max(1, Number(from.get('page')) || 1);
+  return `/account/orders?${new URLSearchParams({ limit: String(limit), offset: String((page - 1) * limit) })}`;
+}
+
+/**
+ * Only the documented fields of a request body (PUT /account/addresses/{id} takes city and street).
+ * @param {string} method
+ * @param {string} path
+ * @param {any} body
+ * @returns {any}
+ */
+export function toTechsphereBody(method, path, body) {
+  if (method === 'PUT' && /^\/account\/addresses\/[^/]+$/.test(path) && body) {
+    const { city, street } = body;
+    return street === undefined ? { city } : { city, street };
+  }
+  return body;
+}
+
+/**
+ * A TechSphere order in the app's order shape. `total` is in pounds (a number); `created_at` comes in
+ * several date formats and is kept as text (src/utils/dates.js reads it).
+ * @param {any} o
+ * @returns {object}
+ */
+export function toAppOrder(o) {
+  const items = Array.isArray(o.items) ? o.items : [];
+  return {
+    id: o.id,
+    createdAt: String(o.created_at ?? ''),
+    status: o.status,
+    items: items.map((i) => ({ productId: i.productId, name: null, quantity: Number(i.qty) || 1 })),
+    total: priceToCents(o.total),
+    currency: 'EGP',
+    cancellable: o.status === 'processing',
+  };
+}
+
+/**
  * The query of GET /products in TechSphere names. Other paths are returned unchanged.
  * @param {string} path e.g. "/products?limit=6&minPrice=1000&q=nova&sort=rating_desc"
  * @returns {string}
  */
 export function toTechsphereRequest(path) {
   const [base, search = ''] = path.split('?');
+  if (base === '/account/orders') return toTechsphereOrdersQuery(search);
   if (base !== '/products') return path;
   const from = new URLSearchParams(search);
   const to = new URLSearchParams();
@@ -104,6 +154,22 @@ export function fromTechsphere(path, body) {
     };
   }
   if (/^\/products\/[^/]+$/.test(base) && body && body.id) return { data: toAppProduct(body) };
+  if (base === '/account/orders' && body && Array.isArray(body.items)) {
+    const limit = body.limit || 5;
+    return {
+      data: body.items.map(toAppOrder),
+      meta: {
+        page: Math.floor((body.offset || 0) / limit) + 1,
+        limit,
+        total: body.total,
+        totalPages: Math.max(1, Math.ceil(body.total / limit)),
+      },
+    };
+  }
+  if (/^\/account\/orders\/[^/]+\/cancel$/.test(base) && body && body.id)
+    return { data: toAppOrder(body) };
+  if (base === '/account/addresses' && Array.isArray(body)) return { data: body };
+  if (/^\/account\/addresses\/[^/]+$/.test(base) && body && body.id) return { data: body };
   return body;
 }
 
@@ -129,6 +195,8 @@ export function toAppError(status, path, body) {
   const code =
     status === 401 && path.startsWith('/auth/login')
       ? 'INVALID_CREDENTIALS'
-      : CODE_FOR_STATUS[status] || `HTTP_${status}`;
+      : status === 400 && /already registered/i.test(body.error)
+        ? 'EMAIL_TAKEN'
+        : CODE_FOR_STATUS[status] || `HTTP_${status}`;
   return { error: { code, message: body.error, details: [] } };
 }

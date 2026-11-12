@@ -2,9 +2,15 @@
 import { start } from '../main.js';
 import * as storage from '../utils/storage.js';
 import { createProductApi } from '../api/product-api.js';
-import { createCartStore, createRecentStore, createSavedStore } from '../state/stores.js';
+import {
+  createCartStore,
+  createRecentStore,
+  createSavedStore,
+  createSessionStore,
+} from '../state/stores.js';
 import { init as nav } from '../components/nav.js';
 import { mountCartBadge } from '../components/cart-badge.js';
+import { mountAccountLink } from '../components/account-link.js';
 import { mount as mountProduct } from '../components/product-detail.js';
 
 const cart = createCartStore(storage);
@@ -26,5 +32,6 @@ function product() {
 start([
   ['nav', nav],
   ['cart-badge', () => mountCartBadge(cart)],
+  ['account-link', () => mountAccountLink(createSessionStore(storage))],
   ['product', product],
 ]);

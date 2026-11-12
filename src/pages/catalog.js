@@ -1,8 +1,9 @@
 /** src/pages/catalog.js — entry module for catalog.html (search, filter, sort and paginate). */
 import { start } from '../main.js';
 import * as storage from '../utils/storage.js';
-import { createCartStore } from '../state/stores.js';
+import { createCartStore, createSessionStore } from '../state/stores.js';
 import { mountCartBadge } from '../components/cart-badge.js';
+import { mountAccountLink } from '../components/account-link.js';
 import { API_BASE_URL, API_DIALECT, SEARCH_DEBOUNCE_MS } from '../config.js';
 import { createHttpClient } from '../api/http.js';
 import { createCatalogState } from '../state/catalog.js';
@@ -21,6 +22,7 @@ function catalog() {
 
 start([
   ['cart-badge', () => mountCartBadge(createCartStore(storage))],
+  ['account-link', () => mountAccountLink(createSessionStore(storage))],
   ['nav', nav],
   ['catalog', catalog],
 ]);

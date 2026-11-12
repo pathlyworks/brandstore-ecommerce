@@ -3,7 +3,6 @@
  *
  * Client-side checks that mirror the API 400 rules (email, address fields) so most errors are caught before a request.
  */
-import { notImplemented } from './not-implemented.js';
 
 /** @typedef {{ field: string, message: string }} FieldError */
 
@@ -57,20 +56,54 @@ export function getEmailError(value) {
   return '';
 }
 
+/** Minimum password length (the TechSphere API's /auth/register rule). */
+export const PASSWORD_MIN = 8;
+
 /**
- * Same rules as POST /auth/login.
+ * Sign-in form: an email address and a password. (Whether they are right is the server's job.)
  * @param {{ email: string, password: string }} input
- * @returns {FieldError[]}
+ * @returns {FieldError[]} in form order; empty when valid
  */
-export function validateLogin(input) {
-  return notImplemented('utils/validate.validateLogin');
+export function validateLogin({ email = '', password = '' }) {
+  const errors = [];
+  const emailError = getEmailError(email);
+  if (emailError) errors.push({ field: 'email', message: emailError });
+  if (!password) errors.push({ field: 'password', message: 'Enter your password.' });
+  return errors;
 }
 
 /**
- * Same rules as PUT /account/addresses/{id}.
- * @param {Record<string, unknown>} input
+ * Registration form: name, email, password (min 8 characters) and a matching confirmation.
+ * @param {{ name: string, email: string, password: string, confirm: string }} input
  * @returns {FieldError[]}
  */
-export function validateAddress(input) {
-  return notImplemented('utils/validate.validateAddress');
+export function validateRegister({ name = '', email = '', password = '', confirm = '' }) {
+  const errors = [];
+  if (!name.trim()) errors.push({ field: 'name', message: 'Enter your name.' });
+  else if (name.trim().length > 80)
+    errors.push({ field: 'name', message: 'Use 80 characters or fewer.' });
+  const emailError = getEmailError(email);
+  if (emailError) errors.push({ field: 'email', message: emailError });
+  if (password.length < PASSWORD_MIN) {
+    errors.push({ field: 'password', message: `Use at least ${PASSWORD_MIN} characters.` });
+  }
+  if (!confirm) errors.push({ field: 'confirm', message: 'Type the password again.' });
+  else if (confirm !== password)
+    errors.push({ field: 'confirm', message: 'The two passwords do not match.' });
+  return errors;
+}
+
+/**
+ * Address form: the city is required (as in PUT /account/addresses/{id}); street is optional.
+ * @param {{ city?: string, street?: string }} input
+ * @returns {FieldError[]}
+ */
+export function validateAddress({ city = '', street = '' }) {
+  const errors = [];
+  if (!city.trim()) errors.push({ field: 'city', message: 'Enter the city.' });
+  else if (city.trim().length > 60)
+    errors.push({ field: 'city', message: 'Use 60 characters or fewer.' });
+  if (street.trim().length > 120)
+    errors.push({ field: 'street', message: 'Use 120 characters or fewer.' });
+  return errors;
 }

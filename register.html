@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="noindex">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Create a BrandStore account to track orders and save addresses.">
+    <title>Create an account — BrandStore</title>
+    <meta name="theme-color" content="#2563eb">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="BrandStore">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:title" content="Create an account — BrandStore">
+    <meta property="og:description" content="Create a BrandStore account to track orders and save addresses.">
+    <meta property="og:url" content="https://brandstore.example/register.html">
+    <meta property="og:image" content="https://brandstore.example/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="BrandStore: curated electronics, apparel and modern essentials, with a headphones, smartwatch and backpack illustration.">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Create an account — BrandStore">
+    <meta name="twitter:description" content="Create a BrandStore account to track orders and save addresses.">
+    <meta name="twitter:image" content="https://brandstore.example/og-image.png">
+    <!-- Cascade order: tokens/reset -> page skeleton -> BEM components -> utilities -->
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/utilities.css">
+    <script type="module" src="src/pages/register.js"></script>
+</head>
+<body>
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+
+    <header class="site-header">
+        <div class="container site-header__inner">
+            <a href="index.html" class="logo">BrandStore</a>
+            <nav class="nav" aria-label="Main Navigation">
+                <button type="button" class="nav__toggle" aria-expanded="false" aria-controls="nav-menu" aria-label="Toggle navigation menu">
+                    <span class="nav__toggle-icon" aria-hidden="true"></span>
+                </button>
+                <ul id="nav-menu" class="nav__list">
+                    <li class="nav__item"><a href="index.html" class="nav__link">Home</a></li>
+                    <li class="nav__item"><a href="catalog.html" class="nav__link">Shop</a></li>
+                    <li class="nav__item"><a href="index.html#categories" class="nav__link">Categories</a></li>
+                    <li class="nav__item"><a href="index.html#deals" class="nav__link">Deals</a></li>
+                    <li class="nav__item"><a href="comparison.html" class="nav__link">Compare Products</a></li>
+                    <li class="nav__item"><a href="cart.html" class="nav__link" data-cart-link>Cart (0)</a></li>
+                    <li class="nav__item"><a href="login.html" class="nav__link" data-account-link>Sign in</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+                <main id="main-content" tabindex="-1" class="section section--compact">
+        <div class="container auth">
+            <h1 class="page-header__title">Create an account</h1>
+            <form id="register-form" class="auth__form" method="post" action="register.html" novalidate aria-labelledby="register-title">
+                <h2 id="register-title" class="u-visually-hidden">Your details</h2>
+                <div class="form-summary" role="alert" tabindex="-1" hidden></div>
+                        <div class="field">
+                            <label for="reg-name" class="field__label">Name</label>
+                            <input id="reg-name" name="name" type="text" class="field__input" autocomplete="name" required aria-invalid="false" aria-describedby="reg-name-error">
+                            <p id="reg-name-error" class="field__error"></p>
+                        </div>
+                        <div class="field">
+                            <label for="reg-email" class="field__label">Email</label>
+                            <input id="reg-email" name="email" type="email" class="field__input" autocomplete="email" required aria-invalid="false" aria-describedby="reg-email-error">
+                            <p id="reg-email-error" class="field__error"></p>
+                        </div>
+                        <div class="field">
+                            <label for="reg-password" class="field__label">Password</label>
+                            <p id="reg-password-hint" class="field__hint">At least 8 characters.</p>
+                            <input id="reg-password" name="password" type="password" class="field__input" autocomplete="new-password" required aria-invalid="false" aria-describedby="reg-password-hint reg-password-error">
+                            <p id="reg-password-error" class="field__error"></p>
+                        </div>
+                        <div class="field">
+                            <label for="reg-confirm" class="field__label">Confirm password</label>
+                            <input id="reg-confirm" name="confirm" type="password" class="field__input" autocomplete="new-password" required aria-invalid="false" aria-describedby="reg-confirm-error">
+                            <p id="reg-confirm-error" class="field__error"></p>
+                        </div>
+                <button type="submit" class="btn btn--secondary">Create account</button>
+            </form>
+            <p class="auth__switch">Already have an account? <a href="login.html">Sign in</a></p>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container site-footer__inner">
+            <p>&copy; 2026 BrandStore. All rights reserved.</p>
+            <nav class="footer-nav" aria-label="Footer Navigation">
+                <ul class="footer-nav__list">
+                    <li class="footer-nav__item"><a href="index.html" class="footer-nav__link">Home</a></li>
+                    <li class="footer-nav__item"><a href="catalog.html" class="footer-nav__link">Shop All Products</a></li>
+                    <li class="footer-nav__item"><a href="index.html#newsletter" class="footer-nav__link">Newsletter</a></li>
+                </ul>
+            </nav>
+        </div>
+    </footer>
+
+</body>
+</html>

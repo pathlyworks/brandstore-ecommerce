@@ -1,4 +1,7 @@
 User-agent: *
+Disallow: /account.html
+Disallow: /login.html
+Disallow: /register.html
 Allow: /
 Disallow: /qa/
 

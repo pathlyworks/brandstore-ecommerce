@@ -9,11 +9,21 @@
  *   cart   -> localStorage   brandstore:cart:v1    (survives refresh, tab close, return visits)
  *   saved  -> localStorage   brandstore:saved:v1   (separate key, same lifetime)
  *   recent -> sessionStorage brandstore:recent:v1  (this tab only)
+ *   session-> sessionStorage brandstore:session:v1 (token, expiry, user; this tab only)
+ *   flags  -> sessionStorage brandstore:flags:v1   (sign-in notice and return page; this tab only)
  */
 import { createStore } from './store.js';
 import { cartReducer, cartSummary, EMPTY_CART, rehydrate } from './cart.js';
 import { EMPTY_SAVED, rehydrateSaved } from './saved.js';
 import { addRecent, rehydrateRecent } from './recent.js';
+import {
+  isActive,
+  NO_FLAGS,
+  rehydrateFlags,
+  rehydrateSession,
+  SIGNED_OUT,
+  withFlags,
+} from './session.js';
 import { KEYS } from '../utils/storage.js';
 
 /**
@@ -95,4 +105,56 @@ export function createRecentStore(storage) {
     repair: rehydrateRecent,
   });
   return { ...store, view: (product) => (store.set(addRecent(store.get(), product)), store.get()) };
+}
+
+/**
+ * The signed-in session (sessionStorage). signOut() removes the session and the account flags only:
+ * the cart and the saved list (localStorage) are not touched.
+ * @param {object} storage
+ * @param {() => number} [now] clock
+ * @returns {object}
+ */
+export function createSessionStore(storage, now = () => Date.now()) {
+  const store = createPersistedStore(storage, {
+    area: 'session',
+    key: KEYS.session,
+    empty: SIGNED_OUT,
+    repair: rehydrateSession,
+  });
+  return {
+    ...store,
+    token: () => (isActive(store.get(), now()) ? store.get().token : null),
+    user: () => store.get().user,
+    isSignedIn: () => isActive(store.get(), now()),
+    isExpired: () => Boolean(store.get().token) && !isActive(store.get(), now()),
+    signIn: (session) => store.set(session),
+    signOut() {
+      store.set(SIGNED_OUT);
+      storage.remove('session', KEYS.session);
+    },
+  };
+}
+
+/**
+ * Sign-in notice + return page (sessionStorage). take() reads them once and clears them.
+ * @param {object} storage
+ * @returns {object}
+ */
+export function createFlagsStore(storage) {
+  const store = createPersistedStore(storage, {
+    area: 'session',
+    key: KEYS.flags,
+    empty: NO_FLAGS,
+    repair: rehydrateFlags,
+  });
+  return {
+    ...store,
+    remember: (change) => store.set(withFlags(store.get(), change)),
+    take() {
+      const flags = store.get();
+      store.set(NO_FLAGS);
+      storage.remove('session', KEYS.flags);
+      return flags;
+    },
+  };
 }

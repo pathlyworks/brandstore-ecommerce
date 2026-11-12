@@ -11,7 +11,10 @@ const root = process.argv.find((a, i) => i >= 2 && !a.startsWith('--')) || path.
 const release = process.argv.includes('--release');
 const PLACEHOLDER_HOST = 'https://brandstore.example';
 const allPages = fs.readdirSync(root).filter(f => f.endsWith('.html')).sort();
-const pages = allPages.filter(f => f !== '404.html'); // indexable pages (SEO checks)
+// Pages kept out of search results (noindex, no canonical, not in the sitemap): the 404 page and the
+// sign-in / account pages, which have nothing to index and must not be cached by search engines.
+const PRIVATE_PAGES = ['404.html', 'login.html', 'register.html', 'account.html'];
+const pages = allPages.filter(f => !PRIVATE_PAGES.includes(f)); // indexable pages (SEO checks)
 let fails = 0, passes = 0; const out = [];
 const check = (ok, rule, msg) => { ok ? passes++ : fails++; out.push(`${ok ? 'PASS' : 'FAIL'}  ${rule}  ${msg}`); };
 const read = (f) => fs.existsSync(path.join(root, f)) ? fs.readFileSync(path.join(root, f), 'utf8') : null;
@@ -82,7 +85,7 @@ const read = (f) => fs.existsSync(path.join(root, f)) ? fs.readFileSync(path.joi
   // ---- SEO / sharing (static) ----
   const titles = [], descs = [];
   for (const pg of allPages) { // title, description, Open Graph and h1 rules apply to every page, 404 included
-    const is404 = pg === '404.html';
+    const is404 = PRIVATE_PAGES.includes(pg);
     const h = read(pg); const t = (h.match(/<title>([^<]*)<\/title>/) || [])[1] || ''; const dsc = (h.match(/<meta name="description" content="([^"]*)"/) || [])[1] || '';
     titles.push(t); descs.push(dsc);
     check((h.match(/<h1[\s>]/g) || []).length === 1, 'single h1 per page (source HTML)', pg);
@@ -91,7 +94,7 @@ const read = (f) => fs.existsSync(path.join(root, f)) ? fs.readFileSync(path.joi
     const og = (p2) => (h.match(new RegExp(`<meta property="${p2}" content="([^"]*)"`)) || [])[1];
     for (const k of ['og:title', 'og:description', 'og:type', 'og:url', 'og:image', 'og:image:alt', 'og:site_name']) check(!!og(k), `open-graph ${k}`, pg);
     check(/<meta name="twitter:card" content="summary_large_image"/.test(h), 'twitter:card', pg);
-    if (is404) check(/<meta name="robots" content="noindex"/.test(h), '404 page is noindex (kept out of search results)', pg);
+    if (is404) check(/<meta name="robots" content="noindex"/.test(h), 'private page (404 / sign-in / account) is noindex', pg);
     else { const can = (h.match(/<link rel="canonical" href="([^"]*)"/) || [])[1]; check(!!can && /^https:\/\//.test(can), 'canonical (Lighthouse SEO): absolute https URL', `${pg} ${can}`);
     check(/<link rel="icon"/.test(h), 'favicon link', pg);
     check(!/noindex/i.test(h), 'is-crawlable (Lighthouse SEO): no noindex', pg); }

@@ -1,0 +1,10 @@
+{
+ "student@techsphere.test": {
+  "password": "Passw0rd!",
+  "role": "shopper"
+ },
+ "admin@techsphere.test": {
+  "password": "Admin123!",
+  "role": "admin"
+ }
+}

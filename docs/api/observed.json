@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-12T15:15:44.838Z",
+  "generatedAt": "2026-11-12T19:41:16.932Z",
   "baseUrl": "mock-server (random local port)",
   "rateLimit": 60,
   "requests": [
@@ -693,6 +693,113 @@
       }
     },
     {
+      "operationId": "register",
+      "method": "POST",
+      "template": "/auth/register",
+      "path": "/auth/register",
+      "note": "invalid email and short password",
+      "expected": 400,
+      "status": 400,
+      "errorCode": "VALIDATION_ERROR",
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "40"
+      },
+      "shape": {
+        "error": {
+          "code": "string",
+          "message": "string",
+          "details": [
+            {
+              "field": "string",
+              "message": "string"
+            }
+          ]
+        }
+      },
+      "request": {
+        "headers": {
+          "X-Client-Id": "contract-run",
+          "Content-Type": "application/json"
+        },
+        "body": {
+          "email": "bad",
+          "password": "short"
+        }
+      }
+    },
+    {
+      "operationId": "register",
+      "method": "POST",
+      "template": "/auth/register",
+      "path": "/auth/register",
+      "note": "email already registered (EMAIL_TAKEN)",
+      "expected": 400,
+      "status": 400,
+      "errorCode": "EMAIL_TAKEN",
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "39"
+      },
+      "shape": {
+        "error": {
+          "code": "string",
+          "message": "string"
+        }
+      },
+      "request": {
+        "headers": {
+          "X-Client-Id": "contract-run",
+          "Content-Type": "application/json"
+        },
+        "body": {
+          "email": "demo@brandstore.test",
+          "password": "Passw0rd!",
+          "name": "Demo"
+        }
+      }
+    },
+    {
+      "operationId": "register",
+      "method": "POST",
+      "template": "/auth/register",
+      "path": "/auth/register",
+      "note": "",
+      "expected": 201,
+      "status": 201,
+      "errorCode": null,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "38"
+      },
+      "shape": {
+        "data": {
+          "token": "string",
+          "tokenType": "string",
+          "expiresIn": "integer",
+          "user": {
+            "id": "string",
+            "name": "string",
+            "email": "string"
+          }
+        }
+      },
+      "request": {
+        "headers": {
+          "X-Client-Id": "contract-run",
+          "Content-Type": "application/json"
+        },
+        "body": {
+          "name": "New Shopper",
+          "email": "new@brandstore.test",
+          "password": "NewPassw0rd"
+        }
+      }
+    },
+    {
       "operationId": "listOrders",
       "method": "GET",
       "template": "/account/orders",
@@ -705,7 +812,7 @@
         "content-type": "application/json; charset=utf-8",
         "www-authenticate": "Bearer",
         "x-ratelimit-limit": "60",
-        "x-ratelimit-remaining": "40"
+        "x-ratelimit-remaining": "37"
       },
       "shape": {
         "error": {
@@ -732,7 +839,7 @@
         "content-type": "application/json; charset=utf-8",
         "www-authenticate": "Bearer",
         "x-ratelimit-limit": "60",
-        "x-ratelimit-remaining": "39"
+        "x-ratelimit-remaining": "36"
       },
       "shape": {
         "error": {
@@ -759,7 +866,7 @@
       "headers": {
         "content-type": "application/json; charset=utf-8",
         "x-ratelimit-limit": "60",
-        "x-ratelimit-remaining": "38"
+        "x-ratelimit-remaining": "35"
       },
       "shape": {
         "data": [
@@ -789,7 +896,7 @@
       "request": {
         "headers": {
           "X-Client-Id": "contract-run",
-          "Authorization": "Bearer a39617f5-38a0-47fd-bb2a-9ccba096ec2e"
+          "Authorization": "Bearer 7e073827-bd96-49b5-beab-a06918deb9bd"
         }
       }
     },
@@ -805,7 +912,7 @@
       "headers": {
         "content-type": "application/json; charset=utf-8",
         "x-ratelimit-limit": "60",
-        "x-ratelimit-remaining": "37"
+        "x-ratelimit-remaining": "34"
       },
       "shape": {
         "data": [
@@ -835,7 +942,7 @@
       "request": {
         "headers": {
           "X-Client-Id": "contract-run",
-          "Authorization": "Bearer a39617f5-38a0-47fd-bb2a-9ccba096ec2e"
+          "Authorization": "Bearer 7e073827-bd96-49b5-beab-a06918deb9bd"
         }
       }
     },
@@ -851,7 +958,7 @@
       "headers": {
         "content-type": "application/json; charset=utf-8",
         "x-ratelimit-limit": "60",
-        "x-ratelimit-remaining": "36"
+        "x-ratelimit-remaining": "33"
       },
       "shape": {
         "error": {
@@ -868,7 +975,7 @@
       "request": {
         "headers": {
           "X-Client-Id": "contract-run",
-          "Authorization": "Bearer a39617f5-38a0-47fd-bb2a-9ccba096ec2e"
+          "Authorization": "Bearer 7e073827-bd96-49b5-beab-a06918deb9bd"
         }
       }
     },
@@ -885,7 +992,7 @@
         "content-type": "application/json; charset=utf-8",
         "www-authenticate": "Bearer",
         "x-ratelimit-limit": "60",
-        "x-ratelimit-remaining": "35"
+        "x-ratelimit-remaining": "32"
       },
       "shape": {
         "error": {
@@ -911,7 +1018,7 @@
       "headers": {
         "content-type": "application/json; charset=utf-8",
         "x-ratelimit-limit": "60",
-        "x-ratelimit-remaining": "34"
+        "x-ratelimit-remaining": "31"
       },
       "shape": {
         "error": {
@@ -928,7 +1035,7 @@
       "request": {
         "headers": {
           "X-Client-Id": "contract-run",
-          "Authorization": "Bearer a39617f5-38a0-47fd-bb2a-9ccba096ec2e",
+          "Authorization": "Bearer 7e073827-bd96-49b5-beab-a06918deb9bd",
           "Content-Type": "application/json"
         },
         "body": {
@@ -948,7 +1055,7 @@
       "headers": {
         "content-type": "application/json; charset=utf-8",
         "x-ratelimit-limit": "60",
-        "x-ratelimit-remaining": "33"
+        "x-ratelimit-remaining": "30"
       },
       "shape": {
         "data": {
@@ -976,7 +1083,7 @@
       "request": {
         "headers": {
           "X-Client-Id": "contract-run",
-          "Authorization": "Bearer a39617f5-38a0-47fd-bb2a-9ccba096ec2e",
+          "Authorization": "Bearer 7e073827-bd96-49b5-beab-a06918deb9bd",
           "Content-Type": "application/json"
         },
         "body": {
@@ -996,7 +1103,7 @@
       "headers": {
         "content-type": "application/json; charset=utf-8",
         "x-ratelimit-limit": "60",
-        "x-ratelimit-remaining": "32"
+        "x-ratelimit-remaining": "29"
       },
       "shape": {
         "error": {
@@ -1007,7 +1114,7 @@
       "request": {
         "headers": {
           "X-Client-Id": "contract-run",
-          "Authorization": "Bearer a39617f5-38a0-47fd-bb2a-9ccba096ec2e"
+          "Authorization": "Bearer 7e073827-bd96-49b5-beab-a06918deb9bd"
         }
       }
     },
@@ -1023,7 +1130,7 @@
       "headers": {
         "content-type": "application/json; charset=utf-8",
         "x-ratelimit-limit": "60",
-        "x-ratelimit-remaining": "31"
+        "x-ratelimit-remaining": "28"
       },
       "shape": {
         "error": {
@@ -1034,7 +1141,7 @@
       "request": {
         "headers": {
           "X-Client-Id": "contract-run",
-          "Authorization": "Bearer a39617f5-38a0-47fd-bb2a-9ccba096ec2e"
+          "Authorization": "Bearer 7e073827-bd96-49b5-beab-a06918deb9bd"
         }
       }
     },
@@ -1050,7 +1157,7 @@
       "headers": {
         "content-type": "application/json; charset=utf-8",
         "x-ratelimit-limit": "60",
-        "x-ratelimit-remaining": "30"
+        "x-ratelimit-remaining": "27"
       },
       "shape": {
         "error": {
@@ -1061,7 +1168,7 @@
       "request": {
         "headers": {
           "X-Client-Id": "contract-run",
-          "Authorization": "Bearer a39617f5-38a0-47fd-bb2a-9ccba096ec2e"
+          "Authorization": "Bearer 7e073827-bd96-49b5-beab-a06918deb9bd"
         }
       }
     },
@@ -1078,7 +1185,7 @@
         "content-type": "application/json; charset=utf-8",
         "www-authenticate": "Bearer",
         "x-ratelimit-limit": "60",
-        "x-ratelimit-remaining": "29"
+        "x-ratelimit-remaining": "26"
       },
       "shape": {
         "error": {
@@ -1104,7 +1211,7 @@
       "headers": {
         "content-type": "application/json; charset=utf-8",
         "x-ratelimit-limit": "60",
-        "x-ratelimit-remaining": "28"
+        "x-ratelimit-remaining": "25"
       },
       "shape": {
         "data": [
@@ -1125,7 +1232,7 @@
       "request": {
         "headers": {
           "X-Client-Id": "contract-run",
-          "Authorization": "Bearer a39617f5-38a0-47fd-bb2a-9ccba096ec2e"
+          "Authorization": "Bearer 7e073827-bd96-49b5-beab-a06918deb9bd"
         }
       }
     },
@@ -1142,7 +1249,7 @@
         "content-type": "application/json; charset=utf-8",
         "www-authenticate": "Bearer",
         "x-ratelimit-limit": "60",
-        "x-ratelimit-remaining": "27"
+        "x-ratelimit-remaining": "24"
       },
       "shape": {
         "error": {
@@ -1178,7 +1285,7 @@
         "content-type": "application/json; charset=utf-8",
         "location": "/account/addresses/office",
         "x-ratelimit-limit": "60",
-        "x-ratelimit-remaining": "26"
+        "x-ratelimit-remaining": "23"
       },
       "shape": {
         "data": {
@@ -1197,7 +1304,7 @@
       "request": {
         "headers": {
           "X-Client-Id": "contract-run",
-          "Authorization": "Bearer a39617f5-38a0-47fd-bb2a-9ccba096ec2e",
+          "Authorization": "Bearer 7e073827-bd96-49b5-beab-a06918deb9bd",
           "Content-Type": "application/json"
         },
         "body": {
@@ -1222,7 +1329,7 @@
       "headers": {
         "content-type": "application/json; charset=utf-8",
         "x-ratelimit-limit": "60",
-        "x-ratelimit-remaining": "25"
+        "x-ratelimit-remaining": "22"
       },
       "shape": {
         "data": {
@@ -1241,7 +1348,7 @@
       "request": {
         "headers": {
           "X-Client-Id": "contract-run",
-          "Authorization": "Bearer a39617f5-38a0-47fd-bb2a-9ccba096ec2e",
+          "Authorization": "Bearer 7e073827-bd96-49b5-beab-a06918deb9bd",
           "Content-Type": "application/json"
         },
         "body": {
@@ -1267,7 +1374,7 @@
       "headers": {
         "content-type": "application/json; charset=utf-8",
         "x-ratelimit-limit": "60",
-        "x-ratelimit-remaining": "24"
+        "x-ratelimit-remaining": "21"
       },
       "shape": {
         "error": {
@@ -1284,7 +1391,7 @@
       "request": {
         "headers": {
           "X-Client-Id": "contract-run",
-          "Authorization": "Bearer a39617f5-38a0-47fd-bb2a-9ccba096ec2e",
+          "Authorization": "Bearer 7e073827-bd96-49b5-beab-a06918deb9bd",
           "Content-Type": "application/json"
         },
         "body": {
@@ -1310,7 +1417,7 @@
         "content-type": "application/json; charset=utf-8",
         "www-authenticate": "Bearer",
         "x-ratelimit-limit": "60",
-        "x-ratelimit-remaining": "23"
+        "x-ratelimit-remaining": "20"
       },
       "shape": {
         "error": {
@@ -1336,7 +1443,7 @@
       "headers": {
         "content-type": "application/json; charset=utf-8",
         "x-ratelimit-limit": "60",
-        "x-ratelimit-remaining": "22"
+        "x-ratelimit-remaining": "19"
       },
       "shape": {
         "data": {
@@ -1347,7 +1454,7 @@
       "request": {
         "headers": {
           "X-Client-Id": "contract-run",
-          "Authorization": "Bearer a39617f5-38a0-47fd-bb2a-9ccba096ec2e"
+          "Authorization": "Bearer 7e073827-bd96-49b5-beab-a06918deb9bd"
         }
       }
     },
@@ -1363,7 +1470,7 @@
       "headers": {
         "content-type": "application/json; charset=utf-8",
         "x-ratelimit-limit": "60",
-        "x-ratelimit-remaining": "21"
+        "x-ratelimit-remaining": "18"
       },
       "shape": {
         "error": {
@@ -1374,7 +1481,7 @@
       "request": {
         "headers": {
           "X-Client-Id": "contract-run",
-          "Authorization": "Bearer a39617f5-38a0-47fd-bb2a-9ccba096ec2e"
+          "Authorization": "Bearer 7e073827-bd96-49b5-beab-a06918deb9bd"
         }
       }
     },
@@ -1390,7 +1497,7 @@
       "headers": {
         "content-type": "application/json; charset=utf-8",
         "x-ratelimit-limit": "60",
-        "x-ratelimit-remaining": "20"
+        "x-ratelimit-remaining": "17"
       },
       "shape": {
         "error": {
@@ -1417,7 +1524,7 @@
         "content-type": "application/json; charset=utf-8",
         "allow": "GET",
         "x-ratelimit-limit": "60",
-        "x-ratelimit-remaining": "19"
+        "x-ratelimit-remaining": "16"
       },
       "shape": {
         "error": {
@@ -1518,6 +1625,39 @@
       }
     },
     {
+      "operationId": "register",
+      "method": "POST",
+      "template": "/auth/register",
+      "path": "/auth/register",
+      "note": "request 61 within 60 s from one client",
+      "expected": 429,
+      "status": 429,
+      "errorCode": "RATE_LIMITED",
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "retry-after": "60",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "0"
+      },
+      "shape": {
+        "error": {
+          "code": "string",
+          "message": "string"
+        }
+      },
+      "request": {
+        "headers": {
+          "X-Client-Id": "burst-register",
+          "Content-Type": "application/json"
+        },
+        "body": {
+          "name": "New Shopper",
+          "email": "new@brandstore.test",
+          "password": "NewPassw0rd"
+        }
+      }
+    },
+    {
       "operationId": "listOrders",
       "method": "GET",
       "template": "/account/orders",
@@ -1541,7 +1681,7 @@
       "request": {
         "headers": {
           "X-Client-Id": "burst-listOrders",
-          "Authorization": "Bearer a3d28cd7-bdb2-4aec-8e2c-c70ba217d625"
+          "Authorization": "Bearer 5cf19824-b5bd-45c3-8f56-0297bc00c999"
         }
       }
     },
@@ -1569,7 +1709,7 @@
       "request": {
         "headers": {
           "X-Client-Id": "burst-cancelOrder",
-          "Authorization": "Bearer a3d28cd7-bdb2-4aec-8e2c-c70ba217d625",
+          "Authorization": "Bearer 5cf19824-b5bd-45c3-8f56-0297bc00c999",
           "Content-Type": "application/json"
         },
         "body": {
@@ -1601,7 +1741,7 @@
       "request": {
         "headers": {
           "X-Client-Id": "burst-listAddresses",
-          "Authorization": "Bearer a3d28cd7-bdb2-4aec-8e2c-c70ba217d625"
+          "Authorization": "Bearer 5cf19824-b5bd-45c3-8f56-0297bc00c999"
         }
       }
     },
@@ -1629,7 +1769,7 @@
       "request": {
         "headers": {
           "X-Client-Id": "burst-putAddress",
-          "Authorization": "Bearer a3d28cd7-bdb2-4aec-8e2c-c70ba217d625",
+          "Authorization": "Bearer 5cf19824-b5bd-45c3-8f56-0297bc00c999",
           "Content-Type": "application/json"
         },
         "body": {
@@ -1666,7 +1806,7 @@
       "request": {
         "headers": {
           "X-Client-Id": "burst-deleteAddress",
-          "Authorization": "Bearer a3d28cd7-bdb2-4aec-8e2c-c70ba217d625"
+          "Authorization": "Bearer 5cf19824-b5bd-45c3-8f56-0297bc00c999"
         }
       }
     },

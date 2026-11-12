@@ -10,6 +10,7 @@
  */
 import { cp, mkdir, readFile, readdir, rm, writeFile, access } from 'node:fs/promises';
 import { dirname, join, relative, resolve } from 'node:path';
+import { injectEnv, viteEnv } from './lib/env.mjs';
 import { fileURLToPath } from 'node:url';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -20,6 +21,9 @@ const COPY = [
   'catalog.html',
   'product.html',
   'cart.html',
+  'login.html',
+  'register.html',
+  'account.html',
   '404.html',
   'css',
   'src',
@@ -83,6 +87,8 @@ for (const item of COPY) {
   if (await exists(join(root, item)))
     await cp(join(root, item), join(out, item), { recursive: true });
 }
+const configFile = join(out, 'src', 'config.js');
+await writeFile(configFile, injectEnv(await readFile(configFile, 'utf8'), viteEnv(process.env))); // VITE_API_BASE etc.
 const modules = new Set();
 for (const page of (await readdir(out)).filter((f) => f.endsWith('.html')))
   await checkPage(page, modules);

@@ -1,5 +1,21 @@
 # Changelog
 
+## Unreleased — Phase 2, Task 4: login, account area, web security (branch `feature/auth-account-security`)
+### Added
+- `login.html`, `register.html`: accessible forms (labels, `aria-invalid`, error summary with focus), client-side validation, distinct 401 (wrong credentials) and 400 (already registered / invalid) messages.
+- `account.html`: order history (paged, mixed API date formats normalised, cancel with 409 handling) and address book (edit, delete), all with `Authorization: Bearer`; sign out clears the session but keeps the cart.
+- Session in sessionStorage (`state/session.js` pure, `createSessionStore`), JWT `exp` read by `utils/jwt.js`; expiry and any 401 send the shopper to sign-in with a message and back afterwards (`components/auth-session.js`).
+- "Sign in" / "Account" link in the menu on every page.
+- The official TechSphere API kit in `api/techsphere/`; `VITE_API_BASE` is injected by `npm run start`/`preview` and the build; `src/api/techsphere.js` translates auth, orders and addresses.
+- `docs/SECURITY.md`: token storage trade-off, XSS, CORS, CSRF, proposed CSP.
+- Tests: auth unit tests, account integration tests (our mock and TechSphere), 8 auth e2e journeys against TechSphere, including a credential-leak check.
+### Changed
+- CSP adds `connect-src 'self'`, `font-src 'self'`, `upgrade-insecure-requests`.
+- Private pages are `noindex`, out of the sitemap and disallowed in `robots.txt`.
+- ESLint forbids `console.log/info/warn` in `src/`.
+### Removed
+- Task 1 stubs (`api/orders.js`, `api/addresses.js`, `components/login-form.js`, `utils/not-implemented.js`), replaced by `api/account.js` and the components above.
+
 ## Unreleased — Phase 2, Task 3, revision 3 (official API)
 ### Changed
 - The API address comes from `VITE_API_BASE` (the official TechSphere API, used for grading); without it the app keeps using our mock on `/api` (`VITE_API_URL` still works).

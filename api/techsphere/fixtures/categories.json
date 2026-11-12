@@ -1,0 +1,22 @@
+[
+ {
+  "id": "laptops",
+  "name": "Laptops",
+  "name_ar": "لابتوب"
+ },
+ {
+  "id": "phones",
+  "name": "Phones",
+  "name_ar": "موبايلات"
+ },
+ {
+  "id": "audio",
+  "name": "Audio",
+  "name_ar": "صوتيات"
+ },
+ {
+  "id": "smart-home",
+  "name": "Smart home",
+  "name_ar": "المنزل الذكي"
+ }
+]

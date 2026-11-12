@@ -1803,3 +1803,168 @@
         grid-template-columns: minmax(0, 1fr) var(--size-totals);
     }
 }
+
+/* --------------------------------------------------------------------------
+   Sign-in, registration and account pages. Phase 2 Task 4.
+   -------------------------------------------------------------------------- */
+.auth {
+    max-width: var(--size-form-max);
+}
+
+.auth__form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    margin-top: var(--space-md);
+    padding: var(--space-lg);
+    border: var(--border-thin) solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+}
+
+.auth__notice {
+    margin-top: var(--space-md);
+    padding: var(--space-sm) var(--space-md);
+    border-left: var(--border-medium) solid var(--color-primary);
+    border-radius: var(--radius-sm);
+    background: var(--color-primary-soft);
+    font-weight: var(--weight-semibold);
+}
+
+.auth__notice[hidden],
+.form-summary[hidden] {
+    display: none;
+}
+
+.auth__switch,
+.auth__hint {
+    margin-top: var(--space-md);
+    font-size: var(--text-sm);
+}
+
+.auth__hint {
+    color: var(--color-text-muted);
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2xs);
+}
+
+.field__label {
+    font-size: var(--text-sm);
+    font-weight: var(--weight-semibold);
+}
+
+.field__hint {
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+}
+
+.field__input {
+    min-height: var(--size-tap-target);
+    padding: var(--space-xs) var(--space-sm);
+    border: var(--border-thin) solid var(--color-border-control);
+    border-radius: var(--radius-sm);
+    background: var(--color-bg);
+    color: var(--color-text);
+    font: inherit;
+}
+
+.field__input[aria-invalid="true"] {
+    border-color: var(--color-danger);
+    border-width: var(--border-medium);
+}
+
+.field__error {
+    font-size: var(--text-sm);
+    font-weight: var(--weight-semibold);
+    color: var(--color-danger);
+}
+
+.field__error:empty {
+    display: none;
+}
+
+.form-summary {
+    padding: var(--space-sm) var(--space-md);
+    border: var(--border-medium) solid var(--color-danger);
+    border-radius: var(--radius-sm);
+    background: var(--color-bg);
+    color: var(--color-text);
+}
+
+.form-summary ul {
+    margin-top: var(--space-2xs);
+    padding-left: var(--space-md);
+}
+
+.form-summary a {
+    color: var(--color-danger);
+    font-weight: var(--weight-semibold);
+}
+
+.form-summary__text {
+    font-weight: var(--weight-semibold);
+}
+
+.account__section {
+    margin-top: var(--space-xl);
+}
+
+.order,
+.address {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2xs) var(--space-md);
+    padding: var(--space-sm) var(--space-md);
+    border: var(--border-thin) solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-bg);
+}
+
+.order__id {
+    font-weight: var(--weight-bold);
+}
+
+.order__date,
+.order__items {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+}
+
+.order__status {
+    padding: var(--space-2xs) var(--space-xs);
+    border-radius: var(--radius-sm);
+    background: var(--color-surface);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-semibold);
+}
+
+.order__status--processing {
+    background: var(--color-primary-soft);
+}
+
+.order__total {
+    margin-left: auto;
+    font-weight: var(--weight-bold);
+}
+
+.address--editing {
+    display: block;
+}
+
+.address-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+}
+
+.address-form__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-sm);
+}
