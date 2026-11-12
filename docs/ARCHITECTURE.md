@@ -40,17 +40,18 @@ Checked on 2026-11-12 by adding two probe files that break the rules: lint repor
 
 ### 3.1 Live today (what the site runs)
 
-| Page              | Entry module              | Features started (in order)                                                                                                                                                                                       |
-| :---------------- | :------------------------ | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `index.html`      | `src/pages/home.js`       | `catalog-render`, `product-filter`, `nav`, `newsletter`, `deals`, `scroll-regions`                                                                                                                                |
-| `comparison.html` | `src/pages/comparison.js` | `nav`, `scroll-regions`, `comparison-table`                                                                                                                                                                       |
-| `404.html`        | `src/pages/not-found.js`  | `nav`, `scroll-regions`                                                                                                                                                                                           |
-| `catalog.html`    | `src/pages/catalog.js`    | `nav`, `catalog` (mounts `components/catalog-view.js`: `filter-bar`, `product-list` + `product-card`, `pagination`, `status-message`, `demo-controls`; uses `api/http.js`, `api/products.js`, `state/catalog.js`) |
-| `product.html`    | `src/pages/product.js`    | `nav`, `product` (mounts `components/product-detail.js`)                                                                                                                                                          |
+| Page              | Entry module              | Features started (in order)                                                                                                                                                                                                              |
+| :---------------- | :------------------------ | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `index.html`      | `src/pages/home.js`       | `catalog-render`, `product-filter`, `nav`, `newsletter`, `deals`, `scroll-regions`                                                                                                                                                       |
+| `comparison.html` | `src/pages/comparison.js` | `nav`, `scroll-regions`, `comparison-table`                                                                                                                                                                                              |
+| `404.html`        | `src/pages/not-found.js`  | `nav`, `scroll-regions`                                                                                                                                                                                                                  |
+| `catalog.html`    | `src/pages/catalog.js`    | `nav`, `catalog` (mounts `components/catalog-view.js`: `filter-bar`, `product-list` + `product-card`, `pagination`, `status-message`, `demo-controls`; uses `api/http.js`, `api/products.js`, `state/catalog.js`)                        |
+| `product.html`    | `src/pages/product.js`    | `nav`, `cart-badge`, `product` (mounts `components/product-detail.js`: `gallery`, `quantity-stepper`, `recent-strip`; loads through the Axios module `api/product-api.js`; updates `state/cart.js`, `state/saved.js`, `state/recent.js`) |
+| `cart.html`       | `src/pages/cart.js`       | `nav`, `cart-badge`, `cart` (mounts `components/cart-view.js`: `cart-panel`, `saved-list`, `recent-strip`; re-checks prices through `api/product-api.js`)                                                                                |
 
 Shared live modules: `src/main.js` (`start`), `src/utils/dom.js` (`el`, `clear`, `qs`, `qsa`),
 `src/utils/validate.js` (`getEmailError`), `src/state/content.js` (the 3 products and 2 testimonials
-the home page renders). 38 modules in total are reachable from the pages (Task 2 made the catalog modules live) (`npm run build` checks
+the home page renders). 53 modules in total are reachable from the pages (Task 2 made the catalog live, Task 3 the cart, saved list and recently viewed; every page also mounts `cart-badge`) (`npm run build` checks
 that every import resolves).
 
 ### 3.2 Planned for the API (documented stubs; the catalog modules above are now implemented)
@@ -102,3 +103,8 @@ Components: `product-list`, `filter-bar`, `pagination`, `product-detail`, `cart-
 All prices are integer cents end to end (API and client); formatting happens only in
 `utils/money.formatMoney`. Product ids are slugs; address ids are chosen by the client (slug of
 the label plus a short random suffix), which makes `PUT /account/addresses/{id}` safe to retry.
+
+## 6. Pure state vs persistence (Phase 2, Task 3 revision)
+
+`src/state/cart.js`, `saved.js` and `recent.js` are pure (no DOM, storage, network or clock; ESLint rule).
+`src/state/stores.js` wraps them: read from storage, repair (`rehydrate*`), write back, notify, follow other tabs.

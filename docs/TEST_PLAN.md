@@ -80,3 +80,9 @@ home page made 4 of 17 runs fail.
 - Unit: 71 tests (query strings, facets, debounce, latest-request runner, money, error wording, http client with a fake `fetch`, URL-backed catalog state, plus the Task 1 tests).
 - Integration: 22 tests: the real `api/` modules against the real mock server (every case in `tests/fixtures/catalog-cases.json`, each error status, abort) and the Netlify function. These replace MSW for now (MSW could not be installed in the build environment).
 - End-to-end: 18 journeys, 34 runs in Chromium at desktop and phone size, all passing; the catalog journeys check results against the same fixtures, the debounce (one request per burst), aborting of superseded requests, URL reload/Back/Forward, and every loading/empty/error state.
+
+### Update after Phase 2, Task 3 (product detail, cart, save for later)
+
+- Unit: 100 tests. New: cart pure functions (inputs deep-frozen, so any mutation would throw), totals against `tests/fixtures/cart-cases.json` (8 reference calculations in dollars, tolerance $0.005), shipping rule edges (9999 / 10000 cents), quantity clamping, out-of-stock refusal, save-for-later moves, recently viewed dedupe and cap, storage wrapper (blocked storage, corrupt JSON), persisted stores (rehydrate in a new store), and the Axios module's interceptors.
+- Integration: 25 tests (adds the Axios module against the real mock server).
+- End-to-end: 26 journeys, 50 runs in Chromium, all passing. The cart journeys check fixture totals in the browser, refresh and return-visit persistence, save for later both ways, recently viewed (dedupe, cap of 6, not shared with a new tab), the out-of-stock explanation, a stale stored price corrected from the API, and one price format on every page. Changing the shipping fee to $8.00 makes the totals journey fail (checked).

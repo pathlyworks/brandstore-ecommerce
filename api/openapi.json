@@ -120,6 +120,15 @@
           },
           {
             "$ref": "#/components/parameters/mockDelay"
+          },
+          {
+            "$ref": "#/components/parameters/ClientId"
+          },
+          {
+            "$ref": "#/components/parameters/MockStatus"
+          },
+          {
+            "$ref": "#/components/parameters/MockDelay"
           }
         ],
         "responses": {
@@ -177,6 +186,15 @@
           },
           {
             "$ref": "#/components/parameters/mockDelay"
+          },
+          {
+            "$ref": "#/components/parameters/ClientId"
+          },
+          {
+            "$ref": "#/components/parameters/MockStatus"
+          },
+          {
+            "$ref": "#/components/parameters/MockDelay"
           }
         ],
         "responses": {
@@ -253,7 +271,18 @@
             "$ref": "#/components/responses/RateLimited"
           }
         },
-        "description": "401 code INVALID_CREDENTIALS. After 5 failed attempts for one email within 60 s the endpoint returns 429 TOO_MANY_LOGIN_ATTEMPTS until the window ends, even with the right password. Body that is not a JSON object = 400 INVALID_JSON."
+        "description": "401 code INVALID_CREDENTIALS. After 5 failed attempts for one email within 60 s the endpoint returns 429 TOO_MANY_LOGIN_ATTEMPTS until the window ends, even with the right password. Body that is not a JSON object = 400 INVALID_JSON.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ClientId"
+          },
+          {
+            "$ref": "#/components/parameters/MockStatus"
+          },
+          {
+            "$ref": "#/components/parameters/MockDelay"
+          }
+        ]
       }
     },
     "/account/orders": {
@@ -286,6 +315,15 @@
               "maximum": 20,
               "default": 10
             }
+          },
+          {
+            "$ref": "#/components/parameters/ClientId"
+          },
+          {
+            "$ref": "#/components/parameters/MockStatus"
+          },
+          {
+            "$ref": "#/components/parameters/MockDelay"
           }
         ],
         "responses": {
@@ -341,6 +379,15 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "$ref": "#/components/parameters/ClientId"
+          },
+          {
+            "$ref": "#/components/parameters/MockStatus"
+          },
+          {
+            "$ref": "#/components/parameters/MockDelay"
           }
         ],
         "requestBody": {
@@ -428,7 +475,18 @@
           "429": {
             "$ref": "#/components/responses/RateLimited"
           }
-        }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ClientId"
+          },
+          {
+            "$ref": "#/components/parameters/MockStatus"
+          },
+          {
+            "$ref": "#/components/parameters/MockDelay"
+          }
+        ]
       }
     },
     "/account/addresses/{id}": {
@@ -444,6 +502,15 @@
         "parameters": [
           {
             "$ref": "#/components/parameters/addressId"
+          },
+          {
+            "$ref": "#/components/parameters/ClientId"
+          },
+          {
+            "$ref": "#/components/parameters/MockStatus"
+          },
+          {
+            "$ref": "#/components/parameters/MockDelay"
           }
         ],
         "requestBody": {
@@ -521,6 +588,15 @@
         "parameters": [
           {
             "$ref": "#/components/parameters/addressId"
+          },
+          {
+            "$ref": "#/components/parameters/ClientId"
+          },
+          {
+            "$ref": "#/components/parameters/MockStatus"
+          },
+          {
+            "$ref": "#/components/parameters/MockDelay"
           }
         ],
         "responses": {
@@ -610,6 +686,36 @@
           "type": "integer",
           "minimum": 0,
           "maximum": 5000
+        }
+      },
+      "ClientId": {
+        "name": "X-Client-Id",
+        "in": "header",
+        "required": false,
+        "description": "Optional id of the calling browser tab; the rate limit counts per client id (falls back to the IP address). Sent by the client's Axios module (src/api/product-api.js).",
+        "schema": {
+          "type": "string",
+          "maxLength": 64
+        }
+      },
+      "MockStatus": {
+        "name": "X-Mock-Status",
+        "in": "header",
+        "required": false,
+        "description": "MOCK SERVER ONLY (test hook, not part of the production contract): make this request fail with the given status. Used by the catalog's #demo panel and the tests.",
+        "schema": {
+          "type": "string",
+          "enum": ["400", "404", "429", "500"]
+        }
+      },
+      "MockDelay": {
+        "name": "X-Mock-Delay",
+        "in": "header",
+        "required": false,
+        "description": "MOCK SERVER ONLY (test hook): delay the response by this many milliseconds (max 5000).",
+        "schema": {
+          "type": "string",
+          "pattern": "^\\d{1,4}$"
         }
       }
     },
@@ -825,7 +931,7 @@
           },
           {
             "type": "object",
-            "required": ["description", "specs"],
+            "required": ["description", "images", "specs"],
             "properties": {
               "description": {
                 "type": "string"
@@ -840,6 +946,23 @@
                       "type": "string"
                     },
                     "value": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "images": {
+                "type": "array",
+                "minItems": 1,
+                "description": "Gallery; the first image is the main one",
+                "items": {
+                  "type": "object",
+                  "required": ["url", "alt"],
+                  "properties": {
+                    "url": {
+                      "type": "string"
+                    },
+                    "alt": {
                       "type": "string"
                     }
                   }

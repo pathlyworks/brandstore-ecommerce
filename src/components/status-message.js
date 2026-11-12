@@ -39,7 +39,7 @@ function countdown(button, seconds) {
  */
 function buildBox(info, { onRetry, onReset, resetLabel, headingLevel }) {
   const button = dom.el('button', {
-    className: 'btn btn--primary',
+    className: 'btn btn--secondary',
     text: info.action === 'retry' ? 'Try again' : resetLabel,
     attrs: { type: 'button' },
   });

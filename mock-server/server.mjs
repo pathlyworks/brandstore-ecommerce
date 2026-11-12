@@ -14,8 +14,8 @@ import { pathToFileURL } from 'node:url';
 import {
   BRANDS,
   CATEGORIES,
-  DETAILS,
   PRODUCTS,
+  detailsFor,
   USERS,
   seedAddresses,
   seedOrders,
@@ -165,7 +165,7 @@ export function createApp({ rateLimitMax = 60 } = {}) {
       throw validation([{ field: 'id', message: 'must be lowercase letters, digits and dashes' }]);
     const p = PRODUCTS.find((x) => x.id === id);
     if (!p) throw new HttpError(404, 'NOT_FOUND', `Product "${id}" was not found.`);
-    return [200, { data: { ...p, ...DETAILS } }];
+    return [200, { data: { ...p, ...detailsFor(p) } }];
   }
 
   function login(body) {
@@ -447,12 +447,15 @@ export function start({ port = 4010, rateLimitMax } = {}) {
   });
 }
 
+// No top-level await here: vite.config.js imports this file, and Vite bundles the config as CommonJS
+// (package.json has no "type": "module"), where top-level await is a build error and `npm run dev` cannot start.
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
-  const { url } = await start({
+  start({
     port: Number(process.env.PORT || 4010),
     rateLimitMax: Number(process.env.RATE_LIMIT_MAX || 60),
+  }).then(({ url }) => {
+    console.log(
+      `BrandStore mock API listening on ${url}  (demo login: demo@brandstore.test / Passw0rd!)`,
+    );
   });
-  console.log(
-    `BrandStore mock API listening on ${url}  (demo login: demo@brandstore.test / Passw0rd!)`,
-  );
 }

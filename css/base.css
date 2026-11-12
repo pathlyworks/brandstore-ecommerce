@@ -95,6 +95,10 @@
     --size-header: 4.25rem;
     --size-form-max: 32rem;
     --size-sidebar: 16rem;          /* catalog filter panel column */
+    --size-thumb: 5rem;             /* gallery thumbnails */
+    --size-line-image: 6rem;        /* cart line and saved item images */
+    --size-recent-card: 9rem;       /* recently viewed cards */
+    --size-totals: 20rem;           /* cart order summary column */
     --size-table-min: 38rem;
     --size-icon-bar: 1.25rem;
     --size-icon-gap: 0.375rem;

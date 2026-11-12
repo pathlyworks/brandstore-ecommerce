@@ -1,0 +1,193 @@
+{
+  "description": "Reference cart totals in DOLLARS, computed with Python's Decimal from the catalog prices (independent of the app's integer-cent code). Shipping rule: free from $100.00 subtotal, else $7.99; empty cart 0. Tests compare the app's totals (cents / 100) within a tolerance of $0.005. `formatted` is the reference display string (en-US, USD) for each amount.",
+  "tolerance": 0.005,
+  "cases": [
+    {
+      "name": "empty cart",
+      "lines": [],
+      "expected": {
+        "itemCount": 0,
+        "subtotal": 0.0,
+        "shipping": 0.0,
+        "total": 0.0
+      },
+      "formatted": {
+        "subtotal": "$0.00",
+        "shipping": "$0.00",
+        "total": "$0.00"
+      }
+    },
+    {
+      "name": "one item, below free shipping",
+      "lines": [
+        {
+          "productId": "wool-socks",
+          "quantity": 1
+        }
+      ],
+      "expected": {
+        "itemCount": 1,
+        "subtotal": 24.0,
+        "shipping": 7.99,
+        "total": 31.99
+      },
+      "formatted": {
+        "subtotal": "$24.00",
+        "shipping": "$7.99",
+        "total": "$31.99"
+      }
+    },
+    {
+      "name": "quantity 3 of one item",
+      "lines": [
+        {
+          "productId": "card-wallet",
+          "quantity": 3
+        }
+      ],
+      "expected": {
+        "itemCount": 3,
+        "subtotal": 89.97,
+        "shipping": 7.99,
+        "total": 97.96
+      },
+      "formatted": {
+        "subtotal": "$89.97",
+        "shipping": "$7.99",
+        "total": "$97.96"
+      }
+    },
+    {
+      "name": "just below the $100 threshold",
+      "lines": [
+        {
+          "productId": "merino-tee",
+          "quantity": 1
+        },
+        {
+          "productId": "wool-socks",
+          "quantity": 1
+        },
+        {
+          "productId": "card-wallet",
+          "quantity": 1
+        }
+      ],
+      "expected": {
+        "itemCount": 3,
+        "subtotal": 98.99,
+        "shipping": 7.99,
+        "total": 106.98
+      },
+      "formatted": {
+        "subtotal": "$98.99",
+        "shipping": "$7.99",
+        "total": "$106.98"
+      }
+    },
+    {
+      "name": "just above the $100 threshold",
+      "lines": [
+        {
+          "productId": "merino-tee",
+          "quantity": 1
+        },
+        {
+          "productId": "wool-socks",
+          "quantity": 1
+        },
+        {
+          "productId": "ceramic-mug",
+          "quantity": 1
+        }
+      ],
+      "expected": {
+        "itemCount": 3,
+        "subtotal": 101.0,
+        "shipping": 0.0,
+        "total": 101.0
+      },
+      "formatted": {
+        "subtotal": "$101.00",
+        "shipping": "$0.00",
+        "total": "$101.00"
+      }
+    },
+    {
+      "name": "two lines, one with quantity 2",
+      "lines": [
+        {
+          "productId": "smartwatch",
+          "quantity": 2
+        },
+        {
+          "productId": "headphones-pro",
+          "quantity": 1
+        }
+      ],
+      "expected": {
+        "itemCount": 3,
+        "subtotal": 499.97,
+        "shipping": 0.0,
+        "total": 499.97
+      },
+      "formatted": {
+        "subtotal": "$499.97",
+        "shipping": "$0.00",
+        "total": "$499.97"
+      }
+    },
+    {
+      "name": "maximum quantity on one line (10)",
+      "lines": [
+        {
+          "productId": "headphones-pro",
+          "quantity": 10
+        }
+      ],
+      "expected": {
+        "itemCount": 10,
+        "subtotal": 1999.9,
+        "shipping": 0.0,
+        "total": 1999.9
+      },
+      "formatted": {
+        "subtotal": "$1,999.90",
+        "shipping": "$0.00",
+        "total": "$1,999.90"
+      }
+    },
+    {
+      "name": "four lines, one at its stock limit (desk lamp, stock 3)",
+      "lines": [
+        {
+          "productId": "desk-lamp",
+          "quantity": 3
+        },
+        {
+          "productId": "linen-throw",
+          "quantity": 2
+        },
+        {
+          "productId": "bluetooth-speaker",
+          "quantity": 1
+        },
+        {
+          "productId": "leather-backpack",
+          "quantity": 1
+        }
+      ],
+      "expected": {
+        "itemCount": 7,
+        "subtotal": 499.48,
+        "shipping": 0.0,
+        "total": 499.48
+      },
+      "formatted": {
+        "subtotal": "$499.48",
+        "shipping": "$0.00",
+        "total": "$499.48"
+      }
+    }
+  ]
+}

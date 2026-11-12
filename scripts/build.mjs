@@ -19,6 +19,7 @@ const COPY = [
   'comparison.html',
   'catalog.html',
   'product.html',
+  'cart.html',
   '404.html',
   'css',
   'src',

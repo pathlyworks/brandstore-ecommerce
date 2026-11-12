@@ -1,5 +1,32 @@
 # Changelog
 
+## Unreleased — Phase 2, Task 3, revision 3 (official API)
+### Changed
+- The API address comes from `VITE_API_BASE` (the official TechSphere API, used for grading); without it the app keeps using our mock on `/api` (`VITE_API_URL` still works).
+- New `src/api/techsphere.js`: translates catalog queries, list and product bodies (string prices, `stock_status`, `reviews_count`, specs) and `{ error }` bodies, used by both the fetch client and the Axios module; `X-Client-Id` is not sent to that API (its CORS rules would block the request).
+- Tests: `tests/unit/techsphere.test.js` (10 tests).
+### Fixed
+- `npm run dev` could not start: `vite.config.js` imports `mock-server/server.mjs`, whose top-level `await` is a build error when Vite bundles the config as CommonJS. The mock's start-up now uses `.then()`.
+
+## Unreleased — Phase 2, Task 3, revision 2 (after review)
+### Changed
+- Pure state modules (`state/cart.js`, `saved.js`, `recent.js`) contain no storage, DOM or network; persistence moved to `state/stores.js`; ESLint enforces it. Added `cartReducer` and `cartSummary` (shared by the menu badge and the cart page).
+- Quantity bounds: `validateQuantity` corrects 0, above-stock and above-limit requests and the reason is shown next to the stepper; setting a cart line to 0 removes it.
+- Stored data is repaired on load (bad entries dropped, duplicates merged, defaults for image/currency) and written back.
+- Spec declares `X-Client-Id` and the mock-only test headers; the e2e run audits every `/api` request against the spec.
+- Tests run in Node (`environment: 'node'`); new `npm run test:node` runs them with no installed packages.
+
+## Unreleased — Phase 2, Task 3: product detail, cart, save for later (branch `feature/product-detail-cart-save-for-later`)
+### Added
+- Product page: image gallery, specs table, stock status, quantity stepper limited by stock, add to cart, save for later, recently viewed strip; out-of-stock products cannot be added and say why.
+- `cart.html`: cart lines, totals (free shipping from $100.00, else $7.99), clear cart, saved-for-later list (move to cart / remove), recently viewed; "Cart (n)" in the menu on every page.
+- Cart and saved list as pure functions over state objects (destructuring + spread), persisted in localStorage and rehydrated with validation; recently viewed in sessionStorage (no duplicates, max 6).
+- `src/api/product-api.js`: the one Axios module, with request and response interceptors (Axios 1.19.0 vendored by `npm run vendor`).
+- API: product detail now has a 3-image gallery and real specs.
+- Tests: cart fixture totals, pure-function and storage unit tests, Axios unit and integration tests, 8 cart e2e journeys.
+### Changed
+- Home page product prices use the shared `formatMoney`.
+
 ## Unreleased — Phase 2, Task 2: catalog (branch `feature/catalog-search-filter-sort`)
 ### Added
 - `catalog.html`: live catalog from `GET /products` with debounced search, category/brand/price/rating filters with client-side facet counts, sorting, pagination, loading/empty/error states with retry, and the whole view in the URL (reload, share, Back/Forward).

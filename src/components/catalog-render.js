@@ -7,14 +7,13 @@
  *   #product-filter, #product-grid, #testimonial-grid
  */
 import * as dom from '../utils/dom.js';
+import { formatMoney, toCents } from '../utils/money.js';
 import * as data from '../state/content.js';
 
 const IMAGE_WIDTHS = [400, 800];
 const IMAGE_DISPLAY = { width: 400, height: 300 };
 const IMAGE_SIZES = '(max-width: 767px) 90vw, (max-width: 1023px) 44vw, 380px';
 const ALL_FILTER = 'all';
-
-const priceFormat = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
 
 /* ---------- Products ---------- */
 
@@ -119,7 +118,7 @@ function createProductBody(product) {
     dom.el('span', { className: 'product-card__tag', text: product.category }),
     dom.el('h3', { className: 'product-card__title', text: product.name }),
     dom.el('p', { className: 'product-card__text', text: product.description }),
-    dom.el('p', { className: 'product-card__price', text: priceFormat.format(product.price) }),
+    dom.el('p', { className: 'product-card__price', text: formatMoney(toCents(product.price)) }),
     link,
   ]);
 }

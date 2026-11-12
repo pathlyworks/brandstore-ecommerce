@@ -21,7 +21,7 @@ const server = http.createServer((req, res) => {
 import(require('url').pathToFileURL(path.join(root, 'mock-server', 'server.mjs')).href).then(({ createApp }) => { api = createApp({ rateLimitMax: 100000 }); server.listen(0, listening); });
 async function listening() {
   const base = 'http://localhost:' + server.address().port; const b = await chromium.launch();
-  for (const w of [375, 1280]) for (const pg of ['/', '/comparison.html', '/catalog.html', '/product.html?id=smartwatch', '/no-such-page']) {
+  for (const w of [375, 1280]) for (const pg of ['/', '/comparison.html', '/catalog.html', '/product.html?id=smartwatch', '/cart.html', '/no-such-page']) {
     const p = await b.newPage({ viewport: { width: w, height: 900 } }); const errs = [];
     p.on('console', m => m.type() === 'error' && errs.push(m.text())); p.on('pageerror', e => errs.push(String(e)));
     await p.addInitScript(() => document.addEventListener('securitypolicyviolation', e => (window.__v = window.__v || []).push(e.violatedDirective + ' ' + e.blockedURI)));
