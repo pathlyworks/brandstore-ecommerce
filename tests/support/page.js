@@ -10,8 +10,11 @@
  */
 async function readPage(file) {
   if (typeof process !== 'undefined' && process.versions?.node) {
+    // A path from the project root (where npm runs). Not `new URL(file, import.meta.url)`: Vite rewrites
+    // that pattern into a site URL ("/catalog.html") when Vitest transforms this file.
     const { readFile } = await import('node:fs/promises');
-    return readFile(new URL(`../../${file}`, import.meta.url), 'utf8');
+    const { join } = await import('node:path');
+    return readFile(join(process.cwd(), file), 'utf8');
   }
   // In a real browser (npm run test:browser): the harness keeps the unmocked fetch for this.
   const response = await (globalThis.__unmockedFetch || fetch)(`/${file}`);
