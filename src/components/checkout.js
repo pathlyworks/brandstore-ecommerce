@@ -42,11 +42,11 @@ function update({ button, note }, cart, signedIn) {
   button.setAttribute('aria-disabled', String(!plan.ok));
   note.textContent = !plan.ok
     ? plan.reason === 'empty'
-      ? 'Add a product to your cart to check out.'
+      ? 'Add a product to your cart to check out. Your cart is saved on this device, so nothing is lost meanwhile.'
       : 'Nothing in your cart is in stock.'
     : signedIn
       ? 'Out-of-stock items are left out of the order.'
-      : 'You will be asked to sign in first. Your cart is kept.';
+      : 'You will be asked to sign in first. Your cart is saved on this device, so nothing is lost meanwhile.';
 }
 
 /**

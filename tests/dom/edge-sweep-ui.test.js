@@ -233,7 +233,11 @@ describe('edge 4: empty-cart checkout attempt', () => {
     const { location } = await openCart([], { signedIn: true });
     const button = screen.getByRole('button', { name: 'Place order' });
     expect(button.getAttribute('aria-disabled')).toBe('true'); // still focusable, unlike disabled
-    expect(screen.getByText('Add a product to your cart to check out.')).toBeTruthy();
+    expect(
+      screen.getByText(
+        'Add a product to your cart to check out. Your cart is saved on this device, so nothing is lost meanwhile.',
+      ),
+    ).toBeTruthy();
     click(button);
     await screen.findByText('Your cart is empty. Add a product before you check out.');
     expect(requests).toEqual([]);
