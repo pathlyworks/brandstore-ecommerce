@@ -3,12 +3,13 @@
  *
  * The cart lines on cart.html: image, name, unit price, quantity stepper, line total, "Save for later"
  * and "Remove". An out-of-stock line stays visible, explains itself and is left out of the total.
- * Every change goes through the pure functions in state/cart.js and state/saved.js.
+ * Every change goes through the pure functions in state/cart.js and state/saved.js, and is announced in
+ * the page's live region (role="status") with the new cart total, so screen-reader users hear the result.
  */
 import * as dom from '../utils/dom.js';
 import { formatMoney } from '../utils/money.js';
 import { lineTotal } from '../utils/cart-math.js';
-import { removeFromCart, updateQuantity } from '../state/cart.js';
+import { cartSummary, removeFromCart, updateQuantity } from '../state/cart.js';
 import { moveToSaved } from '../state/saved.js';
 import { createStepper } from './quantity-stepper.js';
 
@@ -51,20 +52,44 @@ function lineInfo(line) {
 }
 
 /**
+ * What a cart change sounds like: "Quantity of Mug is now 3. Cart total: $96.00."
+ * @param {string} text what happened
+ * @param {object} cart the cart state after the change
+ * @returns {string}
+ */
+export function cartUpdateMessage(text, cart) {
+  const { total, itemCount, currency } = cartSummary(cart);
+  const items = `${itemCount} ${itemCount === 1 ? 'item' : 'items'}`;
+  return itemCount
+    ? `${text} Cart total: ${formatMoney(total, currency)} for ${items}.`
+    : `${text} Your cart is empty.`;
+}
+
+/**
  * One cart line.
  * @param {object} line
- * @param {{ cart: object, saved: object }} stores
+ * @param {{ cart: object, saved: object, say?: (text: string) => void }} stores
  * @returns {HTMLLIElement}
  */
-function cartLine(line, { cart, saved }) {
+function cartLine(line, { cart, saved, say = () => {} }) {
   const id = line.productId;
+  const announce = (text) => say(cartUpdateMessage(text, cart.get()));
+  const setQuantity = (quantity) => {
+    cart.apply(updateQuantity, id, quantity);
+    const now = cart.get().lines.find((l) => l.productId === id); // after the reducer's own limits
+    announce(
+      now
+        ? `Quantity of ${line.name} is now ${now.quantity}.`
+        : `${line.name} removed from the cart.`,
+    );
+  };
   const stepper = createStepper({
     id: `qty-${id}`,
     label: `quantity of ${line.name}`,
     value: line.quantity,
     stock: line.stock,
-    onChange: (quantity) => cart.apply(updateQuantity, id, quantity),
-    onZero: () => cart.apply(updateQuantity, id, 0), // typing 0 removes the line (same rule as the reducer)
+    onChange: (quantity) => setQuantity(quantity),
+    onZero: () => setQuantity(0), // typing 0 removes the line (same rule as the reducer)
   });
   stepper.element
     .querySelectorAll('button, input')
@@ -75,8 +100,12 @@ function cartLine(line, { cart, saved }) {
     const next = moveToSaved({ cart: cart.get(), saved: saved.get() }, id);
     saved.set(next.saved);
     cart.apply(() => next.cart);
+    announce(`${line.name} saved for later.`);
   });
-  remove.addEventListener('click', () => cart.apply(removeFromCart, id));
+  remove.addEventListener('click', () => {
+    cart.apply(removeFromCart, id);
+    announce(`${line.name} removed from the cart.`);
+  });
   return dom.el('li', { className: 'cart-line', dataset: { id } }, [
     dom.el('img', {
       className: 'cart-line__image',
@@ -96,7 +125,7 @@ function cartLine(line, { cart, saved }) {
  * Render every line into the list.
  * @param {HTMLUListElement} list
  * @param {object[]} lines
- * @param {{ cart: object, saved: object }} stores
+ * @param {{ cart: object, saved: object, say?: (text: string) => void }} stores
  */
 export function renderCartLines(list, lines, stores) {
   dom.clear(list);
