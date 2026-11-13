@@ -3,7 +3,7 @@
 Plain-language notes on how BrandStore signs people in and what protects them. Each point names the code
 that does it and the check that proves it.
 
-## 1. Where the token is kept, and the risk we accept
+## 1. Token storage: where the token is kept, and the risk we accept
 
 **Choice: `sessionStorage`** (key `brandstore:session:v1`: token, expiry time, name/email/role).
 

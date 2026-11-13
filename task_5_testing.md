@@ -8,7 +8,7 @@ npm install
 npx playwright install chromium   # first time only
 npm test                          # Vitest: unit + integration (Node and jsdom + MSW)
 npm run test:coverage             # the same with coverage; fails below 80% of lines in state/ or utils/
-npm run e2e                       # Playwright Test: the two end-to-end tests (needs Python 3.9+)
+npm run e2e                       # Playwright Test: the two end-to-end tests (Python 3.9+ unless VITE_API_BASE is set)
 npm run e2e:prove                 # proves each e2e test fails when its feature is broken
 ```
 
@@ -19,7 +19,7 @@ npm run e2e:prove                 # proves each e2e test fails when its feature 
 | Unit tests (Vitest) for the pure cart functions, totals, shipping rule, currency formatting, query-string builder, price-string parser, storage utility (corrupted / missing data) | `tests/unit/edge-cases.test.js` (new) plus the existing `cart`, `query-string`, `saved-recent-storage`, `techsphere`, `validate` … files |              174 unit tests (32 new) |
 | Integration tests in jsdom rendering the catalog and cart modules against MSW handlers for 200, empty, 401, 429, 500                                                               | `tests/dom/catalog-ui.test.js`, `tests/dom/cart-ui.test.js`, handlers in `tests/support/api-handlers.js`                                 | 13 UI tests (+ 4 for `utils/dom.js`) |
 | Two Playwright end-to-end tests                                                                                                                                                    | `tests/e2e/specs/catalog-cart.spec.js`, `tests/e2e/specs/account.spec.js`, `playwright.config.mjs`                                       |                                    2 |
-| ≥ 80% line coverage on `state/` and `utils/`                                                                                                                                       | `vitest.config.js` thresholds (per folder); `scripts/coverage-summary.mjs`                                                               |             99.07% / 95.22% (see §5) |
+| ≥ 80% line coverage on `state/` and `utils/`                                                                                                                                       | `vitest.config.js` thresholds (per folder); `scripts/coverage-summary.mjs`                                                               |             99.87% / 95.22% (see §5) |
 | GitHub Actions: lint, unit + integration, e2e on every pull request                                                                                                                | `.github/workflows/ci.yml` (3 jobs)                                                                                                      |                                    — |
 | Each e2e test fails when its feature is broken                                                                                                                                     | `scripts/prove-e2e.mjs` (`npm run e2e:prove`)                                                                                            |                   4 of 4 bugs caught |
 
@@ -87,7 +87,7 @@ API integration tests only, not the jsdom tests, because those need jsdom:
 
 | Folder       | Lines covered |          % |
 | :----------- | ------------: | ---------: |
-| `src/state/` |     742 / 749 | **99.07%** |
+| `src/state/` |     748 / 749 | **99.87%** |
 | `src/utils/` |     796 / 836 | **95.22%** |
 
 The lowest file is `utils/dom.js` at 56.76%: it needs a DOM, so the Node run cannot reach it, and the jsdom
@@ -124,7 +124,7 @@ documented:
 
 | Real tool (CI)        | Used here                                                                                                                                 | Result here                                                              |
 | :-------------------- | :---------------------------------------------------------------------------------------------------------------------------------------- | :----------------------------------------------------------------------- |
-| Vitest (Node)         | Node's test runner + `tests/support/vitest-shim.mjs` (`npm run test:node`)                                                                | **209 of 209** (174 unit, 35 integration)                                |
+| Vitest (Node)         | Node's test runner + `tests/support/vitest-shim.mjs` (`npm run test:node`)                                                                | **215 of 215** (180 unit, 35 integration)                                |
 | Vitest + jsdom + MSW  | the same files in **real Chromium**, with small Vitest and MSW stand-ins that patch `fetch` and `XMLHttpRequest` (`npm run test:browser`) | **17 of 17**; a network request that misses a handler fails the run      |
 | `@playwright/test`    | the same spec files on the Playwright library with a stand-in for `test`/`expect` (`npm run e2e:local`)                                   | **2 of 2**; `E2E_RUNNER=local npm run e2e:prove`: **4 of 4** bugs caught |
 | `@vitest/coverage-v8` | Node's coverage (`npm run coverage:node`)                                                                                                 | §5                                                                       |
@@ -139,3 +139,13 @@ first. The tests avoid APIs that jsdom lacks (layout, `innerText`, `matchMedia`)
 - `npm run e2e` is now Playwright Test (the two specs); the earlier 71-run journey suite is `npm run e2e:journeys`.
 - New scripts: `test:unit`, `test:integration`, `test:coverage`, `test:browser`, `coverage:node`, `e2e:local`, `e2e:prove`.
 - `devDependencies`: `@playwright/test` and `@vitest/coverage-v8` added (Vitest, jsdom, MSW and Playwright were already listed).
+
+## 10. Revision After the First Grading
+
+| Feedback                                             | Cause                                                                                                                                                                            | Change                                                                                                                                                                                                                                                           |
+| :--------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| End-to-end tests did not run in grading              | `playwright.config.mjs` always started the API with Python; the grading machine has Node.js only and already runs the TechSphere API, giving its address in `VITE_API_BASE`      | With `VITE_API_BASE` set, the config uses that API and starts only the site; `tests/e2e/specs/env.js` resets the same API. Without it, nothing changes (Python starts the kit's server). Checked against the grader's API with no Python on the path: **2 of 2** |
+| Tests should fail when a protected feature is broken | Three one-character bugs went unnoticed: a free (price 0) cart line dropped, a valid stored session read as signed out, a store reloading on another key's change in another tab | `tests/unit/state-guards.test.js` (6 tests) pins down each rule; each of those bugs now fails the unit tests                                                                                                                                                     |
+| Tests should query by role, label or text            | The older journey suite found most elements by CSS id or class                                                                                                                   | The catalog, cart and sign-in journeys now use roles, labels and visible text (`getByRole`, `getByLabel`, `getByText`); **71 of 71** runs still pass                                                                                                             |
+| Security note had no "token storage" heading         | The section was titled "Where the token is kept"                                                                                                                                 | Retitled "Token storage: where the token is kept, and the risk we accept" (`docs/SECURITY.md`)                                                                                                                                                                   |
+| Pull request: merged without a GitHub pull request   | The branches were merged locally (`git merge`); there is no GitHub repository for this project yet                                                                               | Not changed here: it needs the repository on GitHub, a pull request opened from `feature/automated-tests-ci` with `docs/PR_TASK5.md` as its description, CI green, then merged on GitHub                                                                         |

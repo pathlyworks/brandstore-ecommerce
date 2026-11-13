@@ -53,11 +53,11 @@ export function registerAuthJourneys({ journey, expect, url, api }) {
     async (page) => {
       await api.reset();
       await page.goto(`${url}/login.html`);
-      for (const id of ['login-email', 'login-password']) {
-        expect((await page.locator(`label[for="${id}"]`).count()) === 1, `${id} has a label`);
+      for (const name of ['Email', 'Password']) {
+        expect((await page.getByLabel(name, { exact: true }).count()) === 1, `${name} has a label`);
       }
       await page.click('#login-form button[type="submit"]');
-      const summary = page.locator('#login-form .form-summary');
+      const summary = page.getByRole('form', { name: 'Sign in' }).getByRole('alert').first();
       expect(await summary.isVisible(), 'error summary shown');
       expect(
         await page.evaluate(() => document.activeElement.classList.contains('form-summary')),
@@ -92,20 +92,18 @@ export function registerAuthJourneys({ journey, expect, url, api }) {
       await page.fill('#login-email', STUDENT.email);
       await page.fill('#login-password', 'not-the-password');
       await page.click('#login-form button[type="submit"]');
-      await page.waitForSelector('#login-form .form-summary:not([hidden])');
+      await page.getByRole('alert').filter({ hasText: 'email or password is incorrect' }).waitFor();
       expect(
-        (await page.locator('#login-form .form-summary').innerText()).includes(
-          'email or password is incorrect',
-        ),
+        (await page
+          .getByRole('alert')
+          .filter({ hasText: 'email or password is incorrect' })
+          .count()) === 1,
         '401 message',
       );
       await page.fill('#login-password', STUDENT.password);
       await page.click('#login-form button[type="submit"]');
       await page.waitForURL(/account\.html/);
-      expect(
-        (await page.locator('#account-greeting').innerText()).includes('Test Student'),
-        'greeting',
-      );
+      expect(await page.getByText(/Signed in as Test Student/).isVisible(), 'greeting');
     },
     undefined,
     opts,
@@ -122,12 +120,11 @@ export function registerAuthJourneys({ journey, expect, url, api }) {
       await page.fill('#reg-confirm', 'other');
       await page.click('#register-form button[type="submit"]');
       expect(
-        (await page.locator('#reg-password-error').innerText()) === 'Use at least 8 characters.',
+        (await page.getByText('Use at least 8 characters.', { exact: true }).count()) === 2, // summary link + field message
         'password rule',
       );
       expect(
-        (await page.locator('#reg-confirm-error').innerText()) ===
-          'The two passwords do not match.',
+        (await page.getByText('The two passwords do not match.', { exact: true }).count()) === 2, // summary link + field message
         'confirmation rule',
       );
       await page.fill('#reg-password', 'LongEnough1');
@@ -138,9 +135,7 @@ export function registerAuthJourneys({ journey, expect, url, api }) {
       await page.click('#register-form button[type="submit"]');
       await page.waitForURL(/account\.html/);
       expect(
-        (await page.locator('#account-greeting').innerText()).includes(
-          'new.shopper@techsphere.test',
-        ),
+        await page.getByText(/Signed in as .*new\.shopper@techsphere\.test/).isVisible(),
         'signed in as the new account',
       );
     },
@@ -153,7 +148,8 @@ export function registerAuthJourneys({ journey, expect, url, api }) {
     async (page) => {
       await api.reset();
       await signIn(page, url);
-      expect((await page.locator('#orders-list .order').count()) === 5, '5 orders on page 1');
+      const orderIds = page.getByRole('region', { name: 'Your orders' }).getByText(/^Order o-\d+$/);
+      expect((await orderIds.count()) === 5, '5 orders on page 1');
       await page.getByRole('button', { name: 'Page 2' }).click();
       await page.waitForFunction(
         () => document.querySelectorAll('#orders-list .order').length === 4,
@@ -169,7 +165,7 @@ export function registerAuthJourneys({ journey, expect, url, api }) {
       await page.fill('#addr-a-1-city', '');
       await page.click('#addresses-list button[type="submit"]');
       expect(
-        (await page.locator('#addr-a-1-city-error').innerText()) === 'Enter the city.',
+        (await page.getByText('Enter the city.', { exact: true }).count()) === 2, // summary link + field message
         'city required',
       );
       await page.fill('#addr-a-1-city', 'New Cairo');
@@ -212,7 +208,7 @@ export function registerAuthJourneys({ journey, expect, url, api }) {
       await page.goto(`${url}/account.html`);
       await page.waitForURL(/login\.html/);
       expect(
-        (await page.locator('#auth-notice').innerText()) ===
+        (await page.getByRole('status').filter({ hasText: /\S/ }).first().innerText()) ===
           'Your session has expired. Please sign in again.',
         'expired notice',
       );
@@ -242,7 +238,9 @@ export function registerAuthJourneys({ journey, expect, url, api }) {
       await page.goto(`${url}/account.html`);
       await page.waitForURL(/login\.html/);
       expect(
-        (await page.locator('#auth-notice').innerText()).includes('expired'),
+        (await page.getByRole('status').filter({ hasText: /\S/ }).first().innerText()).includes(
+          'expired',
+        ),
         'notice after a 401',
       );
       expect(
@@ -259,7 +257,9 @@ export function registerAuthJourneys({ journey, expect, url, api }) {
       await page.waitForSelector('#account-greeting:has-text("Test Student")');
       await page.waitForURL(/login\.html/, { timeout: 6000 });
       expect(
-        (await page.locator('#auth-notice').innerText()).includes('expired'),
+        (await page.getByRole('status').filter({ hasText: /\S/ }).first().innerText()).includes(
+          'expired',
+        ),
         'notice after the timer',
       );
     },
@@ -292,7 +292,9 @@ export function registerAuthJourneys({ journey, expect, url, api }) {
       await page.getByRole('button', { name: 'Sign out' }).click();
       await page.waitForURL(/login\.html/);
       expect(
-        (await page.locator('#auth-notice').innerText()).includes('signed out'),
+        (await page.getByRole('status').filter({ hasText: /\S/ }).first().innerText()).includes(
+          'signed out',
+        ),
         'signed-out notice',
       );
       const stored = await page.evaluate(() => [
@@ -315,7 +317,8 @@ export function registerAuthJourneys({ journey, expect, url, api }) {
       await page.goto(`${url}/account.html`);
       await page.waitForURL(/login\.html/);
       expect(
-        (await page.locator('#auth-notice').innerText()) === 'Please sign in to see your account.',
+        (await page.getByRole('status').filter({ hasText: /\S/ }).first().innerText()) ===
+          'Please sign in to see your account.',
         'account is protected again',
       );
     },

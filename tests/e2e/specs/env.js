@@ -1,5 +1,9 @@
-/** Shared values for the end-to-end specs. The port is the one playwright.config.mjs starts the API on. */
-export const API_URL = `http://127.0.0.1:${process.env.E2E_API_PORT || 4011}`;
+/**
+ * Shared values for the end-to-end specs. The API is the one given in VITE_API_BASE (grading), else the one
+ * playwright.config.mjs starts on E2E_API_PORT.
+ */
+export const API_URL =
+  process.env.VITE_API_BASE || `http://127.0.0.1:${process.env.E2E_API_PORT || 4011}`;
 
 /** The TechSphere API kit's test account. */
 export const ACCOUNT = {

@@ -2,7 +2,8 @@
 
 **`specs/` — Playwright Test (`npm run e2e`).** The two Task 5 tests, run against the official TechSphere API
 (`api/techsphere/server.py`) and the site served with `VITE_API_BASE`, both started by
-`playwright.config.mjs` (needs Python 3.9+; first time: `npx playwright install chromium`):
+`playwright.config.mjs` (needs Python 3.9+ unless `VITE_API_BASE` points at a running TechSphere API, as in grading;
+first time: `npx playwright install chromium`):
 
 - `catalog-cart.spec.js`: filter the catalog by category and add a product to the cart.
 - `account.spec.js`: sign in with a wrong password first, then the right one, and view the orders.

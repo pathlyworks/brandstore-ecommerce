@@ -1,15 +1,19 @@
 /**
  * Playwright Test configuration for the two end-to-end tests in tests/e2e/specs (npm run e2e).
  *
- * The tests run against the official TechSphere API (api/techsphere/server.py from the API kit, the
- * API the app is graded against) and the site served with VITE_API_BASE pointing at it, exactly as
- * in grading. Both servers are started here; Python 3.9+ is needed (set PYTHON if it is not on the
- * PATH as python3, or python on Windows). The server runs with --grader so each test can reset
- * its data (POST /__reset). The older journey suite (npm run e2e:journeys) is separate.
+ * The tests run against the official TechSphere API and the site served with VITE_API_BASE pointing at it.
+ * - VITE_API_BASE set (grading, or a CI job that runs the API itself): that API is used and only the site
+ *   is started here. The grading machine has Node.js only, no Python.
+ * - VITE_API_BASE not set (local runs, our CI): the API kit's server is started too
+ *   (api/techsphere/server.py; Python 3.9+, set PYTHON if it is not on the PATH as python3, or python on
+ *   Windows) with --grader, so each test can reset its data (POST /__reset).
+ * The older journey suite (npm run e2e:journeys) is separate.
  */
 import { defineConfig, devices } from '@playwright/test';
 
 const API_PORT = Number(process.env.E2E_API_PORT || 4011);
+const GIVEN_API = process.env.VITE_API_BASE; // the API is already running (grading)
+const API_URL = GIVEN_API || `http://127.0.0.1:${API_PORT}`;
 const SITE_PORT = Number(process.env.E2E_SITE_PORT || 4173);
 const PYTHON = process.env.PYTHON || (process.platform === 'win32' ? 'python' : 'python3');
 
@@ -30,16 +34,20 @@ export default defineConfig({
   },
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
   webServer: [
-    {
-      command: `${PYTHON} api/techsphere/server.py ${API_PORT} --grader`,
-      url: `http://127.0.0.1:${API_PORT}/categories`,
-      reuseExistingServer: !process.env.CI,
-      timeout: 30_000,
-    },
+    ...(GIVEN_API
+      ? []
+      : [
+          {
+            command: `${PYTHON} api/techsphere/server.py ${API_PORT} --grader`,
+            url: `${API_URL}/categories`,
+            reuseExistingServer: !process.env.CI,
+            timeout: 30_000,
+          },
+        ]),
     {
       command: `node scripts/serve.mjs . ${SITE_PORT}`,
       url: `http://127.0.0.1:${SITE_PORT}/catalog.html`,
-      env: { VITE_API_BASE: `http://127.0.0.1:${API_PORT}` },
+      env: { VITE_API_BASE: API_URL },
       reuseExistingServer: !process.env.CI,
       timeout: 30_000,
     },

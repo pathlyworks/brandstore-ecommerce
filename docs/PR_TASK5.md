@@ -45,7 +45,7 @@ To see one by hand: in `src/state/cart.js` change the first line of `addToCart` 
 ## Coverage (honest number)
 
 Measured locally with Node's coverage (unit + API integration tests; the jsdom tests are not included):
-**`src/state` 99.07% (742/749 lines), `src/utils` 95.22% (796/836 lines)**. The lowest file is `utils/dom.js` at 56.76%,
+**`src/state` 99.87% (748/749 lines), `src/utils` 95.22% (796/836 lines)**. The lowest file is `utils/dom.js` at 56.76%,
 which needs a DOM; `tests/dom/dom-utils.test.js` covers it under Vitest. The CI job prints Vitest's own V8 numbers
 in its summary and fails below 80%.
 

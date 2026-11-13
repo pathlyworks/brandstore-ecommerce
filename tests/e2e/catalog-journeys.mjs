@@ -20,9 +20,19 @@ function expectedIds(name) {
 async function shownIds(page) {
   await page.waitForSelector('#catalog-results[aria-busy="false"]');
   return page
-    .locator('#catalog-results .product-card[data-id]')
-    .evaluateAll((cards) => cards.map((c) => c.dataset.id));
+    .getByRole('region', { name: 'Products' })
+    .getByRole('article')
+    .evaluateAll((cards) => cards.map((c) => c.closest('[data-id]')?.dataset.id).filter(Boolean));
 }
+
+/** The catalog's status line (role="status"). */
+const status = (page) => page.getByRole('region', { name: 'Products' }).getByRole('status');
+
+/** A radio in one of the filter groups, by the start of its label ("Electronics" for "Electronics (4)"). */
+const facet = (page, group, label) =>
+  page
+    .getByRole('group', { name: group })
+    .getByRole('radio', { name: new RegExp(`^${label} \\(`) });
 
 /** Wait until the visible cards equal the fixture, or fail with both lists. */
 async function expectFixture(page, name, check) {
@@ -59,10 +69,7 @@ export function registerCatalogJourneys({ journey, expect, url }) {
     async (page) => {
       await page.goto(`${url}/catalog.html`);
       await expectFixture(page, 'default view, page 1', expect);
-      expect(
-        (await page.locator('#catalog-status').innerText()) === 'Showing 1–6 of 12 products',
-        'status text',
-      );
+      expect((await status(page).innerText()) === 'Showing 1–6 of 12 products', 'status text');
       await page.getByRole('button', { name: 'Next page' }).click();
       await expectFixture(page, 'default view, page 2', expect);
       expect(params(page).page === '2', 'page=2 in the URL');
@@ -77,16 +84,18 @@ export function registerCatalogJourneys({ journey, expect, url }) {
     'catalog: category, brand and sort compose, and a filter change resets the page',
     async (page) => {
       await page.goto(`${url}/catalog.html?page=2`);
-      await page.locator('#facet-category input[value="electronics"]').check();
+      await facet(page, 'Category', 'Electronics').check();
       await expectFixture(page, 'category', expect);
       expect(
         params(page).page === undefined && params(page).category === 'electronics',
         'page reset to 1',
       );
-      await page.locator('#facet-brand input[value="Pulse"]').check();
+      await facet(page, 'Brand', 'Pulse').check();
       await expectFixture(page, 'category + brand', expect);
-      const pulseCount = await page.locator('#facet-brand label', { hasText: 'Pulse' }).innerText();
-      expect(pulseCount.includes('(2)'), `brand facet count: ${pulseCount}`);
+      const pulse = page
+        .getByRole('group', { name: 'Brand' })
+        .getByRole('radio', { name: 'Pulse (2)' });
+      expect((await pulse.count()) === 1, 'brand facet count: Pulse (2)');
     },
   );
 
@@ -96,14 +105,11 @@ export function registerCatalogJourneys({ journey, expect, url }) {
     await page.reload();
     await expectFixture(page, 'brand + sort by price high to low', expect);
     expect(
-      (await page.locator('#catalog-sort').inputValue()) === 'price_desc',
+      (await page.getByRole('combobox', { name: 'Sort by' }).inputValue()) === 'price_desc',
       'sort control restored',
     );
-    expect(
-      await page.locator('#facet-brand input[value="Northline"]').isChecked(),
-      'brand radio restored',
-    );
-    await page.locator('#facet-category input[value="apparel"]').check();
+    expect(await facet(page, 'Brand', 'Northline').isChecked(), 'brand radio restored');
+    await facet(page, 'Category', 'Apparel').check();
     await page.waitForURL(/category=apparel/);
     await page.goBack();
     await expectFixture(page, 'brand + sort by price high to low', expect);
@@ -115,15 +121,19 @@ export function registerCatalogJourneys({ journey, expect, url }) {
     'catalog: price range (dollars to cents) and rating filters; invalid range is refused',
     async (page) => {
       await page.goto(`${url}/catalog.html?sort=price_asc`);
-      await page.fill('#price-min', '30');
-      await page.fill('#price-max', '80');
-      await page.locator('#price-max').press('Tab');
+      const min = page.getByRole('textbox', { name: 'Min' });
+      const max = page.getByRole('textbox', { name: 'Max' });
+      await min.fill('30');
+      await max.fill('80');
+      await max.press('Tab');
       await expectFixture(page, 'price range in cents', expect);
       expect(params(page).minPrice === '3000' && params(page).maxPrice === '8000', 'cents in URL');
-      await page.fill('#price-min', '90');
-      await page.locator('#price-min').press('Tab');
+      await min.fill('90');
+      await min.press('Tab');
       expect(
-        (await page.locator('#price-error').innerText()).includes('minimum'),
+        (
+          await page.getByRole('group', { name: 'Price (USD)' }).getByRole('alert').innerText()
+        ).includes('minimum'),
         'range error shown',
       );
       expect(params(page).minPrice === '3000', 'invalid range not applied');
@@ -142,7 +152,9 @@ export function registerCatalogJourneys({ journey, expect, url }) {
     await page.goto(`${url}/catalog.html`);
     await shownIds(page);
     searches.length = 0;
-    await page.locator('#catalog-search').pressSequentially('wool', { delay: 60 });
+    await page
+      .getByRole('searchbox', { name: 'Search products' })
+      .pressSequentially('wool', { delay: 60 });
     await expectFixture(page, 'search', expect);
     expect(
       searches.length === 1 && searches[0].includes('q=wool'),
@@ -165,8 +177,8 @@ export function registerCatalogJourneys({ journey, expect, url }) {
       });
       await page.goto(`${url}/catalog.html`);
       await shownIds(page);
-      await page.locator('#facet-category input[value="electronics"]').check();
-      await page.locator('#facet-category input[value="apparel"]').check(); // while electronics is still loading
+      await facet(page, 'Category', 'Electronics').check();
+      await facet(page, 'Category', 'Apparel').check(); // while electronics is still loading
       await expectFixture(page, 'another category', expect);
       await page.waitForTimeout(2000); // longer than the slow response: it must not replace the view
       await expectFixture(page, 'another category', expect);
@@ -178,11 +190,11 @@ export function registerCatalogJourneys({ journey, expect, url }) {
   journey('catalog: empty state offers "Clear all filters"', async (page) => {
     await page.goto(`${url}/catalog.html?q=zzz`);
     await page.waitForSelector('.catalog__empty:not([hidden])');
-    expect(
-      (await page.locator('#catalog-status').innerText()).includes('No products'),
-      'empty status',
-    );
-    await page.locator('.catalog__empty button').click();
+    expect((await status(page).innerText()).includes('No products'), 'empty status');
+    await page
+      .getByRole('region', { name: 'Products' })
+      .getByRole('button', { name: 'Clear all filters' })
+      .click();
     await expectFixture(page, 'default view, page 1', expect);
     expect(new URL(page.url()).search === '', 'URL cleared');
   });
@@ -194,10 +206,7 @@ export function registerCatalogJourneys({ journey, expect, url }) {
       await shownIds(page);
       await page.getByRole('button', { name: 'Slow response (3 s)' }).click();
       await page.waitForSelector('#catalog-results[aria-busy="true"] .product-card--placeholder');
-      expect(
-        (await page.locator('#catalog-status').innerText()) === 'Loading products…',
-        'loading status',
-      );
+      expect((await status(page).innerText()) === 'Loading products…', 'loading status');
       await shownIds(page);
       const cases = [
         ['500 server error', 'Error 500', 'Try again'],
@@ -205,21 +214,22 @@ export function registerCatalogJourneys({ journey, expect, url }) {
         ['400 bad request', 'Error 400', 'Clear all filters'],
         ['429 too many requests', 'Error 429', 'Try again in'],
       ];
+      const errorBox = page.getByRole('region', { name: 'Products' }).getByRole('alert');
       for (const [button, code, action] of cases) {
         await page.getByRole('button', { name: button }).click();
         await page.waitForSelector('#catalog-error:not([hidden])');
-        const box = await page.locator('#catalog-error').innerText();
+        const box = await errorBox.innerText();
         expect(box.includes(code) && box.includes(action), `${button}: ${box}`);
       }
       expect(
-        await page.locator('#catalog-error button').isDisabled(),
+        await errorBox.getByRole('button').isDisabled(),
         '429 retry disabled during countdown',
       );
       await page.getByRole('button', { name: '500 server error' }).click();
       await page.waitForSelector('#catalog-error[data-status="500"]');
-      await page.locator('#catalog-error button', { hasText: 'Try again' }).click();
+      await errorBox.getByRole('button', { name: 'Try again' }).click();
       await expectFixture(page, 'default view, page 1', expect);
-      expect(await page.locator('#catalog-error').isHidden(), 'error cleared after retry');
+      expect(await errorBox.isHidden(), 'error cleared after retry');
     },
     'desktop',
     { allowHttpErrors: true },
@@ -230,7 +240,12 @@ export function registerCatalogJourneys({ journey, expect, url }) {
     async (page) => {
       await page.goto(`${url}/catalog.html`);
       await shownIds(page);
-      await page.locator('.product-card__link').first().click();
+      await page
+        .getByRole('region', { name: 'Products' })
+        .getByRole('heading', { level: 3 })
+        .getByRole('link')
+        .first()
+        .click();
       await page.waitForFunction(
         () => document.getElementById('product-heading').textContent === 'Wireless Headphones Pro',
       );

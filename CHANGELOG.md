@@ -1,6 +1,11 @@
 # Changelog
 
 ## Unreleased — Phase 2, Task 5: automated testing and CI (branch `feature/automated-tests-ci`)
+### Revision after grading
+- End-to-end tests use the API given in `VITE_API_BASE` (the grader's) and start Python only when it is not set.
+- `tests/unit/state-guards.test.js`: free and out-of-stock cart lines, a valid stored session, storage events for other keys.
+- Journey suite queries by role, label and text instead of CSS ids and classes.
+- `docs/SECURITY.md`: section 1 is titled "Token storage".
 ### Added
 - `tests/unit/edge-cases.test.js`: zero/negative/invalid quantities, above stock and limit, floating-point totals, price-string parser, currency formatting, awkward query strings, missing/blocked/full/corrupted storage.
 - `tests/dom/`: catalog and cart rendered in jsdom against Mock Service Worker (200, empty, 401, 429, 500, 404), asserting on roles, names and text; `utils/dom.js` tests.
