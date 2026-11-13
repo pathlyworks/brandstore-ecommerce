@@ -54,6 +54,7 @@ export function createApp({ rateLimitMax = 60 } = {}) {
     addresses = seedAddresses();
     users = USERS.map((u) => ({ ...u }));
     sessions.clear();
+    placed = 0;
     buckets.clear();
     loginFailures.clear();
   }
@@ -278,6 +279,30 @@ export function createApp({ rateLimitMax = 60 } = {}) {
     return [200, { data: publicOrder(o) }];
   }
 
+  /** POST /orders: { items: [{ productId, qty }] } -> 201 { data: { id, number, status } } (same body as TechSphere). */
+  let placed = 0;
+  function placeOrder(body) {
+    const items = Array.isArray(body.items) ? body.items : [];
+    if (!items.length)
+      throw validation([{ field: 'items', message: 'must contain at least one item' }]);
+    const errors = [];
+    items.forEach((item, i) => {
+      if (!item || !PRODUCTS.some((p) => p.id === item.productId))
+        errors.push({
+          field: `items[${i}].productId`,
+          message: 'must be a product in the catalog',
+        });
+      if (!item || !Number.isInteger(item.qty) || item.qty < 1)
+        errors.push({ field: `items[${i}].qty`, message: 'must be a whole number of 1 or more' });
+    });
+    if (errors.length) throw validation(errors);
+    placed += 1;
+    return [
+      201,
+      { data: { id: `o-${100 + placed}`, number: `BS-${1000 + placed}`, status: 'processing' } },
+    ];
+  }
+
   function publicOrder(o) {
     const { userId: _userId, ...rest } = o;
     return {
@@ -393,6 +418,7 @@ export function createApp({ rateLimitMax = 60 } = {}) {
       (c) => putAddress(c.user, c.params[0], c.body),
     ],
     ['DELETE', /^\/account\/addresses\/([^/]+)$/, true, (c) => deleteAddress(c.user, c.params[0])],
+    ['POST', /^\/orders$/, true, (c) => placeOrder(c.body)],
   ];
 
   async function readJson(req) {
