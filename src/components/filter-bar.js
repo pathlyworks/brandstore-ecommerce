@@ -32,7 +32,9 @@ function radioOption(name, option, checked) {
 }
 
 /**
- * Rebuild a radio group: "All" plus one option per facet value.
+ * Rebuild a radio group: "All" plus one option per facet value. If a radio in the group had keyboard
+ * focus (a shopper moving through it with the arrow keys), the new radio with the same value gets it
+ * back, so focus never falls to the page body when the counts are refreshed.
  * @param {HTMLElement} container
  * @param {string} name
  * @param {{ value: string, count: number }[]} options
@@ -40,6 +42,7 @@ function radioOption(name, option, checked) {
  * @param {(value: string) => string} label
  */
 function renderGroup(container, name, options, selected, label) {
+  const focused = container.contains(document.activeElement) ? document.activeElement.value : null;
   const total = options.reduce((sum, option) => sum + option.count, 0);
   const all = { value: '', label: 'All', count: total };
   const items = [all, ...options.map((o) => ({ ...o, label: label(o.value) }))];
@@ -47,6 +50,10 @@ function renderGroup(container, name, options, selected, label) {
   items.forEach((option) =>
     container.appendChild(radioOption(name, option, option.value === selected)),
   );
+  if (focused !== null) {
+    const again = [...container.querySelectorAll('input')].find((i) => i.value === focused);
+    (again || container.querySelector('input:checked'))?.focus();
+  }
 }
 
 /**

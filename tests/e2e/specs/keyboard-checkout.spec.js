@@ -52,6 +52,10 @@ test('keyboard: the skip link, filters, products and cart controls are all in th
   await page.keyboard.press('ArrowDown');
   await expect(page.getByRole('radio', { name: /^Audio/ })).toBeChecked();
   await expect(page).toHaveURL(/[?&]category=audio(&|$)/);
+  // The counts are re-rendered after the new results; focus must stay on the radio, not fall to <body>.
+  await expect(page.getByText('Showing 1–6 of 6 products')).toBeVisible();
+  await page.waitForLoadState('networkidle');
+  await expect(page.getByRole('radio', { name: /^Audio/ })).toBeFocused();
 });
 
 test('keyboard only: filter, add to cart, change quantity (announced), sign in and place the order', async ({
