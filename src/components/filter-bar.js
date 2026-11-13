@@ -32,6 +32,30 @@ function radioOption(name, option, checked) {
 }
 
 /**
+ * Same options as on screen: update checked state, availability and counts on the existing radios
+ * instead of replacing them, so the radio being used keeps focus and nothing moves under the pointer.
+ * @param {HTMLElement} container
+ * @param {{ value: string, count: number }[]} items
+ * @param {string} selected
+ * @returns {boolean} false when the options changed and the group must be rebuilt
+ */
+function updateInPlace(container, items, selected) {
+  const inputs = [...container.querySelectorAll('input')];
+  if (inputs.length !== items.length || inputs.some((input, i) => input.value !== items[i].value)) {
+    return false;
+  }
+  inputs.forEach((input, i) => {
+    const checked = items[i].value === selected;
+    if (input.checked !== checked) input.checked = checked;
+    input.disabled = items[i].count === 0 && !checked;
+    const count = input.parentElement.querySelector('.filters__count');
+    const text = `(${items[i].count})`;
+    if (count && count.textContent !== text) count.textContent = text;
+  });
+  return true;
+}
+
+/**
  * Rebuild a radio group: "All" plus one option per facet value. If a radio in the group had keyboard
  * focus (a shopper moving through it with the arrow keys), the new radio with the same value gets it
  * back, so focus never falls to the page body when the counts are refreshed.
@@ -46,6 +70,7 @@ function renderGroup(container, name, options, selected, label) {
   const total = options.reduce((sum, option) => sum + option.count, 0);
   const all = { value: '', label: 'All', count: total };
   const items = [all, ...options.map((o) => ({ ...o, label: label(o.value) }))];
+  if (updateInPlace(container, items, selected)) return;
   dom.clear(container);
   items.forEach((option) =>
     container.appendChild(radioOption(name, option, option.value === selected)),
