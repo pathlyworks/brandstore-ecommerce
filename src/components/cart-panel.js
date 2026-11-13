@@ -66,14 +66,14 @@ export function cartUpdateMessage(text, cart) {
 }
 
 /**
- * One cart line.
+ * The quantity stepper for a line; every change is announced with the new total.
  * @param {object} line
- * @param {{ cart: object, saved: object, say?: (text: string) => void }} stores
- * @returns {HTMLLIElement}
+ * @param {object} cart the cart store
+ * @param {(text: string) => void} announce
+ * @returns {{ element: HTMLElement }}
  */
-function cartLine(line, { cart, saved, say = () => {} }) {
+function lineStepper(line, cart, announce) {
   const id = line.productId;
-  const announce = (text) => say(cartUpdateMessage(text, cart.get()));
   const setQuantity = (quantity) => {
     cart.apply(updateQuantity, id, quantity);
     const now = cart.get().lines.find((l) => l.productId === id); // after the reducer's own limits
@@ -94,6 +94,18 @@ function cartLine(line, { cart, saved, say = () => {} }) {
   stepper.element
     .querySelectorAll('button, input')
     .forEach((el, i) => (el.dataset.focusKey = `qty-${id}-${i}`));
+  return stepper;
+}
+
+/**
+ * "Save for later" and "Remove" for a line, each announced.
+ * @param {object} line
+ * @param {{ cart: object, saved: object }} stores
+ * @param {(text: string) => void} announce
+ * @returns {HTMLButtonElement[]}
+ */
+function lineActions(line, { cart, saved }, announce) {
+  const id = line.productId;
   const save = textButton('Save for later', `save-${id}`, `Save ${line.name} for later`);
   const remove = textButton('Remove', `remove-${id}`, `Remove ${line.name} from the cart`);
   save.addEventListener('click', () => {
@@ -106,18 +118,30 @@ function cartLine(line, { cart, saved, say = () => {} }) {
     cart.apply(removeFromCart, id);
     announce(`${line.name} removed from the cart.`);
   });
-  return dom.el('li', { className: 'cart-line', dataset: { id } }, [
+  return [save, remove];
+}
+
+/**
+ * One cart line.
+ * @param {object} line
+ * @param {{ cart: object, saved: object, say?: (text: string) => void }} stores
+ * @returns {HTMLLIElement}
+ */
+function cartLine(line, stores) {
+  const { cart, say = () => {} } = stores;
+  const announce = (text) => say(cartUpdateMessage(text, cart.get()));
+  return dom.el('li', { className: 'cart-line', dataset: { id: line.productId } }, [
     dom.el('img', {
       className: 'cart-line__image',
       attrs: { src: line.image.url, alt: '', width: 120, height: 90 },
     }),
     lineInfo(line),
-    line.stock > 0 ? stepper.element : '',
+    line.stock > 0 ? lineStepper(line, cart, announce).element : '',
     dom.el('p', {
       className: 'cart-line__total',
       text: formatMoney(lineTotal(line), line.currency),
     }),
-    dom.el('div', { className: 'cart-line__actions' }, [save, remove]),
+    dom.el('div', { className: 'cart-line__actions' }, lineActions(line, stores, announce)),
   ]);
 }
 

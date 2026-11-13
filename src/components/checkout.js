@@ -50,50 +50,53 @@ function update({ button, note }, cart, signedIn) {
 }
 
 /**
+ * Press "Place order": stop an empty cart, send signed-out shoppers to sign in, else POST /orders.
+ * @param {{ button: HTMLButtonElement }} parts
+ * @param {object} deps see mountCheckout
+ * @param {() => void} refresh
+ */
+async function submit(parts, deps, refresh) {
+  const { cart, session, flags, location, createHttp, say } = deps;
+  const ctx = { session, flags, location };
+  if (parts.button.getAttribute('aria-busy') === 'true') return; // no double orders
+  const plan = checkoutItems(cart.get());
+  if (!plan.ok) return say(plan.message); // empty cart: nothing is sent
+  if (!session.isSignedIn()) {
+    return sendToLogin(ctx, session.isExpired() ? NOTICES.expired : NOTICES.checkout, 'cart.html');
+  }
+  const http = createHttp(() => sendToLogin(ctx, NOTICES.expired, 'cart.html'));
+  parts.button.setAttribute('aria-busy', 'true');
+  parts.button.textContent = 'Placing order…';
+  try {
+    const order = await placeOrder(http, plan.items);
+    cart.apply(clearCart);
+    say(
+      `Thank you! Order ${order.number} is placed and is ${order.status}. You can follow it on your account page.`,
+    );
+  } catch (error) {
+    if (error?.status !== 401) say(checkoutErrorText(error)); // 401: already on the way to sign-in
+  } finally {
+    parts.button.removeAttribute('aria-busy');
+    parts.button.textContent = 'Place order';
+    refresh();
+  }
+}
+
+/**
  * @param {HTMLElement} panel the order summary (#cart-totals)
  * @param {{ cart: object, session: object, flags: object, location: Location,
  *   createHttp: (onUnauthorized: () => void) => object, say: (text: string) => void }} deps
  * @returns {{ placeOrder: () => Promise<void> }} the click handler, for tests
  */
-export function mountCheckout(panel, { cart, session, flags, location, createHttp, say }) {
+export function mountCheckout(panel, deps) {
   const parts = {
     button: panel.querySelector('#checkout'),
     note: panel.querySelector('#checkout-note'),
   };
-  const ctx = { session, flags, location };
-  const refresh = () => update(parts, cart.get(), session.isSignedIn());
-  cart.subscribe(refresh);
+  const refresh = () => update(parts, deps.cart.get(), deps.session.isSignedIn());
+  deps.cart.subscribe(refresh);
   refresh();
-
-  async function submit() {
-    if (parts.button.getAttribute('aria-busy') === 'true') return; // no double orders
-    const plan = checkoutItems(cart.get());
-    if (!plan.ok) return say(plan.message); // empty cart: nothing is sent
-    if (!session.isSignedIn()) {
-      return sendToLogin(
-        ctx,
-        session.isExpired() ? NOTICES.expired : NOTICES.checkout,
-        'cart.html',
-      );
-    }
-    const http = createHttp(() => sendToLogin(ctx, NOTICES.expired, 'cart.html'));
-    parts.button.setAttribute('aria-busy', 'true');
-    parts.button.textContent = 'Placing order…';
-    try {
-      const order = await placeOrder(http, plan.items);
-      cart.apply(clearCart);
-      say(
-        `Thank you! Order ${order.number} is placed and is ${order.status}. You can follow it on your account page.`,
-      );
-    } catch (error) {
-      if (error?.status !== 401) say(checkoutErrorText(error)); // 401: already on the way to sign-in
-    } finally {
-      parts.button.removeAttribute('aria-busy');
-      parts.button.textContent = 'Place order';
-      refresh();
-    }
-  }
-
-  parts.button.addEventListener('click', submit);
-  return { placeOrder: submit };
+  const placeOrderNow = () => submit(parts, deps, refresh);
+  parts.button.addEventListener('click', placeOrderNow);
+  return { placeOrder: placeOrderNow };
 }
