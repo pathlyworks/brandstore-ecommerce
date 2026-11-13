@@ -90,6 +90,7 @@ export default [
       'playwright-report/',
       'test-results/',
       'coverage/',
+      'lighthouse/',
     ],
   },
   {

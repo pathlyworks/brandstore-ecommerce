@@ -26,3 +26,6 @@ package-lock.json
 src/vendor/
 # The official TechSphere kit, copied as published (server.py regenerates fixtures/).
 api/techsphere/
+
+# Lighthouse reports from scripts/lighthouse.mjs (copies kept in docs/lighthouse/)
+lighthouse/
