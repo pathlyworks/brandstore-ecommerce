@@ -24,7 +24,7 @@ const engines = (process.env.E2E_BROWSERS || 'chromium').split(',');
 const VIEWPORTS = { desktop: { width: 1280, height: 900 }, phone: { width: 375, height: 740 } };
 // High API rate limit: the journeys send far more than 60 requests a minute from one address.
 const dir = process.env.E2E_DIST ? 'dist' : '.';
-const site = await serve(dir, 0, { apiRateLimit: 100000, env: {} }); // our mock on /api
+const site = await serve(dir, 0, { apiRateLimit: 100000, env: { VITE_API_URL: '/api' } }); // our mock on /api
 // The official TechSphere API (api/techsphere/server.py) and a second copy of the site pointed at it
 // with VITE_API_BASE, for the sign-in and account journeys (skipped when Python is not installed).
 const techsphere = findPython() ? await startTechsphere() : null;

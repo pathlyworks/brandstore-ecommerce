@@ -12,6 +12,15 @@ const TYPES = {
 };
 const servers = new Map();
 
+// The QA checks use our own mock on /api: src/config.js is served with VITE_API_URL=/api (as
+// scripts/serve.mjs and Vite would inject it), so no Python or TechSphere server is needed.
+const MARKER = 'const env = import.meta.env ?? {};';
+function fileBody(f) {
+  const body = fs.readFileSync(f);
+  if (!f.endsWith(path.join('src', 'config.js'))) return body;
+  return body.toString('utf8').replace(MARKER, `const env = { ...(import.meta.env ?? {}), VITE_API_URL: '/api' };`);
+}
+
 /** Returns the base URL (no trailing slash) of a server for `root`. */
 function siteBase(root) {
   if (servers.has(root)) return servers.get(root);
@@ -27,7 +36,7 @@ function siteBase(root) {
         return res.end(fs.readFileSync(path.join(root, '404.html')));
       }
       res.writeHead(200, { 'Content-Type': TYPES[path.extname(f)] || 'application/octet-stream' });
-      res.end(fs.readFileSync(f));
+      res.end(fileBody(f));
     });
     server.listen(0, '127.0.0.1', () => { server.unref(); resolve('http://127.0.0.1:' + server.address().port); });
   }));
@@ -35,4 +44,4 @@ function siteBase(root) {
   return ready;
 }
 
-module.exports = { siteBase };
+module.exports = { siteBase, fileBody };

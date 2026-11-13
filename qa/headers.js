@@ -16,7 +16,7 @@ const server = http.createServer((req, res) => {
   let u = decodeURIComponent(req.url.split('?')[0]); if (u.endsWith('/')) u += 'index.html';
   let f = path.join(root, u); const known = f.startsWith(root) && fs.existsSync(f) && fs.statSync(f).isFile() && !u.startsWith('/.git');
   if (!known) { f = path.join(root, '404.html'); res.writeHead(404, { ...headers, 'Content-Type': types['.html'] }); return res.end(fs.readFileSync(f)); }
-  res.writeHead(200, { ...headers, 'Content-Type': types[path.extname(f)] || 'application/octet-stream' }); res.end(fs.readFileSync(f));
+  res.writeHead(200, { ...headers, 'Content-Type': types[path.extname(f)] || 'application/octet-stream' }); res.end(require('./serve').fileBody(f));
 });
 import(require('url').pathToFileURL(path.join(root, 'mock-server', 'server.mjs')).href).then(({ createApp }) => { api = createApp({ rateLimitMax: 100000 }); server.listen(0, listening); });
 async function listening() {
