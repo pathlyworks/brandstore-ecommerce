@@ -19,6 +19,7 @@ const CATEGORIES = ['performance', 'accessibility', 'best-practices', 'seo'];
 mkdirSync(out, { recursive: true });
 
 const rows = [];
+const notes = [];
 for (const formFactor of ['mobile', 'desktop']) {
   for (const [name, path] of Object.entries(PAGES)) {
     const file = join(out, `${name}-${formFactor}`);
@@ -41,6 +42,22 @@ for (const formFactor of ['mobile', 'desktop']) {
     const report = JSON.parse(readFileSync(`${file}.report.json`, 'utf8'));
     const score = (c) => Math.round((report.categories[c]?.score ?? 0) * 100);
     rows.push([name, formFactor, ...CATEGORIES.map(score)]);
+    const metrics = [
+      'first-contentful-paint',
+      'largest-contentful-paint',
+      'total-blocking-time',
+      'cumulative-layout-shift',
+    ]
+      .map((id) => `${report.audits[id]?.title}: ${report.audits[id]?.displayValue ?? 'n/a'}`)
+      .join('; ');
+    const weak = Object.values(report.audits)
+      .filter(
+        (a) => typeof a.score === 'number' && a.score < 0.9 && a.scoreDisplayMode !== 'informative',
+      )
+      .map((a) => `${a.title}${a.displayValue ? ` (${a.displayValue})` : ''}`);
+    notes.push(
+      `- **${name}, ${formFactor}:** ${metrics}. Below 90: ${weak.length ? weak.join('; ') : 'none'}.`,
+    );
   }
 }
 
@@ -49,7 +66,7 @@ const table = [
   '| :--- | :--- | ---: | ---: | ---: | ---: |',
   ...rows.map((r) => `| ${r.join(' | ')} |`),
 ].join('\n');
-const summary = `## Lighthouse 12.6.1 (${new Date().toISOString().slice(0, 10)})\n\n${table}\n`;
+const summary = `## Lighthouse 12.6.1 (${new Date().toISOString().slice(0, 10)})\n\n${table}\n\n### Metrics and audits below 90\n\n${notes.join('\n')}\n`;
 writeFileSync(join(out, 'summary.md'), summary);
 console.log(summary);
 if (process.env.GITHUB_STEP_SUMMARY) appendFileSync(process.env.GITHUB_STEP_SUMMARY, summary);
