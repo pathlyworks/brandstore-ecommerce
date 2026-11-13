@@ -143,11 +143,12 @@ export function checkoutItems(cart) {
 /**
  * The numbers the cart page AND the menu badge show (one function, so they always agree).
  * @param {CartState} cart
+ * @param {string} [fallbackCurrency] for an empty cart (the API's currency: EGP on TechSphere)
  * @returns {import('../utils/cart-math.js').CartTotals & { currency: string }}
  */
-export function cartSummary(cart) {
+export function cartSummary(cart, fallbackCurrency = 'USD') {
   const lines = availableLines(cart);
-  return { ...totals(lines), currency: lines[0]?.currency || 'USD' };
+  return { ...totals(lines), currency: lines[0]?.currency || fallbackCurrency };
 }
 
 /**

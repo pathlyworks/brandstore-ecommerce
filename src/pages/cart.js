@@ -1,7 +1,7 @@
 /** src/pages/cart.js — entry module for cart.html (cart, saved for later, recently viewed). */
 import { start } from '../main.js';
 import * as storage from '../utils/storage.js';
-import { API_BASE_URL, API_DIALECT } from '../config.js';
+import { API_BASE_URL, API_DIALECT, DEFAULT_CURRENCY } from '../config.js';
 import { createHttpClient } from '../api/http.js';
 import { createProductApi } from '../api/product-api.js';
 import {
@@ -35,6 +35,7 @@ start([
         cart,
         saved,
         recent,
+        currency: DEFAULT_CURRENCY,
       }),
   ],
   [

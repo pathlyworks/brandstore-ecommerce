@@ -24,5 +24,8 @@ export const API_BASE_URL = env.VITE_API_BASE ?? (ownMock ? env.VITE_API_URL : T
 /** Which API format the app talks to: 'techsphere' (the default) or 'brandstore' (our mock, VITE_API_URL). */
 export const API_DIALECT = ownMock ? 'brandstore' : 'techsphere';
 
+/** The currency an empty cart shows its zero totals in (the TechSphere API prices in EGP). */
+export const DEFAULT_CURRENCY = API_DIALECT === 'techsphere' ? 'EGP' : 'USD';
+
 /** Wait after the last keystroke before searching. */
 export const SEARCH_DEBOUNCE_MS = 300;
