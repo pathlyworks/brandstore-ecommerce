@@ -1,0 +1,19 @@
+{
+  "request": {
+    "method": "PUT",
+    "path": "/account/addresses/a-1",
+    "body": {
+      "city": "Cairo",
+      "street": "90th Street, New Cairo"
+    }
+  },
+  "status": 200,
+  "contentType": "application/json; charset=utf-8",
+  "retryAfter": null,
+  "note": "",
+  "body": {
+    "id": "a-1",
+    "city": "Cairo",
+    "street": "90th Street, New Cairo"
+  }
+}

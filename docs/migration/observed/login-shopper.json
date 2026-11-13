@@ -1,0 +1,22 @@
+{
+  "request": {
+    "method": "POST",
+    "path": "/auth/login",
+    "body": {
+      "email": "student@techsphere.test",
+      "password": "***"
+    }
+  },
+  "status": 200,
+  "contentType": "application/json; charset=utf-8",
+  "retryAfter": null,
+  "note": "",
+  "body": {
+    "token": "eyJhbGciOiJub25lIn0.eyJzdWIiOiAic3R1ZGVudEB0ZWNoc3BoZXJlLnRlc3QiLCAicm9sZSI6ICJzaG9wcGVyIiwgImV4cCI6IDE3OTQ1OTE3MDB9.mock",
+    "user": {
+      "email": "student@techsphere.test",
+      "name": "Test Student",
+      "role": "shopper"
+    }
+  }
+}

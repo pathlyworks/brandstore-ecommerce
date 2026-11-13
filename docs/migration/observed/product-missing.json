@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "GET",
+    "path": "/products/p-999"
+  },
+  "status": 404,
+  "contentType": "application/json; charset=utf-8",
+  "retryAfter": null,
+  "note": "404",
+  "body": {
+    "error": "Product not found"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "request": {
+    "method": "GET",
+    "path": "/account/addresses"
+  },
+  "status": 200,
+  "contentType": "application/json; charset=utf-8",
+  "retryAfter": null,
+  "note": "",
+  "body": [
+    {
+      "id": "a-1",
+      "city": "Cairo",
+      "street": "90th Street"
+    },
+    {
+      "id": "a-2",
+      "city": "Giza",
+      "street": "Pyramids Rd"
+    }
+  ]
+}

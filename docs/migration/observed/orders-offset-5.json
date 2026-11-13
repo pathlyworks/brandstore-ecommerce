@@ -1,0 +1,65 @@
+{
+  "request": {
+    "method": "GET",
+    "path": "/account/orders?offset=5&limit=5"
+  },
+  "status": 200,
+  "contentType": "application/json; charset=utf-8",
+  "retryAfter": null,
+  "note": "",
+  "body": {
+    "items": [
+      {
+        "id": "o-006",
+        "items": [
+          {
+            "productId": "p-006",
+            "qty": 1
+          }
+        ],
+        "total": 2999,
+        "status": "shipped",
+        "created_at": "02/08/2026"
+      },
+      {
+        "id": "o-007",
+        "items": [
+          {
+            "productId": "p-007",
+            "qty": 1
+          }
+        ],
+        "total": 3099,
+        "status": "delivered",
+        "created_at": "2026-08-03T18:40:00+03:00"
+      },
+      {
+        "id": "o-008",
+        "items": [
+          {
+            "productId": "p-008",
+            "qty": 1
+          }
+        ],
+        "total": 3199,
+        "status": "cancelled",
+        "created_at": "4 Aug 2026"
+      },
+      {
+        "id": "o-009",
+        "items": [
+          {
+            "productId": "p-009",
+            "qty": 1
+          }
+        ],
+        "total": 3299,
+        "status": "processing",
+        "created_at": "2026-08-01T10:15:00Z"
+      }
+    ],
+    "offset": 5,
+    "limit": 5,
+    "total": 9
+  }
+}

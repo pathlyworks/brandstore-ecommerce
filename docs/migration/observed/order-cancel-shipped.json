@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "PATCH",
+    "path": "/account/orders/o-002/cancel"
+  },
+  "status": 409,
+  "contentType": "application/json; charset=utf-8",
+  "retryAfter": null,
+  "note": "409",
+  "body": {
+    "error": "Order is shipped"
+  }
+}

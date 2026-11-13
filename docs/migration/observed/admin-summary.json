@@ -1,0 +1,18 @@
+{
+  "request": {
+    "method": "GET",
+    "path": "/admin/summary"
+  },
+  "status": 200,
+  "contentType": "application/json; charset=utf-8",
+  "retryAfter": null,
+  "note": "",
+  "body": {
+    "revenue": 17594,
+    "orders": 9,
+    "products": 24,
+    "out_of_stock": 5,
+    "currency": "EGP",
+    "note": "Revenue is gross sales, not profit"
+  }
+}

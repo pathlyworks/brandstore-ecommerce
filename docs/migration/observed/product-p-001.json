@@ -1,0 +1,25 @@
+{
+  "request": {
+    "method": "GET",
+    "path": "/products/p-001"
+  },
+  "status": 200,
+  "contentType": "application/json; charset=utf-8",
+  "retryAfter": null,
+  "note": "",
+  "body": {
+    "id": "p-001",
+    "name": "Nova Laptops 1",
+    "brand": "Nova",
+    "category": "laptops",
+    "price": 32999,
+    "currency": "EGP",
+    "stock_status": "in_stock",
+    "rating": 3,
+    "reviews_count": 10,
+    "images": ["/images/p-001.webp"],
+    "specs": {
+      "warranty": "1 year"
+    }
+  }
+}

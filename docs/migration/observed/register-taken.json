@@ -1,0 +1,17 @@
+{
+  "request": {
+    "method": "POST",
+    "path": "/auth/register",
+    "body": {
+      "email": "student@techsphere.test",
+      "password": "***"
+    }
+  },
+  "status": 400,
+  "contentType": "application/json; charset=utf-8",
+  "retryAfter": null,
+  "note": "",
+  "body": {
+    "error": "Email already registered"
+  }
+}

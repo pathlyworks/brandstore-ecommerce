@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "GET",
+    "path": "/admin/summary"
+  },
+  "status": 403,
+  "contentType": "application/json; charset=utf-8",
+  "retryAfter": null,
+  "note": "403",
+  "body": {
+    "error": "Forbidden"
+  }
+}

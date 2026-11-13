@@ -1,0 +1,137 @@
+{
+  "request": {
+    "method": "GET",
+    "path": "/products?page=2"
+  },
+  "status": 200,
+  "contentType": "application/json; charset=utf-8",
+  "retryAfter": null,
+  "note": "",
+  "body": {
+    "items": [
+      {
+        "id": "p-009",
+        "name": "Nova Laptops 9",
+        "brand": "Nova",
+        "category": "laptops",
+        "price": 34999,
+        "currency": "EGP",
+        "stock_status": "in_stock",
+        "rating": 4.5,
+        "reviews_count": 34,
+        "images": ["/images/p-009.webp"],
+        "specs": {
+          "warranty": "1 year"
+        }
+      },
+      {
+        "id": "p-010",
+        "name": "Pulse Phones 10",
+        "brand": "Pulse",
+        "category": "phones",
+        "price": 14499,
+        "currency": "EGP",
+        "stock_status": "low",
+        "rating": 5,
+        "reviews_count": 37,
+        "images": ["/images/missing-9.webp"],
+        "specs": {
+          "warranty": "1 year"
+        }
+      },
+      {
+        "id": "p-011",
+        "name": "Orbit Audio 11",
+        "brand": "Orbit",
+        "category": "audio",
+        "price": 4499,
+        "currency": "EGP",
+        "stock_status": "in_stock",
+        "rating": 3,
+        "reviews_count": 40,
+        "images": ["/images/p-011.webp"],
+        "specs": {
+          "warranty": "1 year"
+        }
+      },
+      {
+        "id": "p-012",
+        "name": "Lumen Smart Home 12",
+        "brand": "Lumen",
+        "category": "smart-home",
+        "price": 6999,
+        "currency": "EGP",
+        "stock_status": "out_of_stock",
+        "rating": 3.5,
+        "reviews_count": 43,
+        "images": ["/images/p-012.webp"],
+        "specs": {
+          "warranty": "1 year"
+        }
+      },
+      {
+        "id": "p-013",
+        "name": "Nova Laptops 13",
+        "brand": "Nova",
+        "category": "laptops",
+        "price": 35999,
+        "currency": "EGP",
+        "stock_status": "in_stock",
+        "rating": 4,
+        "reviews_count": 46,
+        "images": ["/images/p-013.webp"],
+        "specs": {
+          "warranty": "1 year"
+        }
+      },
+      {
+        "id": "p-014",
+        "name": "Pulse Phones 14",
+        "brand": "Pulse",
+        "category": "phones",
+        "price": "EGP 15,499",
+        "currency": "EGP",
+        "stock_status": "low",
+        "rating": 4.5,
+        "reviews_count": 49,
+        "images": ["/images/p-014.webp"],
+        "specs": {
+          "warranty": "1 year"
+        }
+      },
+      {
+        "id": "p-015",
+        "name": "Orbit Audio 15",
+        "brand": "Orbit",
+        "category": "audio",
+        "price": 5499,
+        "currency": "EGP",
+        "stock_status": "in_stock",
+        "rating": 5,
+        "reviews_count": 52,
+        "images": ["/images/p-015.webp"],
+        "specs": {
+          "warranty": "1 year"
+        }
+      },
+      {
+        "id": "p-016",
+        "name": "Lumen Smart Home 16",
+        "brand": "Lumen",
+        "category": "smart-home",
+        "price": 7999,
+        "currency": "EGP",
+        "stock_status": "out_of_stock",
+        "rating": 3,
+        "reviews_count": 55,
+        "images": ["/images/p-016.webp"],
+        "specs": {
+          "warranty": "1 year"
+        }
+      }
+    ],
+    "page": 2,
+    "total_pages": 3,
+    "total": 24
+  }
+}

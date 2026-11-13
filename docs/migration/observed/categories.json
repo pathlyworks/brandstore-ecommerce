@@ -1,0 +1,28 @@
+{
+  "request": {
+    "method": "GET",
+    "path": "/categories"
+  },
+  "status": 200,
+  "contentType": "application/json; charset=utf-8",
+  "retryAfter": null,
+  "note": "",
+  "body": [
+    {
+      "id": "laptops",
+      "name": "Laptops"
+    },
+    {
+      "id": "phones",
+      "name": "Phones"
+    },
+    {
+      "id": "audio",
+      "name": "Audio"
+    },
+    {
+      "id": "smart-home",
+      "name": "Smart home"
+    }
+  ]
+}

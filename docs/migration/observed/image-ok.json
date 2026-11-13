@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "GET",
+    "path": "/images/p-001.webp"
+  },
+  "status": 200,
+  "contentType": "application/json; charset=utf-8",
+  "retryAfter": null,
+  "note": "JSON, not image bytes",
+  "body": {
+    "image": "/images/p-001.webp"
+  }
+}

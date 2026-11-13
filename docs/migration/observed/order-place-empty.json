@@ -1,0 +1,16 @@
+{
+  "request": {
+    "method": "POST",
+    "path": "/orders",
+    "body": {
+      "items": []
+    }
+  },
+  "status": 400,
+  "contentType": "application/json; charset=utf-8",
+  "retryAfter": null,
+  "note": "400",
+  "body": {
+    "error": "items are required"
+  }
+}

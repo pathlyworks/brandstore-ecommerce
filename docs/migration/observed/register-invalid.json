@@ -1,0 +1,17 @@
+{
+  "request": {
+    "method": "POST",
+    "path": "/auth/register",
+    "body": {
+      "email": "nope",
+      "password": "***"
+    }
+  },
+  "status": 400,
+  "contentType": "application/json; charset=utf-8",
+  "retryAfter": null,
+  "note": "",
+  "body": {
+    "error": "Invalid email or password (min 8 characters)"
+  }
+}

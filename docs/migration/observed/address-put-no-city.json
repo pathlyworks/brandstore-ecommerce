@@ -1,0 +1,16 @@
+{
+  "request": {
+    "method": "PUT",
+    "path": "/account/addresses/a-1",
+    "body": {
+      "street": "x"
+    }
+  },
+  "status": 400,
+  "contentType": "application/json; charset=utf-8",
+  "retryAfter": null,
+  "note": "400",
+  "body": {
+    "error": "city is required"
+  }
+}

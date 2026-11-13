@@ -1,0 +1,106 @@
+{
+  "request": {
+    "method": "GET",
+    "path": "/products?search=orbit&locale=ar"
+  },
+  "status": 200,
+  "contentType": "application/json; charset=utf-8",
+  "retryAfter": null,
+  "note": "",
+  "body": {
+    "items": [
+      {
+        "id": "p-003",
+        "name": "أوربت 3",
+        "brand": "Orbit",
+        "category": "audio",
+        "price": 2499,
+        "currency": "EGP",
+        "stock_status": "in_stock",
+        "rating": 4,
+        "reviews_count": 16,
+        "images": ["/images/p-003.webp"],
+        "specs": {
+          "warranty": "1 year"
+        }
+      },
+      {
+        "id": "p-007",
+        "name": "أوربت 7",
+        "brand": "Orbit",
+        "category": "audio",
+        "price": 3499,
+        "currency": "EGP",
+        "rating": 3.5,
+        "reviews_count": 28,
+        "images": ["/images/p-007.webp"],
+        "specs": {
+          "warranty": "1 year"
+        }
+      },
+      {
+        "id": "p-011",
+        "name": "أوربت 11",
+        "brand": "Orbit",
+        "category": "audio",
+        "price": 4499,
+        "currency": "EGP",
+        "stock_status": "in_stock",
+        "rating": 3,
+        "reviews_count": 40,
+        "images": ["/images/p-011.webp"],
+        "specs": {
+          "warranty": "1 year"
+        }
+      },
+      {
+        "id": "p-015",
+        "name": "أوربت 15",
+        "brand": "Orbit",
+        "category": "audio",
+        "price": 5499,
+        "currency": "EGP",
+        "stock_status": "in_stock",
+        "rating": 5,
+        "reviews_count": 52,
+        "images": ["/images/p-015.webp"],
+        "specs": {
+          "warranty": "1 year"
+        }
+      },
+      {
+        "id": "p-019",
+        "name": "أوربت 19",
+        "brand": "Orbit",
+        "category": "audio",
+        "price": 6499,
+        "currency": "EGP",
+        "stock_status": "in_stock",
+        "rating": 4.5,
+        "reviews_count": 64,
+        "images": ["/images/p-019.webp"],
+        "specs": {
+          "warranty": "1 year"
+        }
+      },
+      {
+        "id": "p-023",
+        "name": "أوربت 23",
+        "brand": "Orbit",
+        "category": "audio",
+        "price": 7499,
+        "currency": "EGP",
+        "stock_status": "in_stock",
+        "rating": 4,
+        "reviews_count": 76,
+        "images": ["/images/p-023.webp"],
+        "specs": {
+          "warranty": "1 year"
+        }
+      }
+    ],
+    "page": 1,
+    "total_pages": 1,
+    "total": 6
+  }
+}
