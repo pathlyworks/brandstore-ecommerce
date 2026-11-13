@@ -208,7 +208,16 @@ export default [
   },
   {
     files: ['**/*.mjs', 'tests/**/*.js', 'vite.config.js', 'vitest.config.js'],
-    languageOptions: { sourceType: 'module', globals: { ...node, ...browser } },
+    languageOptions: {
+      sourceType: 'module',
+      globals: {
+        ...node,
+        ...browser,
+        EventTarget: 'readonly',
+        XMLHttpRequest: 'readonly',
+        DOMParser: 'readonly',
+      },
+    },
   },
 
   {

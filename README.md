@@ -3,11 +3,11 @@
 A storefront built in plain HTML, CSS and ES-module JavaScript against a REST API (OpenAPI spec in
 `api/openapi.json`, mock server in `mock-server/`). No framework; Vite is used only as a dev server.
 
-## Current task: Phase 2, Task 4 — Login, JWT-protected account area, web security basics
+## Current task: Phase 2, Task 5 — Automated testing (unit, integration, end-to-end) and CI
 
-**Deliverable document: [`task_4_auth.md`](task_4_auth.md)** (what was built, 400/401 handling, token flow and
-expiry, logout, QA matrix, deviations). **Security note: [`docs/SECURITY.md`](docs/SECURITY.md)** (token storage
-trade-off, XSS, CORS, CSRF, proposed CSP). Branch: `feature/auth-account-security`.
+**Deliverable document: [`task_5_testing.md`](task_5_testing.md)** (edge-case unit tests, jsdom + MSW
+integration tests, the two Playwright tests and the proof that they catch broken features, coverage, CI,
+bugs found). Pull request text: [`docs/PR_TASK5.md`](docs/PR_TASK5.md). Branch: `feature/automated-tests-ci`.
 
 ## Run it
 
@@ -45,12 +45,19 @@ Planned (designed in `task_1_api_plan.md`, not built yet): checkout.
 | `start` / `preview` | Zero-dependency server for the project / for `dist/`, with the mock API on `/api` |
 | `build` | Copy the site into `dist/` and check every page reference and module import |
 | `lint` / `format` / `format:check` | ESLint / Prettier |
-| `test` | Vitest unit and integration tests (`tests/unit`, `tests/integration`) |
-| `test:node` | The same test files on Node's built-in runner (no packages needed) |
-| `e2e` | Browser journeys with Playwright (`tests/e2e`) |
+| `test` | Vitest: unit (`tests/unit`), API integration (`tests/integration`) and UI integration in jsdom with MSW (`tests/dom`) |
+| `test:unit` / `test:integration` | Only the unit / only the integration tests |
+| `test:coverage` | `test` with V8 coverage of `src/state` and `src/utils`; fails below 80% of lines |
+| `e2e` | Playwright Test: the two end-to-end tests in `tests/e2e/specs` against the TechSphere API (needs Python 3.9+) |
+| `e2e:prove` | Breaks four features one at a time in a temporary copy and checks the matching e2e test fails |
+| `e2e:journeys` | The older journey suite (`tests/e2e/run.mjs`, desktop and phone) |
+| `test:node`, `test:browser`, `e2e:local`, `coverage:node` | Stand-ins for machines without the packages: Node's test runner, real Chromium for the jsdom tests, the Playwright library for the specs, Node's coverage |
 | `mock` / `contract` | Mock API alone on port 4010 / check the API against the spec |
 | `vendor` | Copy Axios's ES-module build into `src/vendor/` (no bundler) |
 | `qa`, `branch:check`, `check` | Phase 1 QA, branch-name rule, everything |
+
+CI (`.github/workflows/ci.yml`) runs lint, build and contract; the unit and integration tests with coverage;
+and the end-to-end tests on every pull request.
 
 ## Deploy
 
@@ -62,6 +69,7 @@ have no API there.)
 
 | Task | Document |
 | :--- | :--- |
+| Phase 2, Task 5 | `task_5_testing.md`, `docs/PR_TASK5.md` |
 | Phase 2, Task 4 | `task_4_auth.md`, `docs/SECURITY.md` |
 | Phase 2, Task 3 | `task_3_cart.md` |
 | Phase 2, Task 2 | `task_2_catalog.md` |

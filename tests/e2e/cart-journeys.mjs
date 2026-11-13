@@ -15,11 +15,21 @@ async function openProduct(page, url, id) {
   await page.waitForSelector('#product-body[aria-busy="false"]');
 }
 
+/** The product page's quantity stepper (a spinbutton labelled "Quantity"). */
+const quantityBox = (page) => page.getByRole('spinbutton', { name: 'Quantity' });
+
+/** The cart lines and the saved items (the two lists on the cart page). */
+const cartLines = (page) =>
+  page.getByRole('region', { name: 'Items in your cart' }).getByRole('listitem');
+const savedItems = (page) =>
+  page.getByRole('region', { name: /^Saved for later/ }).getByRole('listitem');
+
 /** Add a product to the cart with a quantity typed into the stepper. */
 async function addProduct(page, url, id, quantity) {
   await openProduct(page, url, id);
-  await page.fill('#quantity', String(quantity));
-  await page.locator('#quantity').press('Tab');
+  const stepper = quantityBox(page);
+  await stepper.fill(String(quantity));
+  await stepper.press('Tab');
   await page.getByRole('button', { name: 'Add to cart' }).click();
   await page.waitForSelector('.purchase__message:has-text("Added")');
 }
@@ -48,7 +58,8 @@ async function expectTotals(page, fixture, expect) {
 /** Ids shown in the recently viewed strip. */
 async function recentIds(page) {
   return page
-    .locator('#recently-viewed:not([hidden]) .recent__link')
+    .getByRole('region', { name: 'Recently viewed' })
+    .getByRole('link')
     .evaluateAll((links) => links.map((a) => a.dataset.id));
 }
 
@@ -61,18 +72,21 @@ export function registerCartJourneys({ journey, expect, url }) {
     async (page) => {
       await openProduct(page, url, 'desk-lamp');
       expect(
-        (await page.locator('.purchase__stock').innerText()) === 'Only 3 left in stock',
+        await page.getByText('Only 3 left in stock', { exact: true }).isVisible(),
         'stock status',
       );
       await page.getByRole('button', { name: /Show image 2 of 3/ }).click();
       expect(
-        (await page.locator('.gallery__main').getAttribute('src')).includes('gallery-side'),
+        (await page.getByRole('article').getByRole('img').first().getAttribute('src')).includes(
+          'gallery-side',
+        ),
         'gallery switched',
       );
-      expect((await page.locator('.specs tbody tr').count()) >= 4, 'specs table rows');
-      await page.fill('#quantity', '99');
-      await page.locator('#quantity').press('Tab');
-      expect((await page.inputValue('#quantity')) === '3', 'quantity clamped to stock');
+      const specs = page.getByRole('table', { name: 'Specifications' }).getByRole('row');
+      expect((await specs.count()) >= 4, 'specs table rows');
+      await quantityBox(page).fill('99');
+      await quantityBox(page).press('Tab');
+      expect((await quantityBox(page).inputValue()) === '3', 'quantity clamped to stock');
       expect(
         await page.getByRole('button', { name: 'Increase quantity' }).isDisabled(),
         '+ disabled at the limit',
@@ -89,7 +103,15 @@ export function registerCartJourneys({ journey, expect, url }) {
       'button points at the reason',
     );
     expect(
-      (await page.locator('#stock-note').innerText()).includes('out of stock'),
+      (
+        await page
+          .getByRole('article')
+          .getByText(/out of stock/i)
+          .first()
+          .innerText()
+      )
+        .toLowerCase()
+        .includes('out of stock'),
       'reason shown',
     );
     await page.getByRole('button', { name: 'Save for later' }).click();
@@ -97,7 +119,9 @@ export function registerCartJourneys({ journey, expect, url }) {
     const move = page.getByRole('button', { name: 'Move USB-C 7-in-1 Hub to the cart' });
     expect(await move.isDisabled(), 'Move to cart disabled for the saved item');
     expect(
-      (await page.locator('.saved-item .cart-line__warning').innerText()).includes('Out of stock'),
+      (await savedItems(page)
+        .getByText(/Out of stock/)
+        .count()) === 1,
       'saved item explains',
     );
   });
@@ -150,20 +174,19 @@ export function registerCartJourneys({ journey, expect, url }) {
       await page.goto(`${url}/cart.html`);
       await page.getByRole('button', { name: 'Save Ergonomic Smartwatch for later' }).click();
       expect(
-        (await page.locator('.cart-line').count()) === 0 &&
-          (await page.locator('.saved-item').count()) === 1,
+        (await cartLines(page).count()) === 0 && (await savedItems(page).count()) === 1,
         'moved to saved',
       );
       await page.reload();
       expect(
-        (await page.locator('#saved-count').innerText()) === '(1)',
+        await page.getByRole('heading', { name: 'Saved for later (1)' }).isVisible(),
         'saved list survives refresh',
       );
       await page.getByRole('button', { name: 'Move Ergonomic Smartwatch to the cart' }).click();
-      expect((await page.locator('.cart-line input').inputValue()) === '2', 'quantity kept');
+      expect((await cartLines(page).getByRole('spinbutton').inputValue()) === '2', 'quantity kept');
       await page.getByRole('button', { name: 'Clear cart' }).click();
       await page.reload();
-      expect((await page.locator('.cart-line').count()) === 0, 'cart cleared');
+      expect((await cartLines(page).count()) === 0, 'cart cleared');
     },
   );
 
@@ -193,7 +216,10 @@ export function registerCartJourneys({ journey, expect, url }) {
       );
       const other = await page.context().newPage(); // a new tab: sessionStorage is per tab
       await other.goto(`${url}/cart.html`);
-      expect(await other.locator('#recently-viewed').isHidden(), 'not shared with a new tab');
+      expect(
+        await other.getByRole('region', { name: 'Recently viewed' }).isHidden(),
+        'not shared with a new tab',
+      );
       await other.close();
     },
   );
@@ -215,7 +241,10 @@ export function registerCartJourneys({ journey, expect, url }) {
     await page.reload();
     await page.waitForSelector('#cart-message:has-text("is now")');
     expect(
-      (await page.locator('#cart-message').innerText()).includes('now $149.99 (was $1.00)'),
+      await page
+        .getByRole('status')
+        .getByText(/now \$149\.99 \(was \$1\.00\)/)
+        .isVisible(),
       'message',
     );
     expect(
@@ -245,27 +274,34 @@ export function registerCartJourneys({ journey, expect, url }) {
     'cart: quantity bounds — 0, above the stock and above the limit are corrected and explained',
     async (page) => {
       await openProduct(page, url, 'desk-lamp');
-      const hint = page.locator('#quantity-hint');
+      const box = quantityBox(page);
       for (const [typed, shown, message] of [
         ['0', '1', 'The smallest quantity is 1.'],
         ['99', '3', 'Only 3 in stock.'],
       ]) {
-        await page.fill('#quantity', typed);
-        await page.locator('#quantity').press('Tab');
+        await box.fill(typed);
+        await box.press('Tab');
         expect(
-          (await page.inputValue('#quantity')) === shown && (await hint.innerText()) === message,
-          `${typed}: ${await hint.innerText()}`,
+          (await box.inputValue()) === shown &&
+            (await page.getByText(message, { exact: true }).isVisible()),
+          `${typed}: quantity ${await box.inputValue()}, message "${message}"`,
         );
       }
       await openProduct(page, url, 'headphones-pro');
-      await page.fill('#quantity', '25');
-      await page.locator('#quantity').press('Tab');
-      expect((await page.inputValue('#quantity')) === '10', 'limit 10');
-      expect((await hint.innerText()) === 'The limit is 10 per item.', 'limit message');
+      await box.fill('25');
+      await box.press('Tab');
+      expect((await box.inputValue()) === '10', 'limit 10');
+      expect(
+        await page.getByText('The limit is 10 per item.', { exact: true }).isVisible(),
+        'limit message',
+      );
       await page.getByRole('button', { name: 'Add to cart' }).click();
       await page.goto(`${url}/cart.html`);
-      await page.fill('#qty-headphones-pro', '0');
-      await page.locator('#qty-headphones-pro').press('Tab');
+      const lineQty = page
+        .getByRole('group', { name: 'quantity of Wireless Headphones Pro' })
+        .getByRole('spinbutton');
+      await lineQty.fill('0');
+      await lineQty.press('Tab');
       await page.waitForSelector('#cart-empty:not([hidden])');
       expect(
         (await page.locator('[data-cart-link]').textContent()) === 'Cart (0)',
@@ -337,8 +373,7 @@ export function registerCartJourneys({ journey, expect, url }) {
       }
       await page.goto(`${url}/cart.html`);
       expect(
-        (await page.locator('.cart-line').count()) === 1 &&
-          (await page.locator('.saved-item').count()) === 0,
+        (await cartLines(page).count()) === 1 && (await savedItems(page).count()) === 0,
         'repaired lists',
       );
       const stored = await page.evaluate(

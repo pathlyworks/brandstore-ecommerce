@@ -64,15 +64,22 @@ async function refreshFromCatalog(api, { cart, saved, say }) {
   const ids = [...new Set([...cart.get().lines, ...saved.get().items].map((l) => l.productId))];
   const results = await Promise.allSettled(ids.map((id) => fetchProduct(api, id)));
   const products = {};
+  let unchecked = 0;
   results.forEach((r, i) => {
     if (r.status === 'fulfilled') products[ids[i]] = r.value;
-    else if (r.reason?.status === 404) products[ids[i]] = null; // no longer sold
+    else if (r.reason?.status === 404)
+      products[ids[i]] = null; // no longer sold
+    else unchecked += 1; // 401, 429, 5xx, network: keep the stored line as it is
   });
   const changes = priceChanges(cart.get().lines, products);
   cart.apply(syncWithCatalog, products);
   const items = syncLines(saved.get().items, products);
   if (items !== saved.get().items) saved.set({ ...saved.get(), items });
-  if (changes.length) {
+  if (unchecked) {
+    say(
+      'We could not check the latest prices and stock right now, so the cart shows the prices from when you added the items. Reload the page to try again.',
+    );
+  } else if (changes.length) {
     say(
       changes
         .map(
@@ -87,6 +94,7 @@ async function refreshFromCatalog(api, { cart, saved, say }) {
 /**
  * @param {HTMLElement} root the cart page's <main>
  * @param {{ api: object, cart: object, saved: object, recent: object }} deps (stores from state/stores.js)
+ * @returns {{ ready: Promise<void> }} settles when the price and stock check has finished
  */
 export function mount(root, { api, cart, saved, recent }) {
   const message = dom.qs('#cart-message', root);
@@ -99,5 +107,5 @@ export function mount(root, { api, cart, saved, recent }) {
   saved.subscribe(() => render(root, ctx));
   render(root, ctx);
   renderRecent(dom.qs('#recently-viewed', root), recent.get());
-  refreshFromCatalog(api, ctx);
+  return { ready: refreshFromCatalog(api, ctx) };
 }

@@ -9,15 +9,24 @@ const CATEGORY_LABELS = {
   apparel: 'Apparel',
   'home-living': 'Home & Living',
   accessories: 'Accessories',
+  // TechSphere API categories
+  laptops: 'Laptops',
+  phones: 'Phones',
+  audio: 'Audio',
+  'smart-home': 'Smart Home',
 };
 
 /**
- * "home-living" -> "Home & Living"; unknown slugs are shown as they are.
+ * "home-living" -> "Home & Living"; an unknown slug is made readable: "garden-tools" -> "Garden tools".
  * @param {string} slug
  * @returns {string}
  */
 export function categoryLabel(slug) {
-  return CATEGORY_LABELS[slug] || slug;
+  if (CATEGORY_LABELS[slug]) return CATEGORY_LABELS[slug];
+  const words = String(slug ?? '')
+    .replace(/[-_]+/g, ' ')
+    .trim();
+  return words.charAt(0).toUpperCase() + words.slice(1);
 }
 
 /**
