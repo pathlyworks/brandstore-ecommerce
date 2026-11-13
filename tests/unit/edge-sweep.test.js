@@ -35,15 +35,13 @@ describe('edge 1: missing product image', () => {
     }
   });
 
-  it("an image path from the API is loaded from the API's address", () => {
-    const product = toAppProduct(
-      { ...base, images: ['/images/missing-9.webp', 'https://cdn.example/x.webp'] },
-      'http://localhost:4010',
-    );
-    expect(product.images.map((i) => i.url)).toEqual([
-      'http://localhost:4010/images/missing-9.webp',
-      'https://cdn.example/x.webp',
-    ]);
+  it('absolute image URLs are used; paths to the API placeholder endpoint (/images/...) are not loaded', () => {
+    const product = toAppProduct({
+      ...base,
+      images: ['/images/missing-9.webp', 'https://cdn.example/x.webp'],
+    });
+    expect(product.images).toEqual([{ url: 'https://cdn.example/x.webp', alt: 'Pulse Phones 10' }]);
+    expect(toAppProduct({ ...base, images: ['/images/p-010.webp'] }).image.url).toBe(PLACEHOLDER);
   });
 
   it('a product without a name still has alt text', () => {

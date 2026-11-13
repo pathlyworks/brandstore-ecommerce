@@ -26,7 +26,7 @@ import { mount as mountCatalog } from '../../src/components/catalog-view.js';
 import { mount as mountCart } from '../../src/components/cart-view.js';
 import { mountCheckout } from '../../src/components/checkout.js';
 import { loadPage } from '../support/page.js';
-import { click, screen, waitFor, within } from '../support/screen.js';
+import { click, screen, valueOfTerm, waitFor, within } from '../support/screen.js';
 
 /** A TechSphere-format API on the test page's origin. */
 const TS = `${globalThis.location?.origin ?? 'http://localhost:3000'}/ts`;
@@ -52,7 +52,7 @@ function tsProduct(n, extra = {}) {
 }
 const ALL = Array.from({ length: 24 }, (_, i) => tsProduct(i + 1));
 ALL[9] = tsProduct(10, {
-  images: ['/images/missing-9.webp'],
+  images: [`${TS}/images/missing-9.webp`], // an absolute image URL that answers 404
   specs: { warranty: null, weight: null },
 });
 
@@ -142,7 +142,11 @@ async function openCart(lines, { signedIn = false } = {}) {
       this.replaced.push(url);
     },
   };
-  const view = mountCart(document.getElementById('main-content'), { api: productApi(), ...s });
+  const view = mountCart(document.getElementById('main-content'), {
+    api: productApi(),
+    ...s,
+    currency: 'EGP', // as pages/cart.js passes for the TechSphere API
+  });
   const checkout = mountCheckout(document.getElementById('cart-totals'), {
     cart: s.cart,
     session,
@@ -166,7 +170,7 @@ describe('edge 1: missing product image', () => {
     await openProduct('p-010');
     await screen.findByRole('heading', { level: 1, name: 'Nova Laptops 10' });
     const image = screen.getByRole('img', { name: 'Nova Laptops 10' });
-    // jsdom does not load images, so the test fires the error a browser fires on the API's 404.
+    // jsdom does not load images, so the test fires the error a browser fires on the 404.
     // (In a real browser the 404 has usually arrived already and the placeholder is in place.)
     if (image.getAttribute('src') !== PLACEHOLDER_SRC) {
       expect(image.getAttribute('src')).toBe(`${TS}/images/missing-9.webp`);
@@ -175,6 +179,12 @@ describe('edge 1: missing product image', () => {
     expect(image.getAttribute('src')).toBe(PLACEHOLDER_SRC);
     expect(image.getAttribute('alt')).toBe('Nova Laptops 10');
     image.dispatchEvent(new Event('error')); // even if the placeholder failed, no loop
+    expect(image.getAttribute('src')).toBe(PLACEHOLDER_SRC);
+  });
+
+  it("a path to the API's /images endpoint (a JSON placeholder, per the spec) is not loaded at all", async () => {
+    await openProduct('p-001');
+    const image = await screen.findByRole('img', { name: 'Nova Laptops 1' });
     expect(image.getAttribute('src')).toBe(PLACEHOLDER_SRC);
   });
 });
@@ -242,6 +252,7 @@ describe('edge 4: empty-cart checkout attempt', () => {
     await screen.findByText('Your cart is empty. Add a product before you check out.');
     expect(requests).toEqual([]);
     expect(location.replaced).toEqual([]);
+    expect(valueOfTerm('Total').replace(/\s/g, ' ')).toBe('EGP 0.00'); // the API's currency, not $
   });
 
   it('a cart emptied in another tab is caught when "Place order" is pressed', async () => {

@@ -103,8 +103,6 @@ export async function fetchProduct(api, id, { signal, headers } = {}) {
   const path = ENDPOINTS.product(id);
   const response = await api.get(path, { signal, headers });
   const body =
-    api.defaults.dialect === 'techsphere'
-      ? fromTechsphere(path, response.data, api.defaults.baseURL)
-      : response.data;
+    api.defaults.dialect === 'techsphere' ? fromTechsphere(path, response.data) : response.data;
   return body.data;
 }

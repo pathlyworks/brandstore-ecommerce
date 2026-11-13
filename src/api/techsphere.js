@@ -28,15 +28,15 @@ const PLACEHOLDER = '/assets/product-placeholder.svg';
 export const TECHSPHERE_PAGE_SIZE = 8;
 
 /**
- * An image path from the API ("/images/p-001.webp") as a URL the browser can load: relative to the API.
+ * An image from the API as a URL the browser can load, or null. Absolute URLs (a CDN) are used as they are.
+ * Root-relative paths ("/images/p-001.webp") point at the API's own /images endpoint, which the spec says
+ * answers a JSON placeholder, not image bytes: loading them would cost one request per card (8 a page,
+ * towards the rate limit) and show nothing, so the placeholder is used instead (docs/HANDOFF.md, gap 6).
  * @param {string} src
- * @param {string} apiBase e.g. "http://localhost:4010"
- * @returns {string}
+ * @returns {string | null}
  */
-function imageUrl(src, apiBase) {
-  if (/^https?:\/\//i.test(src) || !/^https?:\/\//i.test(apiBase || '')) return src;
-  // Joined to the API's address (keeping any path prefix such as /v1); see docs/HANDOFF.md, gap 6.
-  return `${apiBase.replace(/\/+$/, '')}/${src.replace(/^\/+/, '')}`;
+function imageUrl(src) {
+  return /^https?:\/\//i.test(src) ? src : null;
 }
 
 /**
@@ -73,19 +73,22 @@ export function priceToCents(price) {
 }
 
 /**
- * A TechSphere product in the app's product shape. Images are resolved against the API address; a product
- * without a usable image gets the placeholder (and a broken image link falls back to it in the browser).
+ * A TechSphere product in the app's product shape. A product without a loadable image (none, empty, not
+ * text, or a path to the API's placeholder endpoint) gets our placeholder; an image URL that fails to load
+ * in the browser falls back to it too (utils/dom.js).
  * @param {any} p
- * @param {string} [apiBase] the API's base URL, for image paths
  * @returns {object}
  */
-export function toAppProduct(p, apiBase = '') {
+export function toAppProduct(p) {
   const status = p.stock_status in STOCK_FOR_STATUS ? p.stock_status : 'in_stock';
   const name = String(p.name ?? 'Unnamed product');
   const sources = Array.isArray(p.images)
     ? p.images.filter((src) => typeof src === 'string' && src.trim())
     : [];
-  const images = sources.map((src) => ({ url: imageUrl(src.trim(), apiBase), alt: name }));
+  const images = sources
+    .map((src) => imageUrl(src.trim()))
+    .filter(Boolean)
+    .map((url) => ({ url, alt: name }));
   if (!images.length) images.push({ url: PLACEHOLDER, alt: name });
   return {
     id: p.id,
@@ -184,15 +187,14 @@ export function toTechsphereRequest(path) {
  * `limit`. Both become the app's { page, limit, total, totalPages }.
  * @param {string} path the request path (without the base URL)
  * @param {any} body
- * @param {string} [apiBase] the API's base URL, for image paths
  * @returns {any}
  */
-export function fromTechsphere(path, body, apiBase = '') {
+export function fromTechsphere(path, body) {
   const base = path.split('?')[0];
   if (base === '/products' && body && Array.isArray(body.items)) {
     const total = Number(body.total) || 0;
     return {
-      data: body.items.map((p) => toAppProduct(p, apiBase)),
+      data: body.items.map((p) => toAppProduct(p)),
       meta: {
         page: Math.max(1, Number(body.page) || 1),
         // The page size, not the number of items on this page: on a short last page (4 of 8) the
@@ -206,8 +208,7 @@ export function fromTechsphere(path, body, apiBase = '') {
       },
     };
   }
-  if (/^\/products\/[^/]+$/.test(base) && body && body.id)
-    return { data: toAppProduct(body, apiBase) };
+  if (/^\/products\/[^/]+$/.test(base) && body && body.id) return { data: toAppProduct(body) };
   if (base === '/account/orders' && body && Array.isArray(body.items)) {
     const limit = body.limit || 5;
     return {

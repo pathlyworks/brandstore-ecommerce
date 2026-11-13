@@ -11,14 +11,28 @@ const PLACEHOLDER = '/assets/product-placeholder.svg';
 
 test.beforeEach(async ({ request }) => resetApi(request));
 
-test('edge 1: a product whose image is missing (API 404) shows the placeholder, not a broken image', async ({
+test('edge 1: a missing product image shows the placeholder, never a broken image', async ({
   page,
 }) => {
+  // As the kit serves it: p-010's image path points at a missing file.
   await page.goto('/product.html?id=p-010');
   const image = page.getByRole('img', { name: 'Pulse Phones 10' }).first();
   await expect(image).toHaveAttribute('src', PLACEHOLDER);
-  await expect(image).toHaveJSProperty('complete', true);
-  expect(await image.evaluate((img) => img.naturalWidth)).toBeGreaterThan(0);
+  expect(await image.evaluate((img) => img.complete && img.naturalWidth > 0)).toBe(true);
+
+  // An absolute image URL that answers 404 (as a CDN would): the browser's error swaps in the placeholder.
+  await page.route(`${API_URL}/products/p-010`, async (route) => {
+    const response = await route.fetch();
+    const product = await response.json();
+    await route.fulfill({
+      response,
+      json: { ...product, images: [`${API_URL}/images/missing-9.webp`] },
+    });
+  });
+  await page.reload();
+  await expect(image).toHaveAttribute('src', PLACEHOLDER);
+  await expect(image).toHaveAttribute('data-image-missing', 'true');
+  expect(await image.evaluate((img) => img.complete && img.naturalWidth > 0)).toBe(true);
 });
 
 test('edge 2: null specification fields are left out, never shown as "null"', async ({ page }) => {
