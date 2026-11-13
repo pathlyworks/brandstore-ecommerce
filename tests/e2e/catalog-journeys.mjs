@@ -131,9 +131,9 @@ export function registerCatalogJourneys({ journey, expect, url }) {
       await min.fill('90');
       await min.press('Tab');
       expect(
-        (
-          await page.getByRole('group', { name: 'Price (USD)' }).getByRole('alert').innerText()
-        ).includes('minimum'),
+        (await page.getByRole('group', { name: 'Price' }).getByRole('alert').innerText()).includes(
+          'minimum',
+        ),
         'range error shown',
       );
       expect(params(page).minPrice === '3000', 'invalid range not applied');
