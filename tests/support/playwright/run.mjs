@@ -10,7 +10,7 @@ import { readdir } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { chromium, request as apiRequest } from 'playwright';
-import { registry } from './shim.mjs';
+import { registry, Skip } from './shim.mjs';
 
 const { default: config } = await import(pathToFileURL(resolve('playwright.config.mjs')).href);
 registry.timeout = config.expect?.timeout ?? 5000;
@@ -66,11 +66,16 @@ for (const file of files) {
     const request = await apiRequest.newContext({ baseURL: config.use.baseURL });
     const started = Date.now();
     try {
-      for (const hook of hooks) await hook({ page, request });
-      await t.fn({ page, request });
+      const fixtures = { page, request, browserName: 'chromium' };
+      for (const hook of hooks) await hook(fixtures);
+      await t.fn(fixtures);
       passed += 1;
       console.log(`  ✓ ${file} › ${t.name} (${Date.now() - started} ms)`);
     } catch (error) {
+      if (error instanceof Skip) {
+        console.log(`  - ${file} › ${t.name} (skipped: ${error.message})`);
+        continue;
+      }
       failed += 1;
       console.log(
         `  ✘ ${file} › ${t.name}\n      ${String(error.message).split('\n').slice(0, 4).join('\n      ')}`,

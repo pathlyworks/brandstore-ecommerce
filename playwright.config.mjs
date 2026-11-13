@@ -15,6 +15,13 @@ const API_PORT = Number(process.env.E2E_API_PORT || 4011);
 const GIVEN_API = process.env.VITE_API_BASE; // the API is already running (grading)
 const API_URL = GIVEN_API || `http://127.0.0.1:${API_PORT}`;
 const SITE_PORT = Number(process.env.E2E_SITE_PORT || 4173);
+// Chromium by default (the grading machine and most laptops have it). The cross-browser smoke test in CI
+// runs the same specs with E2E_BROWSERS=firefox or webkit (or "all").
+const DEVICE = { chromium: 'Desktop Chrome', firefox: 'Desktop Firefox', webkit: 'Desktop Safari' };
+const BROWSERS = (process.env.E2E_BROWSERS || 'chromium')
+  .split(',')
+  .flatMap((b) => (b.trim() === 'all' ? Object.keys(DEVICE) : [b.trim()]))
+  .filter((b) => b in DEVICE);
 const PYTHON = process.env.PYTHON || (process.platform === 'win32' ? 'python' : 'python3');
 
 export default defineConfig({
@@ -32,7 +39,7 @@ export default defineConfig({
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
   },
-  projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
+  projects: BROWSERS.map((name) => ({ name, use: { ...devices[DEVICE[name]] } })),
   webServer: [
     ...(GIVEN_API
       ? []

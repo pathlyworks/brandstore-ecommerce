@@ -17,6 +17,11 @@ export function test(name, fn) {
 }
 test.beforeEach = (fn) => registry.beforeEach.push(fn);
 test.describe = (name, fn) => fn();
+/** test.skip(condition, reason) inside a test: stop it and report it as skipped. */
+export class Skip extends Error {}
+test.skip = (condition, reason) => {
+  if (condition) throw new Skip(reason);
+};
 
 const norm = (s) =>
   String(s ?? '')
@@ -83,6 +88,28 @@ function locatorAssertions(locator, negate) {
         const text = norm(await (await single(locator)).textContent());
         return [fits(text, want), `${locator} text "${text}" != "${want}"`];
       }, negate),
+    toHaveAttribute: (name, want) =>
+      poll(async () => {
+        const value = await (await single(locator)).getAttribute(name);
+        return [fits(value ?? '', want), `${locator} [${name}] is "${value}", expected "${want}"`];
+      }, negate),
+    toHaveJSProperty: (name, want) =>
+      poll(async () => {
+        const value = await (await single(locator)).evaluate((el, n) => el[n], name);
+        return [value === want, `${locator}.${name} is ${value}, expected ${want}`];
+      }, negate),
+    toBeChecked: () =>
+      poll(
+        async () => [await (await single(locator)).isChecked(), `${locator} is not checked`],
+        negate,
+      ),
+    toBeFocused: () =>
+      poll(async () => {
+        const focused = await (
+          await single(locator)
+        ).evaluate((el) => el === document.activeElement);
+        return [focused, `${locator} is not focused`];
+      }, negate),
     toContainText: (want) =>
       poll(async () => {
         const text = norm(await (await single(locator)).textContent());
@@ -112,6 +139,10 @@ function valueAssertions(actual) {
       JSON.stringify(actual) === JSON.stringify(e) ||
       fail(`${JSON.stringify(actual)} != ${JSON.stringify(e)}`),
     toBeTruthy: () => Boolean(actual) || fail(`${actual} is not truthy`),
+    toContain: (part) =>
+      actual.includes(part) ||
+      fail(`${JSON.stringify(actual)} does not contain ${JSON.stringify(part)}`),
+    toBeGreaterThan: (n) => actual > n || fail(`${actual} is not greater than ${n}`),
   };
 }
 
