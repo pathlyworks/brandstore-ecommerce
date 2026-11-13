@@ -85,7 +85,10 @@ await rm(out, { recursive: true, force: true });
 await mkdir(out);
 for (const item of COPY) {
   if (await exists(join(root, item)))
-    await cp(join(root, item), join(out, item), { recursive: true });
+    await cp(join(root, item), join(out, item), {
+      recursive: true,
+      filter: (source) => !source.includes(`${join('src', 'types')}`), // TypeScript drafts: not served
+    });
 }
 const configFile = join(out, 'src', 'config.js');
 await writeFile(configFile, injectEnv(await readFile(configFile, 'utf8'), viteEnv(process.env))); // VITE_API_BASE etc.
