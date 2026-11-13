@@ -21,8 +21,45 @@
 /** Stock counts for the TechSphere stock_status values (the app works with counts; see state/cart.js canAdd). */
 export const STOCK_FOR_STATUS = Object.freeze({ in_stock: 25, low: 3, out_of_stock: 0 });
 
-/** The TechSphere API has no product images to show (its /images answer is a placeholder), so use ours. */
+/** Shown when a product has no image (missing, empty or not a string); see also utils/dom.js for 404s. */
 const PLACEHOLDER = '/assets/product-placeholder.svg';
+
+/** GET /products always answers 8 products a page, whatever `limit` the app would like. */
+export const TECHSPHERE_PAGE_SIZE = 8;
+
+/**
+ * An image path from the API ("/images/p-001.webp") as a URL the browser can load: relative to the API.
+ * @param {string} src
+ * @param {string} apiBase e.g. "http://localhost:4010"
+ * @returns {string}
+ */
+function imageUrl(src, apiBase) {
+  if (/^https?:\/\//i.test(src) || !/^https?:\/\//i.test(apiBase || '')) return src;
+  // Joined to the API's address (keeping any path prefix such as /v1); see docs/HANDOFF.md, gap 6.
+  return `${apiBase.replace(/\/+$/, '')}/${src.replace(/^\/+/, '')}`;
+}
+
+/**
+ * "warranty" -> "Warranty", "battery_life" -> "Battery life".
+ * @param {string} key
+ * @returns {string}
+ */
+function specLabel(key) {
+  const words = String(key).replace(/[_-]+/g, ' ').trim();
+  return words.charAt(0).toUpperCase() + words.slice(1);
+}
+
+/**
+ * The specification rows worth showing: null, undefined and empty values are left out (never "null").
+ * @param {any} specs an object such as { warranty: "1 year", weight: null }
+ * @returns {{ label: string, value: string }[]}
+ */
+export function toAppSpecs(specs) {
+  if (!specs || typeof specs !== 'object' || Array.isArray(specs)) return [];
+  return Object.entries(specs)
+    .filter(([, value]) => value !== null && value !== undefined && String(value).trim() !== '')
+    .map(([key, value]) => ({ label: specLabel(key), value: String(value) }));
+}
 
 /**
  * A price from the TechSphere API in integer cents: 32999 -> 3299900, "EGP 33,999" -> 3399900.
@@ -36,16 +73,23 @@ export function priceToCents(price) {
 }
 
 /**
- * A TechSphere product in the app's product shape.
+ * A TechSphere product in the app's product shape. Images are resolved against the API address; a product
+ * without a usable image gets the placeholder (and a broken image link falls back to it in the browser).
  * @param {any} p
+ * @param {string} [apiBase] the API's base URL, for image paths
  * @returns {object}
  */
-export function toAppProduct(p) {
+export function toAppProduct(p, apiBase = '') {
   const status = p.stock_status in STOCK_FOR_STATUS ? p.stock_status : 'in_stock';
-  const specs = p.specs && typeof p.specs === 'object' ? Object.entries(p.specs) : [];
+  const name = String(p.name ?? 'Unnamed product');
+  const sources = Array.isArray(p.images)
+    ? p.images.filter((src) => typeof src === 'string' && src.trim())
+    : [];
+  const images = sources.map((src) => ({ url: imageUrl(src.trim(), apiBase), alt: name }));
+  if (!images.length) images.push({ url: PLACEHOLDER, alt: name });
   return {
     id: p.id,
-    name: p.name,
+    name,
     category: p.category,
     brand: p.brand,
     price: priceToCents(p.price),
@@ -54,10 +98,10 @@ export function toAppProduct(p) {
     rating: Number(p.rating) || 0,
     reviewCount: Number(p.reviews_count) || 0,
     stock: STOCK_FOR_STATUS[status],
-    image: { url: PLACEHOLDER, alt: p.name },
-    description: `${p.name} by ${p.brand}.`,
-    images: [{ url: PLACEHOLDER, alt: p.name }],
-    specs: specs.map(([label, value]) => ({ label, value: String(value) })),
+    image: images[0],
+    description: p.brand ? `${name} by ${p.brand}.` : `${name}.`,
+    images,
+    specs: toAppSpecs(p.specs),
   };
 }
 
@@ -136,24 +180,34 @@ export function toTechsphereRequest(path) {
 
 /**
  * A TechSphere response body in the app's format (catalog and product endpoints).
+ * Pagination: GET /products pages by `page` (8 a page, `total_pages`); GET /account/orders by `offset` and
+ * `limit`. Both become the app's { page, limit, total, totalPages }.
  * @param {string} path the request path (without the base URL)
  * @param {any} body
+ * @param {string} [apiBase] the API's base URL, for image paths
  * @returns {any}
  */
-export function fromTechsphere(path, body) {
+export function fromTechsphere(path, body, apiBase = '') {
   const base = path.split('?')[0];
   if (base === '/products' && body && Array.isArray(body.items)) {
+    const total = Number(body.total) || 0;
     return {
-      data: body.items.map(toAppProduct),
+      data: body.items.map((p) => toAppProduct(p, apiBase)),
       meta: {
-        page: body.page,
-        limit: body.items.length || 8,
-        total: body.total,
-        totalPages: Math.max(1, body.total_pages),
+        page: Math.max(1, Number(body.page) || 1),
+        // The page size, not the number of items on this page: on a short last page (4 of 8) the
+        // "Showing 17–20" count must still start at (page - 1) * 8 + 1.
+        limit: TECHSPHERE_PAGE_SIZE,
+        total,
+        totalPages: Math.max(
+          1,
+          Number(body.total_pages) || Math.ceil(total / TECHSPHERE_PAGE_SIZE),
+        ),
       },
     };
   }
-  if (/^\/products\/[^/]+$/.test(base) && body && body.id) return { data: toAppProduct(body) };
+  if (/^\/products\/[^/]+$/.test(base) && body && body.id)
+    return { data: toAppProduct(body, apiBase) };
   if (base === '/account/orders' && body && Array.isArray(body.items)) {
     const limit = body.limit || 5;
     return {

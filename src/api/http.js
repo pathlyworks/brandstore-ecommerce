@@ -100,7 +100,7 @@ export function createHttpClient({
       if (response.status === 401) onUnauthorized();
       throw errorFrom(response, techsphere ? toAppError(response.status, path, data) : data);
     }
-    return techsphere ? fromTechsphere(path, data) : data;
+    return techsphere ? fromTechsphere(path, data, baseUrl) : data;
   }
   return {
     get: (path, init) => request('GET', path, init),
