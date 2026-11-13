@@ -28,4 +28,4 @@ src/vendor/
 api/techsphere/
 
 # Lighthouse reports from scripts/lighthouse.mjs (copies kept in docs/lighthouse/)
-lighthouse/
+/lighthouse/

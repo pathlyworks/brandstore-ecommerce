@@ -13,4 +13,4 @@ test-results/
 .env.local
 
 # Lighthouse reports from scripts/lighthouse.mjs (copies kept in docs/lighthouse/)
-lighthouse/
+/lighthouse/
