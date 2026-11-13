@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "GET",
+    "path": "/account/orders"
+  },
+  "status": 401,
+  "contentType": "application/json; charset=utf-8",
+  "retryAfter": null,
+  "note": "401",
+  "body": {
+    "error": "Unauthorized"
+  }
+}

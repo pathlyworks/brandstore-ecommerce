@@ -1,0 +1,17 @@
+{
+  "request": {
+    "method": "POST",
+    "path": "/auth/login",
+    "body": {
+      "email": "student@techsphere.test",
+      "password": "***"
+    }
+  },
+  "status": 401,
+  "contentType": "application/json; charset=utf-8",
+  "retryAfter": null,
+  "note": "",
+  "body": {
+    "error": "Invalid credentials"
+  }
+}

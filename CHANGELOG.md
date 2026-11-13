@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased — Advanced Task 1: legacy audit and migration architecture (branch `docs/react-migration-architecture`)
+### Added
+- `advanced_task_1_migration_plan.md`: audit findings, folder structure, routing map (every legacy feature → route and component), component tree, state-strategy matrix, TypeScript types, Tailwind plan, testing strategy, waves by risk with estimates, deferred work.
+- `src/types/api.ts` (wire format, from 38 captured responses) and `src/types/domain.ts`; `npm run typecheck` checks both ways (`src/types/__checks__/`), in CI also against a freshly captured API.
+- Evidence scripts: `audit-legacy.mjs`, `capture-api.mjs`, `api-field-report.mjs`, `gen-observed-types-check.mjs`, `tokens-to-tailwind.mjs`; outputs in `docs/migration/`.
+
 ## Unreleased — Phase 2, Task 6: robustness, pull request, demo, handoff (branch `feature/robustness-handoff`, PR #3)
 ### Added
 - Checkout: "Place order" (POST /orders with the Bearer token). An empty cart, or a cart with nothing in stock, is stopped before the API with the reason; signed-out shoppers sign in and come back to the cart.

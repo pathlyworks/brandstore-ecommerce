@@ -27,6 +27,11 @@ jobs:
         run: node scripts/check-branch.mjs "${{ github.head_ref || github.ref_name }}"
       - run: npm run lint
       - run: npm run format:check
+      - name: TypeScript domain types match the captured API responses
+        run: |
+          node scripts/gen-observed-types-check.mjs
+          git diff --exit-code src/types/__checks__/observed.ts
+          npm run typecheck
       - run: npm run build
       - run: npm run contract
 
@@ -44,6 +49,11 @@ jobs:
       - run: npm install --no-audit --no-fund
       - name: npm test (unit + integration) with coverage thresholds
         run: npm run test:coverage
+      - name: Types still match a freshly captured TechSphere API (contract drift)
+        run: |
+          npm run api:capture
+          npm run api:fields
+          npm run typecheck
       - name: Coverage of src/state and src/utils (also in the job summary)
         if: always()
         run: node scripts/coverage-summary.mjs coverage/coverage-summary.json

@@ -1,0 +1,25 @@
+{
+  "request": {
+    "method": "GET",
+    "path": "/products/p-010"
+  },
+  "status": 200,
+  "contentType": "application/json; charset=utf-8",
+  "retryAfter": null,
+  "note": "",
+  "body": {
+    "id": "p-010",
+    "name": "Pulse Phones 10",
+    "brand": "Pulse",
+    "category": "phones",
+    "price": 14499,
+    "currency": "EGP",
+    "stock_status": "low",
+    "rating": 5,
+    "reviews_count": 37,
+    "images": ["/images/missing-9.webp"],
+    "specs": {
+      "warranty": "1 year"
+    }
+  }
+}

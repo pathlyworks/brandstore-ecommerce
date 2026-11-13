@@ -1,0 +1,25 @@
+{
+  "request": {
+    "method": "GET",
+    "path": "/products/p-005"
+  },
+  "status": 200,
+  "contentType": "application/json; charset=utf-8",
+  "retryAfter": null,
+  "note": "",
+  "body": {
+    "id": "p-005",
+    "name": "Nova Laptops 5",
+    "brand": "Nova",
+    "category": "laptops",
+    "price": "EGP 33,999",
+    "currency": "EGP",
+    "stock_status": "in_stock",
+    "rating": 5,
+    "reviews_count": 22,
+    "images": ["/images/p-005.webp"],
+    "specs": {
+      "warranty": "1 year"
+    }
+  }
+}

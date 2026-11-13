@@ -1,0 +1,272 @@
+{
+  "capturedAt": "2026-11-13T16:41:40.305Z",
+  "api": "api/techsphere/server.py (kit 1.1)",
+  "calls": [
+    {
+      "name": "categories",
+      "method": "GET",
+      "path": "/categories",
+      "status": 200,
+      "note": ""
+    },
+    {
+      "name": "categories-ar",
+      "method": "GET",
+      "path": "/categories?locale=ar",
+      "status": 200,
+      "note": ""
+    },
+    {
+      "name": "products-page-1",
+      "method": "GET",
+      "path": "/products?page=1",
+      "status": 200,
+      "note": ""
+    },
+    {
+      "name": "products-page-2",
+      "method": "GET",
+      "path": "/products?page=2",
+      "status": 200,
+      "note": ""
+    },
+    {
+      "name": "products-page-3",
+      "method": "GET",
+      "path": "/products?page=3",
+      "status": 200,
+      "note": ""
+    },
+    {
+      "name": "products-page-9",
+      "method": "GET",
+      "path": "/products?page=9",
+      "status": 200,
+      "note": "past the end"
+    },
+    {
+      "name": "products-filtered",
+      "method": "GET",
+      "path": "/products?category=audio&sort=price_desc&min_price=3000",
+      "status": 200,
+      "note": ""
+    },
+    {
+      "name": "products-search-ar",
+      "method": "GET",
+      "path": "/products?search=orbit&locale=ar",
+      "status": 200,
+      "note": ""
+    },
+    {
+      "name": "products-bad-sort",
+      "method": "GET",
+      "path": "/products?sort=name_asc",
+      "status": 400,
+      "note": "400"
+    },
+    {
+      "name": "products-bad-page",
+      "method": "GET",
+      "path": "/products?page=abc",
+      "status": 400,
+      "note": "400"
+    },
+    {
+      "name": "product-p-001",
+      "method": "GET",
+      "path": "/products/p-001",
+      "status": 200,
+      "note": ""
+    },
+    {
+      "name": "product-p-005",
+      "method": "GET",
+      "path": "/products/p-005",
+      "status": 200,
+      "note": ""
+    },
+    {
+      "name": "product-p-007",
+      "method": "GET",
+      "path": "/products/p-007",
+      "status": 200,
+      "note": ""
+    },
+    {
+      "name": "product-p-010",
+      "method": "GET",
+      "path": "/products/p-010",
+      "status": 200,
+      "note": ""
+    },
+    {
+      "name": "product-missing",
+      "method": "GET",
+      "path": "/products/p-999",
+      "status": 404,
+      "note": "404"
+    },
+    {
+      "name": "image-ok",
+      "method": "GET",
+      "path": "/images/p-001.webp",
+      "status": 200,
+      "note": "JSON, not image bytes"
+    },
+    {
+      "name": "image-missing",
+      "method": "GET",
+      "path": "/images/missing-9.webp",
+      "status": 404,
+      "note": "404"
+    },
+    {
+      "name": "login-wrong",
+      "method": "POST",
+      "path": "/auth/login",
+      "status": 401,
+      "note": ""
+    },
+    {
+      "name": "login-shopper",
+      "method": "POST",
+      "path": "/auth/login",
+      "status": 200,
+      "note": ""
+    },
+    {
+      "name": "login-admin",
+      "method": "POST",
+      "path": "/auth/login",
+      "status": 200,
+      "note": ""
+    },
+    {
+      "name": "register-ok",
+      "method": "POST",
+      "path": "/auth/register",
+      "status": 201,
+      "note": ""
+    },
+    {
+      "name": "register-taken",
+      "method": "POST",
+      "path": "/auth/register",
+      "status": 400,
+      "note": ""
+    },
+    {
+      "name": "register-invalid",
+      "method": "POST",
+      "path": "/auth/register",
+      "status": 400,
+      "note": ""
+    },
+    {
+      "name": "orders-no-token",
+      "method": "GET",
+      "path": "/account/orders",
+      "status": 401,
+      "note": "401"
+    },
+    {
+      "name": "orders-page-1",
+      "method": "GET",
+      "path": "/account/orders",
+      "status": 200,
+      "note": ""
+    },
+    {
+      "name": "orders-offset-5",
+      "method": "GET",
+      "path": "/account/orders?offset=5&limit=5",
+      "status": 200,
+      "note": ""
+    },
+    {
+      "name": "order-cancel-ok",
+      "method": "PATCH",
+      "path": "/account/orders/o-001/cancel",
+      "status": 200,
+      "note": ""
+    },
+    {
+      "name": "order-cancel-shipped",
+      "method": "PATCH",
+      "path": "/account/orders/o-002/cancel",
+      "status": 409,
+      "note": "409"
+    },
+    {
+      "name": "order-cancel-missing",
+      "method": "PATCH",
+      "path": "/account/orders/o-999/cancel",
+      "status": 404,
+      "note": "404"
+    },
+    {
+      "name": "addresses",
+      "method": "GET",
+      "path": "/account/addresses",
+      "status": 200,
+      "note": ""
+    },
+    {
+      "name": "address-put-ok",
+      "method": "PUT",
+      "path": "/account/addresses/a-1",
+      "status": 200,
+      "note": ""
+    },
+    {
+      "name": "address-put-no-city",
+      "method": "PUT",
+      "path": "/account/addresses/a-1",
+      "status": 400,
+      "note": "400"
+    },
+    {
+      "name": "address-delete",
+      "method": "DELETE",
+      "path": "/account/addresses/a-2",
+      "status": 204,
+      "note": "204, no body"
+    },
+    {
+      "name": "order-place-ok",
+      "method": "POST",
+      "path": "/orders",
+      "status": 201,
+      "note": ""
+    },
+    {
+      "name": "order-place-empty",
+      "method": "POST",
+      "path": "/orders",
+      "status": 400,
+      "note": "400"
+    },
+    {
+      "name": "admin-summary",
+      "method": "GET",
+      "path": "/admin/summary",
+      "status": 200,
+      "note": ""
+    },
+    {
+      "name": "admin-summary-shopper",
+      "method": "GET",
+      "path": "/admin/summary",
+      "status": 403,
+      "note": "403"
+    },
+    {
+      "name": "products-429",
+      "method": "GET",
+      "path": "/products",
+      "status": 429,
+      "note": "forced with the kit /__control (grader mode)"
+    }
+  ]
+}

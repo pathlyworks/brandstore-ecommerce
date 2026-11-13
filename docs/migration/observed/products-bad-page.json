@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "GET",
+    "path": "/products?page=abc"
+  },
+  "status": 400,
+  "contentType": "application/json; charset=utf-8",
+  "retryAfter": null,
+  "note": "400",
+  "body": {
+    "error": "Invalid query parameter"
+  }
+}

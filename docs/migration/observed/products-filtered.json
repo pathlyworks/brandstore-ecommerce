@@ -1,0 +1,91 @@
+{
+  "request": {
+    "method": "GET",
+    "path": "/products?category=audio&sort=price_desc&min_price=3000"
+  },
+  "status": 200,
+  "contentType": "application/json; charset=utf-8",
+  "retryAfter": null,
+  "note": "",
+  "body": {
+    "items": [
+      {
+        "id": "p-023",
+        "name": "Orbit Audio 23",
+        "brand": "Orbit",
+        "category": "audio",
+        "price": 7499,
+        "currency": "EGP",
+        "stock_status": "in_stock",
+        "rating": 4,
+        "reviews_count": 76,
+        "images": ["/images/p-023.webp"],
+        "specs": {
+          "warranty": "1 year"
+        }
+      },
+      {
+        "id": "p-019",
+        "name": "Orbit Audio 19",
+        "brand": "Orbit",
+        "category": "audio",
+        "price": 6499,
+        "currency": "EGP",
+        "stock_status": "in_stock",
+        "rating": 4.5,
+        "reviews_count": 64,
+        "images": ["/images/p-019.webp"],
+        "specs": {
+          "warranty": "1 year"
+        }
+      },
+      {
+        "id": "p-015",
+        "name": "Orbit Audio 15",
+        "brand": "Orbit",
+        "category": "audio",
+        "price": 5499,
+        "currency": "EGP",
+        "stock_status": "in_stock",
+        "rating": 5,
+        "reviews_count": 52,
+        "images": ["/images/p-015.webp"],
+        "specs": {
+          "warranty": "1 year"
+        }
+      },
+      {
+        "id": "p-011",
+        "name": "Orbit Audio 11",
+        "brand": "Orbit",
+        "category": "audio",
+        "price": 4499,
+        "currency": "EGP",
+        "stock_status": "in_stock",
+        "rating": 3,
+        "reviews_count": 40,
+        "images": ["/images/p-011.webp"],
+        "specs": {
+          "warranty": "1 year"
+        }
+      },
+      {
+        "id": "p-007",
+        "name": "Orbit Audio 7",
+        "brand": "Orbit",
+        "category": "audio",
+        "price": 3499,
+        "currency": "EGP",
+        "rating": 3.5,
+        "reviews_count": 28,
+        "images": ["/images/p-007.webp"],
+        "specs": {
+          "warranty": "1 year"
+        }
+      }
+    ],
+    "page": 1,
+    "total_pages": 1,
+    "total": 5
+  }
+}

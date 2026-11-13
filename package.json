@@ -33,7 +33,12 @@
     "vendor": "node scripts/vendor.mjs",
     "e2e:local": "node --import ./tests/support/playwright/use-hook.mjs tests/support/playwright/run.mjs",
     "e2e:prove": "node scripts/prove-e2e.mjs",
-    "e2e:journeys": "node tests/e2e/run.mjs"
+    "e2e:journeys": "node tests/e2e/run.mjs",
+    "typecheck": "tsc -p tsconfig.json",
+    "audit:legacy": "node scripts/audit-legacy.mjs",
+    "api:capture": "node scripts/capture-api.mjs",
+    "api:fields": "node scripts/api-field-report.mjs && node scripts/gen-observed-types-check.mjs",
+    "tokens:tailwind": "node scripts/tokens-to-tailwind.mjs"
   },
   "devDependencies": {
     "@playwright/test": "^1.55.0",
@@ -43,6 +48,7 @@
     "msw": "^2.7.0",
     "playwright": "^1.55.0",
     "prettier": "^3.8.1",
+    "typescript": "^5.9.3",
     "vite": "^7.0.0",
     "vitest": "^3.2.0"
   },

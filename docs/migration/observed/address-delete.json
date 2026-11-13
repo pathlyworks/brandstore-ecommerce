@@ -1,0 +1,11 @@
+{
+  "request": {
+    "method": "DELETE",
+    "path": "/account/addresses/a-2"
+  },
+  "status": 204,
+  "contentType": "application/json; charset=utf-8",
+  "retryAfter": null,
+  "note": "204, no body",
+  "body": null
+}

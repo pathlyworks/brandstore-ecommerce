@@ -1,0 +1,22 @@
+{
+  "request": {
+    "method": "POST",
+    "path": "/auth/login",
+    "body": {
+      "email": "admin@techsphere.test",
+      "password": "***"
+    }
+  },
+  "status": 200,
+  "contentType": "application/json; charset=utf-8",
+  "retryAfter": null,
+  "note": "",
+  "body": {
+    "token": "eyJhbGciOiJub25lIn0.eyJzdWIiOiAiYWRtaW5AdGVjaHNwaGVyZS50ZXN0IiwgInJvbGUiOiAiYWRtaW4iLCAiZXhwIjogMTc5NDU5MTcwMH0.mock",
+    "user": {
+      "email": "admin@techsphere.test",
+      "name": "Admin",
+      "role": "admin"
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "request": {
+    "method": "GET",
+    "path": "/products?page=9"
+  },
+  "status": 200,
+  "contentType": "application/json; charset=utf-8",
+  "retryAfter": null,
+  "note": "past the end",
+  "body": {
+    "items": [],
+    "page": 9,
+    "total_pages": 3,
+    "total": 24
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "request": {
+    "method": "POST",
+    "path": "/auth/register",
+    "body": {
+      "name": "New Shopper",
+      "email": "new.shopper@example.test",
+      "password": "***"
+    }
+  },
+  "status": 201,
+  "contentType": "application/json; charset=utf-8",
+  "retryAfter": null,
+  "note": "",
+  "body": {
+    "token": "eyJhbGciOiJub25lIn0.eyJzdWIiOiAibmV3LnNob3BwZXJAZXhhbXBsZS50ZXN0IiwgInJvbGUiOiAic2hvcHBlciIsICJleHAiOiAxNzk0NTkxNzAwfQ.mock",
+    "user": {
+      "email": "new.shopper@example.test",
+      "name": "New Shopper"
+    }
+  }
+}

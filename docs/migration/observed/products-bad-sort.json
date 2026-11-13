@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "GET",
+    "path": "/products?sort=name_asc"
+  },
+  "status": 400,
+  "contentType": "application/json; charset=utf-8",
+  "retryAfter": null,
+  "note": "400",
+  "body": {
+    "error": "Unknown sort 'name_asc'"
+  }
+}

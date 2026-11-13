@@ -4,9 +4,10 @@ A storefront in plain HTML, CSS and ES-module JavaScript, built on the **TechSph
 search, filters and pagination; product pages; a cart kept on the device; sign-in with a JWT-protected account
 (orders, addresses); and checkout. There is no framework and no bundler. Vite is used only as a dev server.
 
-**Current task: Phase 2, Task 6 — robustness, pull request, demo and handoff.** Deliverable:
-[`task_6_handoff.md`](task_6_handoff.md). Backend handoff: [`docs/HANDOFF.md`](docs/HANDOFF.md).
-Demo video: [`docs/demo/brandstore-demo.mp4`](docs/demo/brandstore-demo.mp4).
+**Current task: Advanced Task 1 — legacy audit and React + TypeScript migration architecture.** Deliverable:
+[`advanced_task_1_migration_plan.md`](advanced_task_1_migration_plan.md) (audit, component tree, routing map, state
+matrix, types, Tailwind, testing, waves, estimates, deferred work). Evidence: `docs/migration/`; types: `src/types/`.
+Phase 2 (Task 6) deliverable: [`task_6_handoff.md`](task_6_handoff.md).
 
 ## 1. Set up and run
 
@@ -47,6 +48,8 @@ same without Vite, on http://127.0.0.1:8080. On Windows (cmd), set variables fir
 | `npm run lint`, `npm run format:check` | ESLint (including the architecture rules), Prettier | Node only |
 | `npm run contract` | Sends 58 requests to our mock and checks every answer against `api/openapi.json` | Node only |
 | `npm run qa` | Phase 1 checks: JavaScript rules, preflight, behaviour | Node only |
+| `npm run typecheck` | `tsc` strict over `src/types/` (the migration's domain types, checked against the captured API responses) | Node only |
+| `npm run audit:legacy`, `api:capture`, `api:fields`, `tokens:tailwind` | Regenerate the migration evidence in `docs/migration/` | Node; `api:capture` needs an API (Python for the kit, or `VITE_API_BASE`) |
 
 **CI** (`.github/workflows/ci.yml`) runs on every pull request:
 - lint, format, build and contract;
@@ -121,6 +124,7 @@ in Netlify's environment and add its origin to `connect-src` and `img-src` in th
 
 | Task | Document |
 | :--- | :--- |
+| Advanced, Task 1 | `advanced_task_1_migration_plan.md`, `docs/migration/`, `src/types/` |
 | Phase 2, Task 6 | `task_6_handoff.md` (edge-case sweep, accessibility, PR and merge conflict, browsers, Lighthouse, demo), `docs/HANDOFF.md`, `docs/lighthouse/`, `docs/demo/` |
 | Phase 2, Task 5 | `task_5_testing.md`, `docs/PR_TASK5.md` |
 | Phase 2, Task 4 | `task_4_auth.md`, `docs/SECURITY.md` |

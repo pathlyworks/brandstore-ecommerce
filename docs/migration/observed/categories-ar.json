@@ -1,0 +1,28 @@
+{
+  "request": {
+    "method": "GET",
+    "path": "/categories?locale=ar"
+  },
+  "status": 200,
+  "contentType": "application/json; charset=utf-8",
+  "retryAfter": null,
+  "note": "",
+  "body": [
+    {
+      "id": "laptops",
+      "name": "لابتوب"
+    },
+    {
+      "id": "phones",
+      "name": "موبايلات"
+    },
+    {
+      "id": "audio",
+      "name": "صوتيات"
+    },
+    {
+      "id": "smart-home",
+      "name": "المنزل الذكي"
+    }
+  ]
+}

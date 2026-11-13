@@ -1,0 +1,14 @@
+{
+  "request": {
+    "method": "GET",
+    "path": "/products"
+  },
+  "status": 429,
+  "contentType": "application/json; charset=utf-8",
+  "retryAfter": null,
+  "note": "forced with the kit /__control (grader mode)",
+  "body": {
+    "error": "Forced failure",
+    "status": 429
+  }
+}

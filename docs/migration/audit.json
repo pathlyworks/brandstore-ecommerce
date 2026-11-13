@@ -1,0 +1,1099 @@
+{
+  "generatedAt": "2026-11-13T16:43:25.119Z",
+  "modules": [
+    {
+      "file": "src/api/account.js",
+      "folder": "api",
+      "lines": 112,
+      "functions": 7,
+      "exported": 7,
+      "jsdocTyped": 7,
+      "typescript": false,
+      "anyLike": 3
+    },
+    {
+      "file": "src/api/auth.js",
+      "folder": "api",
+      "lines": 57,
+      "functions": 3,
+      "exported": 3,
+      "jsdocTyped": 3,
+      "typescript": false,
+      "anyLike": 1
+    },
+    {
+      "file": "src/api/endpoints.js",
+      "folder": "api",
+      "lines": 18,
+      "functions": 0,
+      "exported": 0,
+      "jsdocTyped": 0,
+      "typescript": false,
+      "anyLike": 0
+    },
+    {
+      "file": "src/api/errors.js",
+      "folder": "api",
+      "lines": 81,
+      "functions": 1,
+      "exported": 1,
+      "jsdocTyped": 1,
+      "typescript": false,
+      "anyLike": 0
+    },
+    {
+      "file": "src/api/http.js",
+      "folder": "api",
+      "lines": 110,
+      "functions": 4,
+      "exported": 1,
+      "jsdocTyped": 4,
+      "typescript": false,
+      "anyLike": 1
+    },
+    {
+      "file": "src/api/orders.js",
+      "folder": "api",
+      "lines": 24,
+      "functions": 1,
+      "exported": 1,
+      "jsdocTyped": 1,
+      "typescript": false,
+      "anyLike": 0
+    },
+    {
+      "file": "src/api/product-api.js",
+      "folder": "api",
+      "lines": 109,
+      "functions": 4,
+      "exported": 4,
+      "jsdocTyped": 4,
+      "typescript": false,
+      "anyLike": 2
+    },
+    {
+      "file": "src/api/products.js",
+      "folder": "api",
+      "lines": 56,
+      "functions": 3,
+      "exported": 3,
+      "jsdocTyped": 3,
+      "typescript": false,
+      "anyLike": 0
+    },
+    {
+      "file": "src/api/techsphere.js",
+      "folder": "api",
+      "lines": 258,
+      "functions": 11,
+      "exported": 8,
+      "jsdocTyped": 11,
+      "typescript": false,
+      "anyLike": 11
+    },
+    {
+      "file": "src/components/account-link.js",
+      "folder": "components",
+      "lines": 19,
+      "functions": 1,
+      "exported": 1,
+      "jsdocTyped": 1,
+      "typescript": false,
+      "anyLike": 0
+    },
+    {
+      "file": "src/components/account-view.js",
+      "folder": "components",
+      "lines": 136,
+      "functions": 4,
+      "exported": 2,
+      "jsdocTyped": 4,
+      "typescript": false,
+      "anyLike": 3
+    },
+    {
+      "file": "src/components/address-book.js",
+      "folder": "components",
+      "lines": 142,
+      "functions": 5,
+      "exported": 1,
+      "jsdocTyped": 5,
+      "typescript": false,
+      "anyLike": 3
+    },
+    {
+      "file": "src/components/auth-form.js",
+      "folder": "components",
+      "lines": 68,
+      "functions": 2,
+      "exported": 2,
+      "jsdocTyped": 2,
+      "typescript": false,
+      "anyLike": 1
+    },
+    {
+      "file": "src/components/auth-session.js",
+      "folder": "components",
+      "lines": 50,
+      "functions": 3,
+      "exported": 3,
+      "jsdocTyped": 3,
+      "typescript": false,
+      "anyLike": 1
+    },
+    {
+      "file": "src/components/cart-badge.js",
+      "folder": "components",
+      "lines": 24,
+      "functions": 1,
+      "exported": 1,
+      "jsdocTyped": 1,
+      "typescript": false,
+      "anyLike": 0
+    },
+    {
+      "file": "src/components/cart-panel.js",
+      "folder": "components",
+      "lines": 158,
+      "functions": 7,
+      "exported": 3,
+      "jsdocTyped": 7,
+      "typescript": false,
+      "anyLike": 6
+    },
+    {
+      "file": "src/components/cart-view.js",
+      "folder": "components",
+      "lines": 113,
+      "functions": 4,
+      "exported": 1,
+      "jsdocTyped": 4,
+      "typescript": false,
+      "anyLike": 1
+    },
+    {
+      "file": "src/components/catalog-render.js",
+      "folder": "components",
+      "lines": 246,
+      "functions": 14,
+      "exported": 1,
+      "jsdocTyped": 10,
+      "typescript": false,
+      "anyLike": 4
+    },
+    {
+      "file": "src/components/catalog-view.js",
+      "folder": "components",
+      "lines": 183,
+      "functions": 7,
+      "exported": 2,
+      "jsdocTyped": 7,
+      "typescript": false,
+      "anyLike": 12
+    },
+    {
+      "file": "src/components/checkout.js",
+      "folder": "components",
+      "lines": 103,
+      "functions": 4,
+      "exported": 2,
+      "jsdocTyped": 4,
+      "typescript": false,
+      "anyLike": 3
+    },
+    {
+      "file": "src/components/comparison-table.js",
+      "folder": "components",
+      "lines": 51,
+      "functions": 3,
+      "exported": 1,
+      "jsdocTyped": 2,
+      "typescript": false,
+      "anyLike": 0
+    },
+    {
+      "file": "src/components/deals.js",
+      "folder": "components",
+      "lines": 89,
+      "functions": 4,
+      "exported": 1,
+      "jsdocTyped": 3,
+      "typescript": false,
+      "anyLike": 0
+    },
+    {
+      "file": "src/components/demo-controls.js",
+      "folder": "components",
+      "lines": 49,
+      "functions": 1,
+      "exported": 1,
+      "jsdocTyped": 1,
+      "typescript": false,
+      "anyLike": 0
+    },
+    {
+      "file": "src/components/filter-bar.js",
+      "folder": "components",
+      "lines": 190,
+      "functions": 8,
+      "exported": 2,
+      "jsdocTyped": 8,
+      "typescript": false,
+      "anyLike": 0
+    },
+    {
+      "file": "src/components/form-errors.js",
+      "folder": "components",
+      "lines": 70,
+      "functions": 3,
+      "exported": 3,
+      "jsdocTyped": 3,
+      "typescript": false,
+      "anyLike": 0
+    },
+    {
+      "file": "src/components/gallery.js",
+      "folder": "components",
+      "lines": 66,
+      "functions": 2,
+      "exported": 1,
+      "jsdocTyped": 2,
+      "typescript": false,
+      "anyLike": 0
+    },
+    {
+      "file": "src/components/nav.js",
+      "folder": "components",
+      "lines": 86,
+      "functions": 4,
+      "exported": 1,
+      "jsdocTyped": 3,
+      "typescript": false,
+      "anyLike": 0
+    },
+    {
+      "file": "src/components/newsletter.js",
+      "folder": "components",
+      "lines": 149,
+      "functions": 8,
+      "exported": 1,
+      "jsdocTyped": 7,
+      "typescript": false,
+      "anyLike": 6
+    },
+    {
+      "file": "src/components/order-list.js",
+      "folder": "components",
+      "lines": 73,
+      "functions": 3,
+      "exported": 2,
+      "jsdocTyped": 3,
+      "typescript": false,
+      "anyLike": 1
+    },
+    {
+      "file": "src/components/pagination.js",
+      "folder": "components",
+      "lines": 68,
+      "functions": 2,
+      "exported": 1,
+      "jsdocTyped": 2,
+      "typescript": false,
+      "anyLike": 0
+    },
+    {
+      "file": "src/components/product-card.js",
+      "folder": "components",
+      "lines": 80,
+      "functions": 3,
+      "exported": 1,
+      "jsdocTyped": 3,
+      "typescript": false,
+      "anyLike": 2
+    },
+    {
+      "file": "src/components/product-detail.js",
+      "folder": "components",
+      "lines": 229,
+      "functions": 8,
+      "exported": 3,
+      "jsdocTyped": 8,
+      "typescript": false,
+      "anyLike": 7
+    },
+    {
+      "file": "src/components/product-filter.js",
+      "folder": "components",
+      "lines": 89,
+      "functions": 5,
+      "exported": 1,
+      "jsdocTyped": 4,
+      "typescript": false,
+      "anyLike": 0
+    },
+    {
+      "file": "src/components/product-list.js",
+      "folder": "components",
+      "lines": 66,
+      "functions": 2,
+      "exported": 1,
+      "jsdocTyped": 2,
+      "typescript": false,
+      "anyLike": 0
+    },
+    {
+      "file": "src/components/quantity-stepper.js",
+      "folder": "components",
+      "lines": 84,
+      "functions": 2,
+      "exported": 1,
+      "jsdocTyped": 2,
+      "typescript": false,
+      "anyLike": 0
+    },
+    {
+      "file": "src/components/recent-strip.js",
+      "folder": "components",
+      "lines": 49,
+      "functions": 2,
+      "exported": 1,
+      "jsdocTyped": 2,
+      "typescript": false,
+      "anyLike": 0
+    },
+    {
+      "file": "src/components/saved-list.js",
+      "folder": "components",
+      "lines": 90,
+      "functions": 4,
+      "exported": 1,
+      "jsdocTyped": 4,
+      "typescript": false,
+      "anyLike": 3
+    },
+    {
+      "file": "src/components/scroll-regions.js",
+      "folder": "components",
+      "lines": 38,
+      "functions": 2,
+      "exported": 1,
+      "jsdocTyped": 1,
+      "typescript": false,
+      "anyLike": 0
+    },
+    {
+      "file": "src/components/status-message.js",
+      "folder": "components",
+      "lines": 92,
+      "functions": 3,
+      "exported": 1,
+      "jsdocTyped": 3,
+      "typescript": false,
+      "anyLike": 0
+    },
+    {
+      "file": "src/config.js",
+      "folder": ".",
+      "lines": 32,
+      "functions": 0,
+      "exported": 0,
+      "jsdocTyped": 0,
+      "typescript": false,
+      "anyLike": 0
+    },
+    {
+      "file": "src/main.js",
+      "folder": ".",
+      "lines": 26,
+      "functions": 1,
+      "exported": 1,
+      "jsdocTyped": 1,
+      "typescript": false,
+      "anyLike": 0
+    },
+    {
+      "file": "src/pages/account.js",
+      "folder": "pages",
+      "lines": 45,
+      "functions": 1,
+      "exported": 0,
+      "jsdocTyped": 0,
+      "typescript": false,
+      "anyLike": 0
+    },
+    {
+      "file": "src/pages/cart.js",
+      "folder": "pages",
+      "lines": 60,
+      "functions": 0,
+      "exported": 0,
+      "jsdocTyped": 0,
+      "typescript": false,
+      "anyLike": 0
+    },
+    {
+      "file": "src/pages/catalog.js",
+      "folder": "pages",
+      "lines": 29,
+      "functions": 1,
+      "exported": 0,
+      "jsdocTyped": 0,
+      "typescript": false,
+      "anyLike": 0
+    },
+    {
+      "file": "src/pages/comparison.js",
+      "folder": "pages",
+      "lines": 18,
+      "functions": 0,
+      "exported": 0,
+      "jsdocTyped": 0,
+      "typescript": false,
+      "anyLike": 0
+    },
+    {
+      "file": "src/pages/home.js",
+      "folder": "pages",
+      "lines": 27,
+      "functions": 0,
+      "exported": 0,
+      "jsdocTyped": 0,
+      "typescript": false,
+      "anyLike": 0
+    },
+    {
+      "file": "src/pages/login.js",
+      "folder": "pages",
+      "lines": 41,
+      "functions": 1,
+      "exported": 0,
+      "jsdocTyped": 0,
+      "typescript": false,
+      "anyLike": 0
+    },
+    {
+      "file": "src/pages/not-found.js",
+      "folder": "pages",
+      "lines": 16,
+      "functions": 0,
+      "exported": 0,
+      "jsdocTyped": 0,
+      "typescript": false,
+      "anyLike": 0
+    },
+    {
+      "file": "src/pages/product.js",
+      "folder": "pages",
+      "lines": 38,
+      "functions": 1,
+      "exported": 0,
+      "jsdocTyped": 0,
+      "typescript": false,
+      "anyLike": 0
+    },
+    {
+      "file": "src/pages/register.js",
+      "folder": "pages",
+      "lines": 37,
+      "functions": 1,
+      "exported": 0,
+      "jsdocTyped": 0,
+      "typescript": false,
+      "anyLike": 0
+    },
+    {
+      "file": "src/state/cart.js",
+      "folder": "state",
+      "lines": 263,
+      "functions": 15,
+      "exported": 15,
+      "jsdocTyped": 15,
+      "typescript": false,
+      "anyLike": 2
+    },
+    {
+      "file": "src/state/catalog.js",
+      "folder": "state",
+      "lines": 48,
+      "functions": 1,
+      "exported": 1,
+      "jsdocTyped": 1,
+      "typescript": false,
+      "anyLike": 0
+    },
+    {
+      "file": "src/state/content.js",
+      "folder": "state",
+      "lines": 54,
+      "functions": 0,
+      "exported": 0,
+      "jsdocTyped": 0,
+      "typescript": false,
+      "anyLike": 0
+    },
+    {
+      "file": "src/state/recent.js",
+      "folder": "state",
+      "lines": 55,
+      "functions": 3,
+      "exported": 3,
+      "jsdocTyped": 3,
+      "typescript": false,
+      "anyLike": 2
+    },
+    {
+      "file": "src/state/saved.js",
+      "folder": "state",
+      "lines": 93,
+      "functions": 6,
+      "exported": 5,
+      "jsdocTyped": 6,
+      "typescript": false,
+      "anyLike": 1
+    },
+    {
+      "file": "src/state/session.js",
+      "folder": "state",
+      "lines": 77,
+      "functions": 4,
+      "exported": 4,
+      "jsdocTyped": 4,
+      "typescript": false,
+      "anyLike": 2
+    },
+    {
+      "file": "src/state/store.js",
+      "folder": "state",
+      "lines": 28,
+      "functions": 1,
+      "exported": 1,
+      "jsdocTyped": 1,
+      "typescript": false,
+      "anyLike": 0
+    },
+    {
+      "file": "src/state/stores.js",
+      "folder": "state",
+      "lines": 161,
+      "functions": 6,
+      "exported": 6,
+      "jsdocTyped": 6,
+      "typescript": false,
+      "anyLike": 12
+    },
+    {
+      "file": "src/utils/cart-math.js",
+      "folder": "utils",
+      "lines": 104,
+      "functions": 6,
+      "exported": 6,
+      "jsdocTyped": 6,
+      "typescript": false,
+      "anyLike": 0
+    },
+    {
+      "file": "src/utils/dates.js",
+      "folder": "utils",
+      "lines": 59,
+      "functions": 3,
+      "exported": 2,
+      "jsdocTyped": 3,
+      "typescript": false,
+      "anyLike": 0
+    },
+    {
+      "file": "src/utils/debounce.js",
+      "folder": "utils",
+      "lines": 39,
+      "functions": 1,
+      "exported": 1,
+      "jsdocTyped": 1,
+      "typescript": false,
+      "anyLike": 0
+    },
+    {
+      "file": "src/utils/dom.js",
+      "folder": "utils",
+      "lines": 100,
+      "functions": 5,
+      "exported": 5,
+      "jsdocTyped": 5,
+      "typescript": false,
+      "anyLike": 3
+    },
+    {
+      "file": "src/utils/facets.js",
+      "folder": "utils",
+      "lines": 70,
+      "functions": 4,
+      "exported": 4,
+      "jsdocTyped": 4,
+      "typescript": false,
+      "anyLike": 0
+    },
+    {
+      "file": "src/utils/format.js",
+      "folder": "utils",
+      "lines": 56,
+      "functions": 3,
+      "exported": 3,
+      "jsdocTyped": 3,
+      "typescript": false,
+      "anyLike": 0
+    },
+    {
+      "file": "src/utils/jwt.js",
+      "folder": "utils",
+      "lines": 50,
+      "functions": 3,
+      "exported": 2,
+      "jsdocTyped": 3,
+      "typescript": false,
+      "anyLike": 0
+    },
+    {
+      "file": "src/utils/latest.js",
+      "folder": "utils",
+      "lines": 38,
+      "functions": 1,
+      "exported": 1,
+      "jsdocTyped": 1,
+      "typescript": false,
+      "anyLike": 0
+    },
+    {
+      "file": "src/utils/money.js",
+      "folder": "utils",
+      "lines": 36,
+      "functions": 2,
+      "exported": 2,
+      "jsdocTyped": 2,
+      "typescript": false,
+      "anyLike": 0
+    },
+    {
+      "file": "src/utils/query-string.js",
+      "folder": "utils",
+      "lines": 142,
+      "functions": 7,
+      "exported": 5,
+      "jsdocTyped": 7,
+      "typescript": false,
+      "anyLike": 0
+    },
+    {
+      "file": "src/utils/storage.js",
+      "folder": "utils",
+      "lines": 69,
+      "functions": 1,
+      "exported": 1,
+      "jsdocTyped": 1,
+      "typescript": false,
+      "anyLike": 0
+    },
+    {
+      "file": "src/utils/validate.js",
+      "folder": "utils",
+      "lines": 110,
+      "functions": 4,
+      "exported": 4,
+      "jsdocTyped": 4,
+      "typescript": false,
+      "anyLike": 0
+    }
+  ],
+  "byFolder": {
+    "api": {
+      "files": 9,
+      "lines": 825,
+      "functions": 34,
+      "jsdocTyped": 34,
+      "anyLike": 18
+    },
+    "components": {
+      "files": 30,
+      "lines": 2950,
+      "functions": 121,
+      "jsdocTyped": 111,
+      "anyLike": 53
+    },
+    ".": {
+      "files": 2,
+      "lines": 58,
+      "functions": 1,
+      "jsdocTyped": 1,
+      "anyLike": 0
+    },
+    "pages": {
+      "files": 9,
+      "lines": 311,
+      "functions": 5,
+      "jsdocTyped": 0,
+      "anyLike": 0
+    },
+    "state": {
+      "files": 8,
+      "lines": 779,
+      "functions": 36,
+      "jsdocTyped": 36,
+      "anyLike": 19
+    },
+    "utils": {
+      "files": 12,
+      "lines": 873,
+      "functions": 40,
+      "jsdocTyped": 40,
+      "anyLike": 3
+    }
+  },
+  "pages": [
+    {
+      "page": "404.html",
+      "entry": "src/pages/not-found.js",
+      "jsModules": 15,
+      "jsRaw": 38561,
+      "jsGzip": 11495,
+      "cssFiles": 4,
+      "cssRaw": 59397,
+      "cssGzip": 10267,
+      "htmlRaw": 5031,
+      "axios": false
+    },
+    {
+      "page": "account.html",
+      "entry": "src/pages/account.js",
+      "jsModules": 30,
+      "jsRaw": 92175,
+      "jsGzip": 28094,
+      "cssFiles": 4,
+      "cssRaw": 59397,
+      "cssGzip": 10267,
+      "htmlRaw": 5253,
+      "axios": false
+    },
+    {
+      "page": "cart.html",
+      "entry": "src/pages/cart.js",
+      "jsModules": 30,
+      "jsRaw": 137298,
+      "jsGzip": 44651,
+      "cssFiles": 4,
+      "cssRaw": 59397,
+      "cssGzip": 10267,
+      "htmlRaw": 7431,
+      "axios": true
+    },
+    {
+      "page": "catalog.html",
+      "entry": "src/pages/catalog.js",
+      "jsModules": 34,
+      "jsRaw": 98558,
+      "jsGzip": 29360,
+      "cssFiles": 4,
+      "cssRaw": 59397,
+      "cssGzip": 10267,
+      "htmlRaw": 9217,
+      "axios": false
+    },
+    {
+      "page": "comparison.html",
+      "entry": "src/pages/comparison.js",
+      "jsModules": 16,
+      "jsRaw": 40085,
+      "jsGzip": 11920,
+      "cssFiles": 4,
+      "cssRaw": 59397,
+      "cssGzip": 10267,
+      "htmlRaw": 9006,
+      "axios": false
+    },
+    {
+      "page": "index.html",
+      "entry": "src/pages/home.js",
+      "jsModules": 22,
+      "jsRaw": 62741,
+      "jsGzip": 18557,
+      "cssFiles": 4,
+      "cssRaw": 59397,
+      "cssGzip": 10267,
+      "htmlRaw": 14569,
+      "axios": false
+    },
+    {
+      "page": "login.html",
+      "entry": "src/pages/login.js",
+      "jsModules": 25,
+      "jsRaw": 73498,
+      "jsGzip": 22699,
+      "cssFiles": 4,
+      "cssRaw": 59397,
+      "cssGzip": 10267,
+      "htmlRaw": 5940,
+      "axios": false
+    },
+    {
+      "page": "product.html",
+      "entry": "src/pages/product.js",
+      "jsModules": 27,
+      "jsRaw": 126320,
+      "jsGzip": 41731,
+      "cssFiles": 4,
+      "cssRaw": 59397,
+      "cssGzip": 10267,
+      "htmlRaw": 5102,
+      "axios": true
+    },
+    {
+      "page": "register.html",
+      "entry": "src/pages/register.js",
+      "jsModules": 25,
+      "jsRaw": 73276,
+      "jsGzip": 22601,
+      "cssFiles": 4,
+      "cssRaw": 59397,
+      "cssGzip": 10267,
+      "htmlRaw": 6678,
+      "axios": false
+    }
+  ],
+  "axios": {
+    "raw": 48447,
+    "gzip": 17920
+  },
+  "sharedBlocks": [
+    {
+      "block": "header",
+      "pages": 9,
+      "linesEach": 20,
+      "copies": 9,
+      "distinctVersions": 4
+    },
+    {
+      "block": "footer",
+      "pages": 9,
+      "linesEach": 12,
+      "copies": 9,
+      "distinctVersions": 4
+    }
+  ],
+  "headTagsPerPage": [25, 25, 25, 25, 25, 25, 25, 25, 25],
+  "patterns": [
+    {
+      "pattern": "Product image <img> built by hand",
+      "files": [
+        "src/components/cart-panel.js",
+        "src/components/catalog-render.js",
+        "src/components/gallery.js",
+        "src/components/product-card.js",
+        "src/components/recent-strip.js",
+        "src/components/saved-list.js"
+      ]
+    },
+    {
+      "pattern": "Price formatting at the call site (formatMoney)",
+      "files": [
+        "src/components/cart-panel.js",
+        "src/components/cart-view.js",
+        "src/components/catalog-render.js",
+        "src/components/order-list.js",
+        "src/components/product-card.js",
+        "src/components/product-detail.js",
+        "src/components/recent-strip.js",
+        "src/components/saved-list.js",
+        "src/utils/money.js"
+      ]
+    },
+    {
+      "pattern": "Error / retry box (role=\"alert\", \"Try again\")",
+      "files": ["src/components/status-message.js"]
+    },
+    {
+      "pattern": "Live status region written by hand (textContent on a status element)",
+      "files": [
+        "src/components/account-view.js",
+        "src/components/cart-panel.js",
+        "src/components/cart-view.js",
+        "src/components/checkout.js",
+        "src/components/newsletter.js",
+        "src/components/product-detail.js",
+        "src/components/saved-list.js"
+      ]
+    },
+    {
+      "pattern": "Pagination (Previous / Next)",
+      "files": ["src/components/pagination.js"]
+    },
+    {
+      "pattern": "HTTP client",
+      "files": ["src/api/http.js", "src/api/product-api.js"]
+    },
+    {
+      "pattern": "Two API formats (our mock and TechSphere) switched by a dialect flag",
+      "files": [
+        "src/api/http.js",
+        "src/api/product-api.js",
+        "src/pages/account.js",
+        "src/pages/cart.js",
+        "src/pages/catalog.js",
+        "src/pages/login.js",
+        "src/pages/register.js"
+      ]
+    },
+    {
+      "pattern": "Store created per page (createCartStore)",
+      "files": [
+        "src/pages/account.js",
+        "src/pages/cart.js",
+        "src/pages/catalog.js",
+        "src/pages/comparison.js",
+        "src/pages/home.js",
+        "src/pages/login.js",
+        "src/pages/not-found.js",
+        "src/pages/product.js",
+        "src/pages/register.js"
+      ]
+    },
+    {
+      "pattern": "Focus restore after re-render",
+      "files": [
+        "src/components/address-book.js",
+        "src/components/cart-panel.js",
+        "src/components/cart-view.js",
+        "src/components/catalog-view.js",
+        "src/components/filter-bar.js",
+        "src/components/form-errors.js",
+        "src/components/gallery.js",
+        "src/components/nav.js",
+        "src/components/newsletter.js",
+        "src/components/order-list.js"
+      ]
+    }
+  ],
+  "storageKeys": [
+    {
+      "name": "cart",
+      "key": "brandstore:cart:v1",
+      "area": "local",
+      "pagesCreatingAStore": [
+        "account.js",
+        "cart.js",
+        "catalog.js",
+        "comparison.js",
+        "home.js",
+        "login.js",
+        "not-found.js",
+        "product.js",
+        "register.js"
+      ]
+    },
+    {
+      "name": "saved",
+      "key": "brandstore:saved:v1",
+      "area": "local",
+      "pagesCreatingAStore": ["cart.js", "product.js"]
+    },
+    {
+      "name": "recent",
+      "key": "brandstore:recent:v1",
+      "area": "session",
+      "pagesCreatingAStore": ["cart.js", "product.js"]
+    },
+    {
+      "name": "session",
+      "key": "brandstore:session:v1",
+      "area": "session",
+      "pagesCreatingAStore": [
+        "account.js",
+        "cart.js",
+        "catalog.js",
+        "comparison.js",
+        "home.js",
+        "login.js",
+        "not-found.js",
+        "product.js",
+        "register.js"
+      ]
+    },
+    {
+      "name": "flags",
+      "key": "brandstore:flags:v1",
+      "area": "session",
+      "pagesCreatingAStore": ["account.js", "cart.js", "login.js", "register.js"]
+    }
+  ],
+  "urlState": ["src/pages/product.js", "src/state/catalog.js", "src/utils/query-string.js"],
+  "moduleState": [
+    "src/components/account-view.js",
+    "src/components/cart-view.js",
+    "src/components/catalog-view.js",
+    "src/components/demo-controls.js",
+    "src/components/product-filter.js",
+    "src/components/status-message.js"
+  ],
+  "tests": [
+    {
+      "dir": "tests/unit",
+      "files": 17,
+      "cases": 162,
+      "list": [
+        "auth.test.js",
+        "cart.test.js",
+        "catalog-helpers.test.js",
+        "content.test.js",
+        "edge-cases.test.js",
+        "edge-sweep.test.js",
+        "facets.test.js",
+        "http-and-state.test.js",
+        "main.test.js",
+        "module-map.test.js",
+        "product-api.test.js",
+        "query-string.test.js",
+        "request-audit.test.js",
+        "saved-recent-storage.test.js",
+        "state-guards.test.js",
+        "techsphere.test.js",
+        "validate.test.js"
+      ]
+    },
+    {
+      "dir": "tests/integration",
+      "files": 5,
+      "cases": 21,
+      "list": [
+        "account-api.test.js",
+        "catalog-api.test.js",
+        "netlify-function.test.js",
+        "product-api.test.js",
+        "techsphere-account.test.js"
+      ]
+    },
+    {
+      "dir": "tests/dom",
+      "files": 4,
+      "cases": 26,
+      "list": [
+        "cart-ui.test.js",
+        "catalog-ui.test.js",
+        "dom-utils.test.js",
+        "edge-sweep-ui.test.js"
+      ]
+    },
+    {
+      "dir": "tests/e2e/specs",
+      "files": 4,
+      "cases": 9,
+      "list": [
+        "account.spec.js",
+        "catalog-cart.spec.js",
+        "keyboard-checkout.spec.js",
+        "robustness.spec.js"
+      ]
+    },
+    {
+      "dir": "tests/e2e",
+      "files": 3,
+      "cases": 28,
+      "list": ["auth-journeys.mjs", "cart-journeys.mjs", "catalog-journeys.mjs"]
+    }
+  ]
+}

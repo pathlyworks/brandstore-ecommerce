@@ -1,0 +1,24 @@
+{
+  "request": {
+    "method": "GET",
+    "path": "/products/p-007"
+  },
+  "status": 200,
+  "contentType": "application/json; charset=utf-8",
+  "retryAfter": null,
+  "note": "",
+  "body": {
+    "id": "p-007",
+    "name": "Orbit Audio 7",
+    "brand": "Orbit",
+    "category": "audio",
+    "price": 3499,
+    "currency": "EGP",
+    "rating": 3.5,
+    "reviews_count": 28,
+    "images": ["/images/p-007.webp"],
+    "specs": {
+      "warranty": "1 year"
+    }
+  }
+}
