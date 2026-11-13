@@ -45,7 +45,7 @@ function render(root, ctx) {
   const { items } = ctx.saved.get();
   renderCartLines(dom.qs('#cart-lines', root), lines, ctx);
   renderSavedItems(dom.qs('#saved-items', root), items, ctx);
-  renderTotals(dom.qs('#cart-totals', root), cartSummary(ctx.cart.get()));
+  renderTotals(dom.qs('#cart-totals', root), cartSummary(ctx.cart.get(), ctx.currency));
   dom.qs('#cart-empty', root).hidden = lines.length > 0;
   dom.qs('#cart-clear', root).hidden = lines.length === 0;
   dom.qs('#saved-empty', root).hidden = items.length > 0;
@@ -93,12 +93,13 @@ async function refreshFromCatalog(api, { cart, saved, say }) {
 
 /**
  * @param {HTMLElement} root the cart page's <main>
- * @param {{ api: object, cart: object, saved: object, recent: object }} deps (stores from state/stores.js)
+ * @param {{ api: object, cart: object, saved: object, recent: object, currency?: string }} deps (stores from
+ *   state/stores.js; currency: what an empty cart's zero totals are shown in)
  * @returns {{ ready: Promise<void> }} settles when the price and stock check has finished
  */
-export function mount(root, { api, cart, saved, recent }) {
+export function mount(root, { api, cart, saved, recent, currency = 'USD' }) {
   const message = dom.qs('#cart-message', root);
-  const ctx = { cart, saved, say: (text) => (message.textContent = text) };
+  const ctx = { cart, saved, currency, say: (text) => (message.textContent = text) };
   dom.qs('#cart-clear', root).addEventListener('click', () => {
     cart.apply(clearCart);
     ctx.say('Your cart is empty now.');

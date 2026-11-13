@@ -10,6 +10,7 @@ export const NOTICES = Object.freeze({
   signInFirst: 'Please sign in to see your account.',
   expired: 'Your session has expired. Please sign in again.',
   signedOut: 'You have signed out. Your cart and saved items are still on this device.',
+  checkout: 'Please sign in to place your order. Your cart is kept.',
 });
 
 /**

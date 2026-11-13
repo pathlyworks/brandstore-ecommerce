@@ -5,7 +5,31 @@
  * textContent (or a text node), never with innerHTML. The browser then treats
  * it as plain text, so a product name such as "<img onerror=...>" is shown as
  * those characters instead of being run as markup.
+ *
+ * Every <img> made with el() falls back to the product placeholder when its file cannot be
+ * loaded (missing, 404, or not an image), so the shopper never sees a broken-image icon.
  */
+
+/** The image shown when a product's own image is missing or cannot be loaded. */
+export const PLACEHOLDER_SRC = '/assets/product-placeholder.svg';
+
+/**
+ * Swap an image to the placeholder when it fails to load. Runs at most once per failure: the
+ * placeholder itself is never retried, so a missing placeholder cannot loop.
+ * @param {HTMLImageElement} img
+ * @param {string} [placeholder]
+ * @returns {HTMLImageElement}
+ */
+export function withImageFallback(img, placeholder = PLACEHOLDER_SRC) {
+  img.addEventListener('error', function () {
+    if (img.getAttribute('src') === placeholder) return;
+    img.removeAttribute('srcset');
+    img.removeAttribute('sizes');
+    img.setAttribute('src', placeholder);
+    img.dataset.imageMissing = 'true';
+  });
+  return img;
+}
 /**
  * Create an element without parsing any HTML.
  * @param {string} tag  Tag name, e.g. 'article'.
@@ -39,6 +63,7 @@ export function el(tag, options, children) {
   (children || []).forEach(function (child) {
     node.appendChild(typeof child === 'string' ? document.createTextNode(child) : child);
   });
+  if (tag === 'img') withImageFallback(node);
 
   return node;
 }

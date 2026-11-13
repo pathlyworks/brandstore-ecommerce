@@ -22,7 +22,7 @@ function fakeAdapter(status, data, headers = {}) {
 describe('product-api (Axios)', () => {
   it('the request interceptor adds Accept and X-Client-Id and the base URL', async () => {
     const { seen, adapter } = fakeAdapter(200, { data: { id: 'smartwatch' } });
-    const api = createProductApi({ baseURL: '/api', adapter });
+    const api = createProductApi({ baseURL: '/api', adapter, dialect: 'brandstore' }); // our mock
     expect((await fetchProduct(api, 'smartwatch')).id).toBe('smartwatch');
     expect(seen[0].url).toBe('/products/smartwatch');
     expect(seen[0].baseURL).toBe('/api');

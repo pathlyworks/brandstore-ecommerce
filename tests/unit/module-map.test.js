@@ -86,6 +86,7 @@ describe('api/endpoints.js matches the OpenAPI paths', () => {
     ENDPOINTS.cancelOrder('x-id'),
     ENDPOINTS.addresses,
     ENDPOINTS.address('x-id'),
+    ENDPOINTS.placeOrder,
   ].map(toTemplate);
 
   it('every client path is in the spec', () => {

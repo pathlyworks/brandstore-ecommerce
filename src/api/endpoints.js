@@ -13,4 +13,5 @@ export const ENDPOINTS = Object.freeze({
   cancelOrder: (/** @type {string} */ id) => `/account/orders/${encodeURIComponent(id)}/cancel`,
   addresses: '/account/addresses',
   address: (/** @type {string} */ id) => `/account/addresses/${encodeURIComponent(id)}`,
+  placeOrder: '/orders',
 });

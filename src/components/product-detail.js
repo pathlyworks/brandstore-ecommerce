@@ -38,15 +38,26 @@ export function stockStatus(stock) {
 }
 
 /**
- * The specifications as a two-column table (row headers).
- * @param {{ label: string, value: string }[]} specs
- * @returns {HTMLTableElement}
+ * The specifications as a two-column table (row headers). Rows without a value (null, undefined or empty,
+ * from either API) are left out; with none left, one line says so instead of an empty table.
+ * @param {{ label: string, value: string | null }[] | null | undefined} specs
+ * @returns {HTMLElement}
  */
-function createSpecs(specs) {
-  const rows = specs.map(({ label, value }) =>
+export function createSpecs(specs) {
+  const known = (Array.isArray(specs) ? specs : []).filter(
+    (s) =>
+      s && s.label && s.value !== null && s.value !== undefined && String(s.value).trim() !== '',
+  );
+  if (!known.length) {
+    return dom.el('p', {
+      className: 'specs specs--none',
+      text: 'No specifications are listed for this product.',
+    });
+  }
+  const rows = known.map(({ label, value }) =>
     dom.el('tr', {}, [
       dom.el('th', { text: label, attrs: { scope: 'row' } }),
-      dom.el('td', { text: value }),
+      dom.el('td', { text: String(value) }),
     ]),
   );
   return dom.el('table', { className: 'specs' }, [

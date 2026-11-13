@@ -18,7 +18,9 @@ test('filter the catalog by category and add a product to the cart', async ({ pa
   await expect(page.getByText('Showing 1–6 of 6 products')).toBeVisible();
   const products = results.getByRole('link');
   await expect(products).toHaveCount(6);
-  for (const name of await products.allTextContents()) expect(name).toMatch(/Audio/);
+  // A web-first assertion, not allTextContents(): in Playwright's Firefox, allTextContents() on a role
+  // locator crashes the page process (isolated in CI on PR #3; evaluateAll and CSS locators are fine).
+  await expect(products).toHaveText(Array(6).fill(/Audio/));
 
   // Open the first product and add it to the cart.
   await products.first().click();

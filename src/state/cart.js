@@ -119,14 +119,36 @@ export function availableLines({ lines }) {
   return lines.filter(({ stock }) => stock > 0);
 }
 
+/** Why checkout cannot start, in the shopper's words. */
+export const CHECKOUT_BLOCKED = Object.freeze({
+  empty: 'Your cart is empty. Add a product before you check out.',
+  unavailable:
+    'Nothing in your cart is in stock right now, so there is nothing to order. Save the items for later or remove them.',
+});
+
+/**
+ * What "Place order" sends (POST /orders { items: [{ productId, qty }] }), or why it cannot start. An empty
+ * cart never reaches the API; out-of-stock lines are left out, as they are left out of the total.
+ * @param {CartState} cart
+ * @returns {{ ok: true, items: { productId: string, qty: number }[] } | { ok: false, reason: 'empty' | 'unavailable', message: string }}
+ */
+export function checkoutItems(cart) {
+  if (!cart.lines.length) return { ok: false, reason: 'empty', message: CHECKOUT_BLOCKED.empty };
+  const lines = availableLines(cart);
+  if (!lines.length)
+    return { ok: false, reason: 'unavailable', message: CHECKOUT_BLOCKED.unavailable };
+  return { ok: true, items: lines.map((l) => ({ productId: l.productId, qty: l.quantity })) };
+}
+
 /**
  * The numbers the cart page AND the menu badge show (one function, so they always agree).
  * @param {CartState} cart
+ * @param {string} [fallbackCurrency] for an empty cart (the API's currency: EGP on TechSphere)
  * @returns {import('../utils/cart-math.js').CartTotals & { currency: string }}
  */
-export function cartSummary(cart) {
+export function cartSummary(cart, fallbackCurrency = 'USD') {
   const lines = availableLines(cart);
-  return { ...totals(lines), currency: lines[0]?.currency || 'USD' };
+  return { ...totals(lines), currency: lines[0]?.currency || fallbackCurrency };
 }
 
 /**

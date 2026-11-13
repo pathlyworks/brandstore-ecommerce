@@ -53,8 +53,8 @@ describe('techsphere translation', () => {
       reviewCount: 120,
     });
     expect(p.specs).toEqual([
-      { label: 'ram', value: '16 GB' },
-      { label: 'storage', value: '512' },
+      { label: 'Ram', value: '16 GB' },
+      { label: 'Storage', value: '512' },
     ]);
     expect(toAppProduct({ ...LAPTOP, stock_status: 'low' }).stock).toBe(3);
     const { stock_status: _, ...noStatus } = LAPTOP;
@@ -81,7 +81,7 @@ describe('techsphere translation', () => {
       total_pages: 3,
       total: 24,
     });
-    expect(list.meta).toEqual({ page: 1, limit: 1, total: 24, totalPages: 3 });
+    expect(list.meta).toEqual({ page: 1, limit: 8, total: 24, totalPages: 3 }); // the page size, not items.length
     expect(list.data[0].price).toBe(3399900);
     expect(fromTechsphere('/products/p-001', LAPTOP).data.id).toBe('p-001');
     expect(fromTechsphere('/categories', ['laptops'])).toEqual(['laptops']);

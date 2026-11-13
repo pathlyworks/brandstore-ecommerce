@@ -1,5 +1,21 @@
 # Changelog
 
+## Unreleased — Phase 2, Task 6: robustness, pull request, demo, handoff (branch `feature/robustness-handoff`, PR #3)
+### Added
+- Checkout: "Place order" (POST /orders with the Bearer token). An empty cart, or a cart with nothing in stock, is stopped before the API with the reason; signed-out shoppers sign in and come back to the cart.
+- Live-region announcements for every cart change (quantity, save for later, remove), with the new total.
+- Edge-case sweep tests: `tests/unit/edge-sweep.test.js`, `tests/dom/edge-sweep-ui.test.js`, `tests/e2e/specs/robustness.spec.js`; keyboard and checkout spec `tests/e2e/specs/keyboard-checkout.spec.js`.
+- CI: cross-browser smoke (Firefox, WebKit) and Lighthouse (`scripts/lighthouse.mjs`); `E2E_BROWSERS` for the Playwright specs.
+- `docs/HANDOFF.md` (16 API contract gaps), demo video and recorder (`docs/demo/`, `scripts/record-demo.mjs`), README rewritten for a new developer.
+### Changed
+- The API address defaults to `http://localhost:4010` (the TechSphere kit) when `VITE_API_BASE` is not set; our own mock is opt-in with `VITE_API_URL=/api`.
+- Product images come from the API, with a one-time fallback to the placeholder when one cannot be loaded.
+- `npm run e2e` resets the API only when it can (`/__reset` may be absent on a given API).
+### Fixed
+- Specification rows with null values showed "null"; they are left out.
+- On a short last catalog page the count started at the wrong number ("Showing 9–12" instead of "17–20"): the TechSphere page size is 8.
+- An empty cart showed "$0.00" against the EGP-priced API; the price filter legend said "USD".
+
 ## Unreleased — Phase 2, Task 5: automated testing and CI (branch `feature/automated-tests-ci`)
 ### Revision after grading
 - End-to-end tests use the API given in `VITE_API_BASE` (the grader's) and start Python only when it is not set.

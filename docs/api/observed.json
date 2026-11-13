@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-12T19:41:16.932Z",
+  "generatedAt": "2026-11-13T15:17:48.471Z",
   "baseUrl": "mock-server (random local port)",
   "rateLimit": 60,
   "requests": [
@@ -855,110 +855,54 @@
       }
     },
     {
-      "operationId": "listOrders",
-      "method": "GET",
-      "template": "/account/orders",
-      "path": "/account/orders",
-      "note": "",
-      "expected": 200,
-      "status": 200,
-      "errorCode": null,
+      "operationId": "placeOrder",
+      "method": "POST",
+      "template": "/orders",
+      "path": "/orders",
+      "note": "no Authorization header",
+      "expected": 401,
+      "status": 401,
+      "errorCode": "UNAUTHENTICATED",
       "headers": {
         "content-type": "application/json; charset=utf-8",
+        "www-authenticate": "Bearer",
         "x-ratelimit-limit": "60",
         "x-ratelimit-remaining": "35"
       },
       "shape": {
-        "data": [
-          {
-            "id": "string",
-            "createdAt": "string",
-            "status": "string",
-            "items": [
-              "object"
-            ],
-            "subtotal": "integer",
-            "shipping": "integer",
-            "total": "integer",
-            "currency": "string",
-            "cancellable": "boolean",
-            "cancelledAt": "null",
-            "cancelReason": "null"
-          }
-        ],
-        "meta": {
-          "page": "integer",
-          "limit": "integer",
-          "total": "integer",
-          "totalPages": "integer"
+        "error": {
+          "code": "string",
+          "message": "string"
         }
       },
       "request": {
         "headers": {
           "X-Client-Id": "contract-run",
-          "Authorization": "Bearer 7e073827-bd96-49b5-beab-a06918deb9bd"
+          "Content-Type": "application/json"
+        },
+        "body": {
+          "items": [
+            {
+              "productId": "headphones-pro",
+              "qty": 1
+            }
+          ]
         }
       }
     },
     {
-      "operationId": "listOrders",
-      "method": "GET",
-      "template": "/account/orders",
-      "path": "/account/orders?status=processing&limit=5",
-      "note": "",
-      "expected": 200,
-      "status": 200,
-      "errorCode": null,
-      "headers": {
-        "content-type": "application/json; charset=utf-8",
-        "x-ratelimit-limit": "60",
-        "x-ratelimit-remaining": "34"
-      },
-      "shape": {
-        "data": [
-          {
-            "id": "string",
-            "createdAt": "string",
-            "status": "string",
-            "items": [
-              "object"
-            ],
-            "subtotal": "integer",
-            "shipping": "integer",
-            "total": "integer",
-            "currency": "string",
-            "cancellable": "boolean",
-            "cancelledAt": "null",
-            "cancelReason": "null"
-          }
-        ],
-        "meta": {
-          "page": "integer",
-          "limit": "integer",
-          "total": "integer",
-          "totalPages": "integer"
-        }
-      },
-      "request": {
-        "headers": {
-          "X-Client-Id": "contract-run",
-          "Authorization": "Bearer 7e073827-bd96-49b5-beab-a06918deb9bd"
-        }
-      }
-    },
-    {
-      "operationId": "listOrders",
-      "method": "GET",
-      "template": "/account/orders",
-      "path": "/account/orders?status=lost",
-      "note": "",
+      "operationId": "placeOrder",
+      "method": "POST",
+      "template": "/orders",
+      "path": "/orders",
+      "note": "empty cart: no items",
       "expected": 400,
       "status": 400,
       "errorCode": "VALIDATION_ERROR",
       "headers": {
         "content-type": "application/json; charset=utf-8",
         "x-ratelimit-limit": "60",
-        "x-ratelimit-remaining": "33"
+        "x-ratelimit-remaining": "34"
       },
       "shape": {
         "error": {
@@ -975,7 +919,173 @@
       "request": {
         "headers": {
           "X-Client-Id": "contract-run",
-          "Authorization": "Bearer 7e073827-bd96-49b5-beab-a06918deb9bd"
+          "Authorization": "Bearer 5c1002ee-c0fa-4d08-8bc0-0c1c134abf02",
+          "Content-Type": "application/json"
+        },
+        "body": {
+          "items": []
+        }
+      }
+    },
+    {
+      "operationId": "placeOrder",
+      "method": "POST",
+      "template": "/orders",
+      "path": "/orders",
+      "note": "",
+      "expected": 201,
+      "status": 201,
+      "errorCode": null,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "33"
+      },
+      "shape": {
+        "data": {
+          "id": "string",
+          "number": "string",
+          "status": "string"
+        }
+      },
+      "request": {
+        "headers": {
+          "X-Client-Id": "contract-run",
+          "Authorization": "Bearer 5c1002ee-c0fa-4d08-8bc0-0c1c134abf02",
+          "Content-Type": "application/json"
+        },
+        "body": {
+          "items": [
+            {
+              "productId": "headphones-pro",
+              "qty": 2
+            }
+          ]
+        }
+      }
+    },
+    {
+      "operationId": "listOrders",
+      "method": "GET",
+      "template": "/account/orders",
+      "path": "/account/orders",
+      "note": "",
+      "expected": 200,
+      "status": 200,
+      "errorCode": null,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "32"
+      },
+      "shape": {
+        "data": [
+          {
+            "id": "string",
+            "createdAt": "string",
+            "status": "string",
+            "items": [
+              "object"
+            ],
+            "subtotal": "integer",
+            "shipping": "integer",
+            "total": "integer",
+            "currency": "string",
+            "cancellable": "boolean",
+            "cancelledAt": "null",
+            "cancelReason": "null"
+          }
+        ],
+        "meta": {
+          "page": "integer",
+          "limit": "integer",
+          "total": "integer",
+          "totalPages": "integer"
+        }
+      },
+      "request": {
+        "headers": {
+          "X-Client-Id": "contract-run",
+          "Authorization": "Bearer 5c1002ee-c0fa-4d08-8bc0-0c1c134abf02"
+        }
+      }
+    },
+    {
+      "operationId": "listOrders",
+      "method": "GET",
+      "template": "/account/orders",
+      "path": "/account/orders?status=processing&limit=5",
+      "note": "",
+      "expected": 200,
+      "status": 200,
+      "errorCode": null,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "31"
+      },
+      "shape": {
+        "data": [
+          {
+            "id": "string",
+            "createdAt": "string",
+            "status": "string",
+            "items": [
+              "object"
+            ],
+            "subtotal": "integer",
+            "shipping": "integer",
+            "total": "integer",
+            "currency": "string",
+            "cancellable": "boolean",
+            "cancelledAt": "null",
+            "cancelReason": "null"
+          }
+        ],
+        "meta": {
+          "page": "integer",
+          "limit": "integer",
+          "total": "integer",
+          "totalPages": "integer"
+        }
+      },
+      "request": {
+        "headers": {
+          "X-Client-Id": "contract-run",
+          "Authorization": "Bearer 5c1002ee-c0fa-4d08-8bc0-0c1c134abf02"
+        }
+      }
+    },
+    {
+      "operationId": "listOrders",
+      "method": "GET",
+      "template": "/account/orders",
+      "path": "/account/orders?status=lost",
+      "note": "",
+      "expected": 400,
+      "status": 400,
+      "errorCode": "VALIDATION_ERROR",
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "30"
+      },
+      "shape": {
+        "error": {
+          "code": "string",
+          "message": "string",
+          "details": [
+            {
+              "field": "string",
+              "message": "string"
+            }
+          ]
+        }
+      },
+      "request": {
+        "headers": {
+          "X-Client-Id": "contract-run",
+          "Authorization": "Bearer 5c1002ee-c0fa-4d08-8bc0-0c1c134abf02"
         }
       }
     },
@@ -992,7 +1102,7 @@
         "content-type": "application/json; charset=utf-8",
         "www-authenticate": "Bearer",
         "x-ratelimit-limit": "60",
-        "x-ratelimit-remaining": "32"
+        "x-ratelimit-remaining": "29"
       },
       "shape": {
         "error": {
@@ -1018,7 +1128,7 @@
       "headers": {
         "content-type": "application/json; charset=utf-8",
         "x-ratelimit-limit": "60",
-        "x-ratelimit-remaining": "31"
+        "x-ratelimit-remaining": "28"
       },
       "shape": {
         "error": {
@@ -1035,7 +1145,7 @@
       "request": {
         "headers": {
           "X-Client-Id": "contract-run",
-          "Authorization": "Bearer 7e073827-bd96-49b5-beab-a06918deb9bd",
+          "Authorization": "Bearer 5c1002ee-c0fa-4d08-8bc0-0c1c134abf02",
           "Content-Type": "application/json"
         },
         "body": {
@@ -1055,7 +1165,7 @@
       "headers": {
         "content-type": "application/json; charset=utf-8",
         "x-ratelimit-limit": "60",
-        "x-ratelimit-remaining": "30"
+        "x-ratelimit-remaining": "27"
       },
       "shape": {
         "data": {
@@ -1083,7 +1193,7 @@
       "request": {
         "headers": {
           "X-Client-Id": "contract-run",
-          "Authorization": "Bearer 7e073827-bd96-49b5-beab-a06918deb9bd",
+          "Authorization": "Bearer 5c1002ee-c0fa-4d08-8bc0-0c1c134abf02",
           "Content-Type": "application/json"
         },
         "body": {
@@ -1103,7 +1213,7 @@
       "headers": {
         "content-type": "application/json; charset=utf-8",
         "x-ratelimit-limit": "60",
-        "x-ratelimit-remaining": "29"
+        "x-ratelimit-remaining": "26"
       },
       "shape": {
         "error": {
@@ -1114,7 +1224,7 @@
       "request": {
         "headers": {
           "X-Client-Id": "contract-run",
-          "Authorization": "Bearer 7e073827-bd96-49b5-beab-a06918deb9bd"
+          "Authorization": "Bearer 5c1002ee-c0fa-4d08-8bc0-0c1c134abf02"
         }
       }
     },
@@ -1130,7 +1240,7 @@
       "headers": {
         "content-type": "application/json; charset=utf-8",
         "x-ratelimit-limit": "60",
-        "x-ratelimit-remaining": "28"
+        "x-ratelimit-remaining": "25"
       },
       "shape": {
         "error": {
@@ -1141,7 +1251,7 @@
       "request": {
         "headers": {
           "X-Client-Id": "contract-run",
-          "Authorization": "Bearer 7e073827-bd96-49b5-beab-a06918deb9bd"
+          "Authorization": "Bearer 5c1002ee-c0fa-4d08-8bc0-0c1c134abf02"
         }
       }
     },
@@ -1157,7 +1267,7 @@
       "headers": {
         "content-type": "application/json; charset=utf-8",
         "x-ratelimit-limit": "60",
-        "x-ratelimit-remaining": "27"
+        "x-ratelimit-remaining": "24"
       },
       "shape": {
         "error": {
@@ -1168,7 +1278,7 @@
       "request": {
         "headers": {
           "X-Client-Id": "contract-run",
-          "Authorization": "Bearer 7e073827-bd96-49b5-beab-a06918deb9bd"
+          "Authorization": "Bearer 5c1002ee-c0fa-4d08-8bc0-0c1c134abf02"
         }
       }
     },
@@ -1185,7 +1295,7 @@
         "content-type": "application/json; charset=utf-8",
         "www-authenticate": "Bearer",
         "x-ratelimit-limit": "60",
-        "x-ratelimit-remaining": "26"
+        "x-ratelimit-remaining": "23"
       },
       "shape": {
         "error": {
@@ -1211,7 +1321,7 @@
       "headers": {
         "content-type": "application/json; charset=utf-8",
         "x-ratelimit-limit": "60",
-        "x-ratelimit-remaining": "25"
+        "x-ratelimit-remaining": "22"
       },
       "shape": {
         "data": [
@@ -1232,7 +1342,7 @@
       "request": {
         "headers": {
           "X-Client-Id": "contract-run",
-          "Authorization": "Bearer 7e073827-bd96-49b5-beab-a06918deb9bd"
+          "Authorization": "Bearer 5c1002ee-c0fa-4d08-8bc0-0c1c134abf02"
         }
       }
     },
@@ -1249,7 +1359,7 @@
         "content-type": "application/json; charset=utf-8",
         "www-authenticate": "Bearer",
         "x-ratelimit-limit": "60",
-        "x-ratelimit-remaining": "24"
+        "x-ratelimit-remaining": "21"
       },
       "shape": {
         "error": {
@@ -1285,7 +1395,7 @@
         "content-type": "application/json; charset=utf-8",
         "location": "/account/addresses/office",
         "x-ratelimit-limit": "60",
-        "x-ratelimit-remaining": "23"
+        "x-ratelimit-remaining": "20"
       },
       "shape": {
         "data": {
@@ -1304,7 +1414,7 @@
       "request": {
         "headers": {
           "X-Client-Id": "contract-run",
-          "Authorization": "Bearer 7e073827-bd96-49b5-beab-a06918deb9bd",
+          "Authorization": "Bearer 5c1002ee-c0fa-4d08-8bc0-0c1c134abf02",
           "Content-Type": "application/json"
         },
         "body": {
@@ -1329,7 +1439,7 @@
       "headers": {
         "content-type": "application/json; charset=utf-8",
         "x-ratelimit-limit": "60",
-        "x-ratelimit-remaining": "22"
+        "x-ratelimit-remaining": "19"
       },
       "shape": {
         "data": {
@@ -1348,7 +1458,7 @@
       "request": {
         "headers": {
           "X-Client-Id": "contract-run",
-          "Authorization": "Bearer 7e073827-bd96-49b5-beab-a06918deb9bd",
+          "Authorization": "Bearer 5c1002ee-c0fa-4d08-8bc0-0c1c134abf02",
           "Content-Type": "application/json"
         },
         "body": {
@@ -1374,7 +1484,7 @@
       "headers": {
         "content-type": "application/json; charset=utf-8",
         "x-ratelimit-limit": "60",
-        "x-ratelimit-remaining": "21"
+        "x-ratelimit-remaining": "18"
       },
       "shape": {
         "error": {
@@ -1391,7 +1501,7 @@
       "request": {
         "headers": {
           "X-Client-Id": "contract-run",
-          "Authorization": "Bearer 7e073827-bd96-49b5-beab-a06918deb9bd",
+          "Authorization": "Bearer 5c1002ee-c0fa-4d08-8bc0-0c1c134abf02",
           "Content-Type": "application/json"
         },
         "body": {
@@ -1417,7 +1527,7 @@
         "content-type": "application/json; charset=utf-8",
         "www-authenticate": "Bearer",
         "x-ratelimit-limit": "60",
-        "x-ratelimit-remaining": "20"
+        "x-ratelimit-remaining": "17"
       },
       "shape": {
         "error": {
@@ -1443,7 +1553,7 @@
       "headers": {
         "content-type": "application/json; charset=utf-8",
         "x-ratelimit-limit": "60",
-        "x-ratelimit-remaining": "19"
+        "x-ratelimit-remaining": "16"
       },
       "shape": {
         "data": {
@@ -1454,7 +1564,7 @@
       "request": {
         "headers": {
           "X-Client-Id": "contract-run",
-          "Authorization": "Bearer 7e073827-bd96-49b5-beab-a06918deb9bd"
+          "Authorization": "Bearer 5c1002ee-c0fa-4d08-8bc0-0c1c134abf02"
         }
       }
     },
@@ -1470,7 +1580,7 @@
       "headers": {
         "content-type": "application/json; charset=utf-8",
         "x-ratelimit-limit": "60",
-        "x-ratelimit-remaining": "18"
+        "x-ratelimit-remaining": "15"
       },
       "shape": {
         "error": {
@@ -1481,7 +1591,7 @@
       "request": {
         "headers": {
           "X-Client-Id": "contract-run",
-          "Authorization": "Bearer 7e073827-bd96-49b5-beab-a06918deb9bd"
+          "Authorization": "Bearer 5c1002ee-c0fa-4d08-8bc0-0c1c134abf02"
         }
       }
     },
@@ -1497,7 +1607,7 @@
       "headers": {
         "content-type": "application/json; charset=utf-8",
         "x-ratelimit-limit": "60",
-        "x-ratelimit-remaining": "17"
+        "x-ratelimit-remaining": "14"
       },
       "shape": {
         "error": {
@@ -1524,7 +1634,7 @@
         "content-type": "application/json; charset=utf-8",
         "allow": "GET",
         "x-ratelimit-limit": "60",
-        "x-ratelimit-remaining": "16"
+        "x-ratelimit-remaining": "13"
       },
       "shape": {
         "error": {
@@ -1681,7 +1791,44 @@
       "request": {
         "headers": {
           "X-Client-Id": "burst-listOrders",
-          "Authorization": "Bearer 5cf19824-b5bd-45c3-8f56-0297bc00c999"
+          "Authorization": "Bearer 66be29ad-7d70-4b9f-8c9e-a23be3843552"
+        }
+      }
+    },
+    {
+      "operationId": "placeOrder",
+      "method": "POST",
+      "template": "/orders",
+      "path": "/orders",
+      "note": "request 61 within 60 s from one client",
+      "expected": 429,
+      "status": 429,
+      "errorCode": "RATE_LIMITED",
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "retry-after": "60",
+        "x-ratelimit-limit": "60",
+        "x-ratelimit-remaining": "0"
+      },
+      "shape": {
+        "error": {
+          "code": "string",
+          "message": "string"
+        }
+      },
+      "request": {
+        "headers": {
+          "X-Client-Id": "burst-placeOrder",
+          "Authorization": "Bearer 66be29ad-7d70-4b9f-8c9e-a23be3843552",
+          "Content-Type": "application/json"
+        },
+        "body": {
+          "items": [
+            {
+              "productId": "headphones-pro",
+              "qty": 2
+            }
+          ]
         }
       }
     },
@@ -1709,7 +1856,7 @@
       "request": {
         "headers": {
           "X-Client-Id": "burst-cancelOrder",
-          "Authorization": "Bearer 5cf19824-b5bd-45c3-8f56-0297bc00c999",
+          "Authorization": "Bearer 66be29ad-7d70-4b9f-8c9e-a23be3843552",
           "Content-Type": "application/json"
         },
         "body": {
@@ -1741,7 +1888,7 @@
       "request": {
         "headers": {
           "X-Client-Id": "burst-listAddresses",
-          "Authorization": "Bearer 5cf19824-b5bd-45c3-8f56-0297bc00c999"
+          "Authorization": "Bearer 66be29ad-7d70-4b9f-8c9e-a23be3843552"
         }
       }
     },
@@ -1769,7 +1916,7 @@
       "request": {
         "headers": {
           "X-Client-Id": "burst-putAddress",
-          "Authorization": "Bearer 5cf19824-b5bd-45c3-8f56-0297bc00c999",
+          "Authorization": "Bearer 66be29ad-7d70-4b9f-8c9e-a23be3843552",
           "Content-Type": "application/json"
         },
         "body": {
@@ -1806,7 +1953,7 @@
       "request": {
         "headers": {
           "X-Client-Id": "burst-deleteAddress",
-          "Authorization": "Bearer 5cf19824-b5bd-45c3-8f56-0297bc00c999"
+          "Authorization": "Bearer 66be29ad-7d70-4b9f-8c9e-a23be3843552"
         }
       }
     },

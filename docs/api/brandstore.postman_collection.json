@@ -677,7 +677,114 @@
       }
     },
     {
-      "name": "25 GET /account/orders -> 200",
+      "name": "25 POST /orders -> 401 (no Authorization header)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status is 401', () => pm.response.to.have.status(401));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "X-Client-Id",
+            "value": "postman"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/orders",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"items\": [\n    {\n      \"productId\": \"headphones-pro\",\n      \"qty\": 1\n    }\n  ]\n}"
+        },
+        "description": "placeOrder"
+      }
+    },
+    {
+      "name": "26 POST /orders -> 400 (empty cart: no items)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status is 400', () => pm.response.to.have.status(400));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "X-Client-Id",
+            "value": "postman"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/orders",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"items\": []\n}"
+        },
+        "description": "placeOrder"
+      }
+    },
+    {
+      "name": "27 POST /orders -> 201",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status is 201', () => pm.response.to.have.status(201));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "X-Client-Id",
+            "value": "postman"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/orders",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"items\": [\n    {\n      \"productId\": \"headphones-pro\",\n      \"qty\": 2\n    }\n  ]\n}"
+        },
+        "description": "placeOrder"
+      }
+    },
+    {
+      "name": "28 GET /account/orders -> 200",
       "event": [
         {
           "listen": "test",
@@ -706,7 +813,7 @@
       }
     },
     {
-      "name": "26 GET /account/orders?status=processing&limit=5 -> 200",
+      "name": "29 GET /account/orders?status=processing&limit=5 -> 200",
       "event": [
         {
           "listen": "test",
@@ -735,7 +842,7 @@
       }
     },
     {
-      "name": "27 GET /account/orders?status=lost -> 400",
+      "name": "30 GET /account/orders?status=lost -> 400",
       "event": [
         {
           "listen": "test",
@@ -764,7 +871,7 @@
       }
     },
     {
-      "name": "28 PATCH /account/orders/o-1003/cancel -> 401",
+      "name": "31 PATCH /account/orders/o-1003/cancel -> 401",
       "event": [
         {
           "listen": "test",
@@ -789,7 +896,7 @@
       }
     },
     {
-      "name": "29 PATCH /account/orders/o-1003/cancel -> 400 (reason too long)",
+      "name": "32 PATCH /account/orders/o-1003/cancel -> 400 (reason too long)",
       "event": [
         {
           "listen": "test",
@@ -826,7 +933,7 @@
       }
     },
     {
-      "name": "30 PATCH /account/orders/o-1003/cancel -> 200",
+      "name": "33 PATCH /account/orders/o-1003/cancel -> 200",
       "event": [
         {
           "listen": "test",
@@ -863,7 +970,7 @@
       }
     },
     {
-      "name": "31 PATCH /account/orders/o-1003/cancel -> 400 (already cancelled)",
+      "name": "34 PATCH /account/orders/o-1003/cancel -> 400 (already cancelled)",
       "event": [
         {
           "listen": "test",
@@ -892,7 +999,7 @@
       }
     },
     {
-      "name": "32 PATCH /account/orders/o-1001/cancel -> 400 (delivered order)",
+      "name": "35 PATCH /account/orders/o-1001/cancel -> 400 (delivered order)",
       "event": [
         {
           "listen": "test",
@@ -921,7 +1028,7 @@
       }
     },
     {
-      "name": "33 PATCH /account/orders/o-9999/cancel -> 404",
+      "name": "36 PATCH /account/orders/o-9999/cancel -> 404",
       "event": [
         {
           "listen": "test",
@@ -950,7 +1057,7 @@
       }
     },
     {
-      "name": "34 GET /account/addresses -> 401",
+      "name": "37 GET /account/addresses -> 401",
       "event": [
         {
           "listen": "test",
@@ -975,7 +1082,7 @@
       }
     },
     {
-      "name": "35 GET /account/addresses -> 200",
+      "name": "38 GET /account/addresses -> 200",
       "event": [
         {
           "listen": "test",
@@ -1004,7 +1111,7 @@
       }
     },
     {
-      "name": "36 PUT /account/addresses/office -> 401",
+      "name": "39 PUT /account/addresses/office -> 401",
       "event": [
         {
           "listen": "test",
@@ -1037,7 +1144,7 @@
       }
     },
     {
-      "name": "37 PUT /account/addresses/office -> 201 (new id: created)",
+      "name": "40 PUT /account/addresses/office -> 201 (new id: created)",
       "event": [
         {
           "listen": "test",
@@ -1074,7 +1181,7 @@
       }
     },
     {
-      "name": "38 PUT /account/addresses/office -> 200 (same id again: replaced)",
+      "name": "41 PUT /account/addresses/office -> 200 (same id again: replaced)",
       "event": [
         {
           "listen": "test",
@@ -1111,7 +1218,7 @@
       }
     },
     {
-      "name": "39 PUT /account/addresses/office -> 400",
+      "name": "42 PUT /account/addresses/office -> 400",
       "event": [
         {
           "listen": "test",
@@ -1148,7 +1255,7 @@
       }
     },
     {
-      "name": "40 DELETE /account/addresses/office -> 401",
+      "name": "43 DELETE /account/addresses/office -> 401",
       "event": [
         {
           "listen": "test",
@@ -1173,7 +1280,7 @@
       }
     },
     {
-      "name": "41 DELETE /account/addresses/office -> 200",
+      "name": "44 DELETE /account/addresses/office -> 200",
       "event": [
         {
           "listen": "test",
@@ -1202,7 +1309,7 @@
       }
     },
     {
-      "name": "42 DELETE /account/addresses/office -> 404 (already deleted)",
+      "name": "45 DELETE /account/addresses/office -> 404 (already deleted)",
       "event": [
         {
           "listen": "test",
@@ -1231,7 +1338,7 @@
       }
     },
     {
-      "name": "43 GET /nothing-here -> 404 (not an operation)",
+      "name": "46 GET /nothing-here -> 404 (not an operation)",
       "event": [
         {
           "listen": "test",
@@ -1256,7 +1363,7 @@
       }
     },
     {
-      "name": "44 DELETE /products -> 405 (wrong method; Allow header lists GET)",
+      "name": "47 DELETE /products -> 405 (wrong method; Allow header lists GET)",
       "event": [
         {
           "listen": "test",

@@ -5,6 +5,11 @@
   command = "npm run build"
   publish = "dist"
 
+# The deployed demo uses our own mock API (the Netlify function on /api): without this the app would call
+# the TechSphere API on http://localhost:4010 (src/config.js). Set VITE_API_BASE instead to use a real API.
+[build.environment]
+  VITE_API_URL = "/api"
+
 # Security headers for every response. The Content-Security-Policy only allows
 # files from the site itself, which is all this project uses (no inline scripts,
 # no inline styles, no third-party requests). connect-src 'self' allows the API on /api (the Netlify

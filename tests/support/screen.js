@@ -11,6 +11,7 @@
 /** Implicit ARIA roles for the elements these pages use. */
 const IMPLICIT_ROLES = [
   ['a[href]', 'link'],
+  ['img:not([alt=""])', 'img'],
   ['button', 'button'],
   ['h1, h2, h3, h4, h5, h6', 'heading'],
   ['ul, ol', 'list'],
@@ -82,6 +83,7 @@ export function nameOf(element) {
   }
   const label = element.getAttribute('aria-label');
   if (label) return normalise(label);
+  if (element.matches('img')) return normalise(element.getAttribute('alt'));
   if (element.matches('input, select, textarea')) {
     const wrapping = element.closest('label');
     const forLabel = element.id && doc.querySelector(`label[for="${element.id}"]`);

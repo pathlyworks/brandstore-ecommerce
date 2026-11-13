@@ -1,8 +1,9 @@
 name: CI
 
 # Runs on every pull request and on pushes to main: lint, unit + integration tests (with coverage
-# of src/state and src/utils, which must stay at 80% or more), then the end-to-end tests against
-# the official TechSphere API. Each job starts from a clean checkout.
+# of src/state and src/utils, which must stay at 80% or more), the end-to-end tests against the
+# official TechSphere API, a cross-browser smoke test (Firefox and WebKit) and Lighthouse.
+# Each job starts from a clean checkout.
 on:
   pull_request:
   push:
@@ -66,7 +67,7 @@ jobs:
           python-version: '3.12'
       - run: npm install --no-audit --no-fund
       - run: npx playwright install --with-deps chromium
-      - name: npm run e2e (the two Playwright Test specs)
+      - name: npm run e2e (Playwright Test specs, Chromium)
         run: npm run e2e
       - name: Older journey suite (desktop and phone)
         run: npm run e2e:journeys
@@ -78,3 +79,65 @@ jobs:
             playwright-report/
             test-results/
           retention-days: 14
+
+  cross-browser:
+    name: Cross-browser smoke (${{ matrix.browser }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [firefox, webkit]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: npm install --no-audit --no-fund
+      - run: npx playwright install --with-deps ${{ matrix.browser }}
+      - name: Playwright Test specs in ${{ matrix.browser }}
+        run: npm run e2e
+        env:
+          E2E_BROWSERS: ${{ matrix.browser }}
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report-${{ matrix.browser }}
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 14
+
+  lighthouse:
+    name: Lighthouse (built site against the TechSphere API)
+    runs-on: ubuntu-latest
+    env:
+      VITE_API_BASE: http://127.0.0.1:4010
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: npm install --no-audit --no-fund
+      - run: npm run build
+      - name: Start the API and the built site
+        run: |
+          python3 api/techsphere/server.py 4010 &
+          node scripts/serve.mjs dist 4173 &
+          for i in $(seq 1 30); do
+            curl -sf http://127.0.0.1:4010/categories >/dev/null && curl -sf http://127.0.0.1:4173/ >/dev/null && break
+            sleep 1
+          done
+      - name: Lighthouse on the home, catalog, product and cart pages (mobile and desktop)
+        run: node scripts/lighthouse.mjs http://127.0.0.1:4173 lighthouse
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lighthouse
+          path: lighthouse/
+          retention-days: 30

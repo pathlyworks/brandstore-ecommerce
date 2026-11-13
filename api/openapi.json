@@ -706,6 +706,99 @@
           }
         ]
       }
+    },
+    "/orders": {
+      "post": {
+        "tags": ["Orders"],
+        "operationId": "placeOrder",
+        "summary": "Place an order from the cart",
+        "description": "Same request body as the TechSphere API's POST /orders. 400 VALIDATION_ERROR for an empty items list, an unknown product or a quantity below 1; the app never sends an empty cart (it stops the attempt itself).",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ClientId"
+          },
+          {
+            "$ref": "#/components/parameters/MockStatus"
+          },
+          {
+            "$ref": "#/components/parameters/MockDelay"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["items"],
+                "properties": {
+                  "items": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                      "type": "object",
+                      "required": ["productId", "qty"],
+                      "properties": {
+                        "productId": {
+                          "type": "string"
+                        },
+                        "qty": {
+                          "type": "integer",
+                          "minimum": 1
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The order was placed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["data"],
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "required": ["id", "number", "status"],
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "number": {
+                          "type": "string"
+                        },
+                        "status": {
+                          "$ref": "#/components/schemas/OrderStatus"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          }
+        }
+      }
     }
   },
   "components": {
