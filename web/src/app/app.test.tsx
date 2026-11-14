@@ -134,7 +134,7 @@ describe('/login and the nested /account routes', () => {
   it('sends a signed-out shopper from /account to /login and back after signing in', async () => {
     const { router } = renderApp('/account');
     expect(await screen.findByRole('heading', { level: 1, name: 'Sign in' })).toBeInTheDocument();
-    expect(router.state.location.search).toBe('?next=%2Faccount%2Forders');
+    expect(router.state.location.search).toBe('?next=%2Faccount');
 
     await userEvent.click(screen.getByRole('button', { name: 'Sign in' }));
     expect(screen.getByLabelText('Email')).toHaveAccessibleDescription(/enter your email/i);

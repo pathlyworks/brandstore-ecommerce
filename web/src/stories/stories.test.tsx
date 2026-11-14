@@ -4,6 +4,7 @@
  * 2. axe-core finds no violations in any story (the same check as the Storybook accessibility addon;
  *    colour contrast is left to the addon and Lighthouse, because jsdom does not compute styles).
  */
+import type { ComponentType } from 'react';
 import { render } from '@testing-library/react';
 import { composeStories, setProjectAnnotations, type Meta } from '@storybook/react-vite';
 import axe from 'axe-core';
@@ -55,7 +56,10 @@ describe('stories', () => {
       }
     });
 
-    const stories = Object.entries(composeStories(module as Parameters<typeof composeStories>[0]));
+    // composeStories gives one renderable component per story (with the preview's decorators applied).
+    const stories = Object.entries(
+      composeStories(module as Parameters<typeof composeStories>[0]),
+    ) as unknown as [string, ComponentType][];
     it.each(stories)('%s has no axe violations', async (_name, Story) => {
       render(<Story />);
       const results = await axe.run(document.body, {

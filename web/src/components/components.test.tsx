@@ -15,10 +15,10 @@ describe('Button', () => {
     );
     const button = screen.getByRole('button', { name: /save/i });
     expect(button).toHaveAttribute('aria-busy', 'true');
-    await userEvent.click(button);
-    expect(onClick).not.toHaveBeenCalled();
     await userEvent.tab();
     expect(button).toHaveFocus();
+    await userEvent.click(button);
+    expect(onClick).not.toHaveBeenCalled();
   });
 });
 

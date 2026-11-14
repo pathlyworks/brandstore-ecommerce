@@ -31,7 +31,7 @@ test('links, nested account routes and Back work without a page load', async ({ 
   );
 
   await page.goto('/account');
-  await expect(page).toHaveURL(/\/login\?next=%2Faccount%2Forders$/);
+  await expect(page).toHaveURL(/\/login\?next=%2Faccount$/);
   await page.goBack();
   await expect(page).toHaveURL(/\/$/);
 });

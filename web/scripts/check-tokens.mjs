@@ -12,7 +12,7 @@ const ROOT = new URL('../src', import.meta.url).pathname;
 const SKIP = ['styles/theme.css'];
 const RULES = [
   [
-    /\b[a-z-]+-\[(#|rgb|rgba|hsl|hsla|oklch|oklab|lab|lch|color)\b?[^\]]*\]/g,
+    /\b[a-z-]+-\[(#|rgb|rgba|hsl|hsla|oklch|oklab|lab|lch|color)[^\]]*\]/g,
     'arbitrary colour value',
   ],
   [
