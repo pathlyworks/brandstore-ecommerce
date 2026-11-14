@@ -28,6 +28,9 @@ test('sign in, see the orders, page through them, sign out', async ({ page }) =>
     .click();
   await expect(page.getByRole('heading', { level: 1, name: 'Your addresses' })).toBeVisible();
 
+  // Sign-out leaves the account area for the home page (Task 4); the account is then behind sign-in again.
   await page.getByRole('button', { name: 'Sign out' }).click();
-  await expect(page).toHaveURL(/\/login/);
+  await expect(page).toHaveURL(/127\.0\.0\.1:\d+\/$/);
+  await page.goto('/account/orders');
+  await expect(page).toHaveURL(/\/login\?next=%2Faccount%2Forders$/);
 });

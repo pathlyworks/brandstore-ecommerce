@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased — Advanced Task 4: protected routes and sessions (branch `feature/protected-routes-session`, PR #10)
+### Added
+- AuthContext as a pure reducer (signIn, signOut, expire): login, register (`/register`), logout; session in memory mirrored to sessionStorage; `exp` and `role` read from the token; expiry timer; sign-out reaches other tabs and removes the checkout draft, never the cart.
+- `ProtectedRoute` for `/account`, `/checkout` and `/admin` (role admin, 403 page otherwise) with `/login?next=<path+query>` and `safeNext`.
+- One 401 handler in `web/src/api/client.ts` (`auth: true` requests, `connectAuth` bridge) and one re-authentication path (`reason=expired`).
+- Session-expiry warning and recovery in the checkout. `/admin` (store totals) as a lazily loaded chunk; checkout steps lazy too; `check:bundles` proves the admin chunk stays out of shopper bundles.
+- `npm run audit` with a written policy and allowlist (`security/`), in CI.
+### Changed
+- axios 1.21.1, vitest 5.1, @lhci/cli 0.16.1 (npm audit). `npm run dev` passes its options to Vite (PR #9).
+
 ## Unreleased — Advanced Task 3: cart, checkout and orders (branch `feature/cart-checkout-orders`, PR #8)
 ### Added
 - Cart reducer as the single, pure writer (add, update, remove, clear, hydrate, reprice) and total selectors in integer cents, tested against 16 reference cases (`web/scripts/cart-reference.mjs`).

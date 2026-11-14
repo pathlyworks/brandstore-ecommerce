@@ -60,10 +60,19 @@ jobs:
       - name: Vite build
         if: success() || failure() # report every check, not only the first that fails
         run: npm run build -w web
+      - name: npm run dev passes its options to Vite (as the grader starts the app)
+        if: success() || failure()
+        run: |
+          npm run dev -- --port 4999 --strictPort --host 0.0.0.0 > dev.log 2>&1 &
+          for i in $(seq 1 60); do
+            if curl -sf http://127.0.0.1:4999/ | grep -q '<div id="root">'; then echo "dev server up on 4999"; kill %1; exit 0; fi
+            sleep 1
+          done
+          cat dev.log; exit 1
       - name: The admin chunk never ships to shoppers
         if: success() || failure()
         run: npm run check:bundles -w web
-      - name: npm audit (policy in task_4_security.md §6)
+      - name: npm audit (policy in task_4_security.md §8)
         if: success() || failure()
         run: npm run audit
       - name: Storybook build

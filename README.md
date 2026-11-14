@@ -4,10 +4,11 @@ A storefront in plain HTML, CSS and ES-module JavaScript, built on the **TechSph
 search, filters and pagination; product pages; a cart kept on the device; sign-in with a JWT-protected account
 (orders, addresses); and checkout. There is no framework and no bundler. Vite is used only as a dev server.
 
-**Current task: Advanced Task 3 — cart Context, multi-step checkout and orders.** Deliverable:
-[`task_3_checkout.md`](task_3_checkout.md): the cart on Context + useReducer with selectors and versioned
-persistence, the checkout at `/checkout` (address, mock payment, review) with input that survives refresh and Back,
-`POST /orders` at most once, the confirmation route, and cancel in the order history. Earlier: Task 2
+**Current task: Advanced Task 4 — protected routes, session handling and security notes.** Deliverable and
+security note: [`task_4_security.md`](task_4_security.md): AuthContext (login, register, logout), ProtectedRoute with
+return to the intended page, one 401 handler in `web/src/api/client.ts`, the cart kept across sign-in and sign-out,
+session expiry during checkout, a lazily loaded admin chunk that shoppers never download, and `npm run audit`.
+Earlier: Task 3 [`task_3_checkout.md`](task_3_checkout.md), Task 2
 [`task_2_react_foundation.md`](task_2_react_foundation.md), Task 1 [`task_1_architecture.md`](task_1_architecture.md).
 
 ## 1. Set up and run
@@ -31,7 +32,7 @@ kit's server runs (`src/config.js`). Pick one:
 | Python 3.9+ | `python3 api/techsphere/server.py` (port 4010; Windows: `python`) | `npm run dev` |
 | Node.js only, no API | — | `VITE_API_URL=/api npm run dev:legacy` (legacy pages with our own BrandStore mock on `/api`) |
 
-`npm run dev` starts the **React app** (`web/`) on http://localhost:5173; `npm run dev:legacy` starts the legacy
+`npm run dev` starts the **React app** (options pass through: `npm run dev -- --port 4000 --strictPort --host 0.0.0.0`) (`web/`) on http://localhost:5173; `npm run dev:legacy` starts the legacy
 pages (open `/catalog.html`). `npm run storybook` opens the component stories on http://localhost:6006. `npm run start` does the
 same without Vite, on http://127.0.0.1:8080. On Windows (cmd), set variables first: `set VITE_API_BASE=http://localhost:4010`.
 
@@ -129,6 +130,7 @@ in Netlify's environment and add its origin to `connect-src` and `img-src` in th
 
 | Task | Document |
 | :--- | :--- |
+| Advanced, Task 4 | `task_4_security.md`, `security/`, `web/src/features/auth`, `web/src/api/client.ts` |
 | Advanced, Task 3 | `task_3_checkout.md`, `web/src/features/cart`, `web/src/features/checkout` |
 | Advanced, Task 2 | `task_2_react_foundation.md`, `web/` |
 | Advanced, Task 1 | `task_1_architecture.md`, `docs/migration/`, `src/types/` |
