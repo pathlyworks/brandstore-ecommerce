@@ -68,7 +68,7 @@ describe('multi-step checkout', () => {
     // Skipping ahead by URL is sent back to the incomplete step.
     await view.router.navigate('/checkout/review');
     await waitFor(() => expect(view.router.state.location.pathname).toBe('/checkout/address'));
-    expect(screen.getByText('Complete "Delivery address" first.')).toBeInTheDocument();
+    expect(await screen.findByText('Complete "Delivery address" first.')).toBeInTheDocument();
 
     await fillAddress(user);
     await user.type(screen.getByLabelText('Mobile number'), '9'); // now 12 digits: invalid again
