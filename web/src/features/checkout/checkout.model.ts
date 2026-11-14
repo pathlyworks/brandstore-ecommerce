@@ -14,15 +14,16 @@ export const STEP_LABELS: Record<CheckoutStep, string> = {
   review: 'Review and place order',
 };
 
-export type Governorate =
-  | ''
-  | 'cairo'
-  | 'giza'
-  | 'alexandria'
-  | 'qalyubia'
-  | 'dakahlia'
-  | 'sharqia'
-  | 'other';
+const GOVERNORATE_IDS = [
+  'cairo',
+  'giza',
+  'alexandria',
+  'qalyubia',
+  'dakahlia',
+  'sharqia',
+  'other',
+] as const;
+export type Governorate = '' | (typeof GOVERNORATE_IDS)[number];
 
 export interface AddressDraft {
   fullName: string;

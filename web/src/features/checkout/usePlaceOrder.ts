@@ -25,10 +25,11 @@ import { useCheckout } from './CheckoutContext';
 import { describePayment, normalisePhone } from './checkout.model';
 import { clearDraft, loadPlacedOrders, rememberPlacedOrder } from './checkout.storage';
 
-export type PlacePhase =
-  | { status: 'idle' }
-  | { status: 'submitting' }
-  | { status: 'error'; error: AppError };
+interface PlaceFailed {
+  status: 'error';
+  error: AppError;
+}
+export type PlacePhase = { status: 'idle' | 'submitting' } | PlaceFailed;
 
 export const confirmationPath = (number: string) =>
   `/checkout/confirmation/${encodeURIComponent(number)}`;
