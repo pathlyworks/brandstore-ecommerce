@@ -42,7 +42,7 @@ export function Modal({
   useEffect(() => {
     onCloseRef.current = onClose;
     busyRef.current = busy;
-  });
+  }, [onClose, busy]);
 
   useEffect(() => {
     if (!open) return undefined;

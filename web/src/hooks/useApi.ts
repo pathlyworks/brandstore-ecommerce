@@ -57,10 +57,11 @@ export function useApi<T>(
   const [attempt, bump] = useReducer((n: number) => n + 1, 0);
   const loadRef = useRef(load);
 
-  // The latest loader, without making it an effect dependency (it is usually an inline arrow).
+  // The latest loader, kept in a ref so the fetch effect below does not restart when it changes
+  // (it is usually an inline arrow).
   useEffect(() => {
     loadRef.current = load;
-  });
+  }, [load]);
 
   useEffect(() => {
     if (key === null) {
