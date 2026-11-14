@@ -8,6 +8,20 @@ import { API_BASE } from '../config';
 import { categories, freshToken, orders, products, session, SHOPPER } from './fixtures';
 
 const PAGE_SIZE = 8;
+
+/** What the handlers changed or received, reset after every test (setup.ts). */
+export const apiState = {
+  orders: structuredClone(orders),
+  placed: [] as unknown[],
+  reset() {
+    this.orders = structuredClone(orders);
+    this.placed = [];
+  },
+};
+
+const authorised = (request: Request) =>
+  request.headers.get('Authorization')?.startsWith('Bearer ') ?? false;
+const unauthorised = () => HttpResponse.json({ error: 'Unauthorized' }, { status: 401 });
 const api = (path: string) => `${API_BASE}${path}`;
 const price = (value: number | string) =>
   typeof value === 'number' ? value : Number(value.replace(/[^\d.]/g, ''));
@@ -57,18 +71,50 @@ export const handlers = [
   }),
 
   http.get(api('/account/orders'), ({ request }) => {
-    if (!request.headers.get('Authorization')?.startsWith('Bearer ')) {
-      return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    if (!authorised(request)) return unauthorised();
     const url = new URL(request.url);
     const offset = Number(url.searchParams.get('offset') ?? '0');
     const limit = Number(url.searchParams.get('limit') ?? '5');
+    const list = apiState.orders;
     return HttpResponse.json({
-      items: orders.slice(offset, offset + limit),
+      items: list.slice(offset, offset + limit),
       offset,
       limit,
-      total: orders.length,
+      total: list.length,
     });
+  }),
+
+  // Like the kit: 404 unknown, 409 when shipped, delivered or cancelled, else 200 with the cancelled order.
+  http.patch(api('/account/orders/:id/cancel'), ({ request, params }) => {
+    if (!authorised(request)) return unauthorised();
+    const order = apiState.orders.find((o) => o.id === params.id);
+    if (!order) return HttpResponse.json({ error: 'Order not found' }, { status: 404 });
+    if (order.status !== 'processing')
+      return HttpResponse.json({ error: `Order is ${order.status}` }, { status: 409 });
+    order.status = 'cancelled';
+    return HttpResponse.json(order);
+  }),
+
+  http.get(api('/account/addresses'), ({ request }) => {
+    if (!authorised(request)) return unauthorised();
+    return HttpResponse.json([
+      { id: 'a-1', city: 'Cairo', street: '90th Street' },
+      { id: 'a-2', city: 'Giza', street: 'Pyramids Rd' },
+    ]);
+  }),
+
+  // Like the kit: 400 without items, else 201 { id, number, status }. It does not de-duplicate.
+  http.post(api('/orders'), async ({ request }) => {
+    if (!authorised(request)) return unauthorised();
+    const body = (await request.json()) as { items?: unknown[] } | null;
+    if (!body?.items?.length)
+      return HttpResponse.json({ error: 'items are required' }, { status: 400 });
+    apiState.placed.push(body);
+    const n = apiState.placed.length;
+    return HttpResponse.json(
+      { id: `o-${100 + n}`, number: `TS-${1000 + n}`, status: 'processing' },
+      { status: 201 },
+    );
   }),
 ];
 

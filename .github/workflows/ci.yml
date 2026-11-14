@@ -29,6 +29,9 @@ jobs:
         run: node scripts/check-branch.mjs "${{ github.head_ref || github.ref_name }}"
       - run: npm run lint
       - run: npm run format:check
+      - name: Show what Prettier would change (only when the format check failed)
+        if: failure()
+        run: npx prettier --write . > /dev/null && git --no-pager diff
       - name: TypeScript domain types match the captured API responses
         run: |
           node scripts/gen-observed-types-check.mjs

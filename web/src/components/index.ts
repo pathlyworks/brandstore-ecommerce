@@ -10,3 +10,4 @@ export { Select, type SelectOption, type SelectProps } from './Select';
 export { Spinner } from './Spinner';
 export { Table, type Column, type TableProps } from './Table';
 export { Tabs, type TabItem, type TabsProps } from './Tabs';
+export { Steps, type StepItem, type StepState, type StepsProps } from './Steps';
