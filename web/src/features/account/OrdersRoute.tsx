@@ -9,7 +9,7 @@ import { useSearchParams } from 'react-router';
 import type { AppError, Order } from '@shared/domain';
 import { cancelOrder, fetchOrders } from '../../api/endpoints';
 import { Badge, Button, Modal, Table, type BadgeTone, type Column } from '../../components';
-import { ErrorState, errorText } from '../../components/StatusMessage';
+import { errorText } from '../../components/StatusMessage';
 import { toAppError } from '../../hooks/useApi';
 import { loadPlacedOrders } from '../checkout/checkout.storage';
 import { useApi } from '../../hooks/useApi';
@@ -67,12 +67,12 @@ type CancelState =
 
 export function OrdersRoute() {
   useDocumentTitle('Your orders');
-  const { session, signOut } = useAuth();
+  const { session } = useAuth();
   const [params, setParams] = useSearchParams();
   const page = Math.max(1, Number.parseInt(params.get('page') ?? '1', 10) || 1);
-  const token = session?.token ?? null;
-  const orders = useApi(token ? `orders?page=${page}` : null, (signal) =>
-    fetchOrders(page, token ?? '', signal),
+  const account = session?.user.email ?? null;
+  const orders = useApi(account ? `orders:${account}?page=${page}` : null, (signal) =>
+    fetchOrders(page, signal),
   );
   // Orders the API returned from PATCH …/cancel, shown in place of the listed ones until the next reload.
   const [updated, setUpdated] = useState<ReadonlyMap<string, Order>>(new Map());
@@ -81,11 +81,11 @@ export function OrdersRoute() {
   const cancelling = useRef(false);
 
   async function confirmCancel(order: Order) {
-    if (!token || cancelling.current) return; // one PATCH at a time, however fast the clicks
+    if (cancelling.current) return; // one PATCH at a time, however fast the clicks
     cancelling.current = true;
     setCancel({ status: 'cancelling', order });
     try {
-      const result = await cancelOrder(order.id, token);
+      const result = await cancelOrder(order.id);
       setUpdated((map) => new Map(map).set(result.id, result));
       setCancel({ status: 'closed' });
       setAnnouncement(`Order ${order.id} is cancelled.`);
@@ -98,9 +98,6 @@ export function OrdersRoute() {
         );
         setUpdated(new Map());
         orders.retry();
-      } else if (appError.status === 401) {
-        setCancel({ status: 'closed' });
-        signOut();
       } else {
         setCancel({ status: 'failed', order, error: appError });
       }
@@ -129,16 +126,6 @@ export function OrdersRoute() {
         ),
     },
   ];
-
-  if (orders.status === 'error' && orders.error.code === 'UNAUTHENTICATED') {
-    // The token was refused (expired or revoked): signing out sends RequireAuth to /login?next=…
-    return (
-      <div className="flex flex-col items-start gap-sm">
-        <ErrorState error={orders.error} />
-        <Button onClick={signOut}>Sign in again</Button>
-      </div>
-    );
-  }
 
   const data = orders.data;
   const rows = (data?.items ?? []).map((order) => updated.get(order.id) ?? order);

@@ -3,7 +3,7 @@
   "version": "0.2.0",
   "private": true,
   "type": "module",
-  "description": "BrandStore React + TypeScript app (Advanced Task 2: typed components, routing, Tailwind).",
+  "description": "BrandStore React + TypeScript app (Advanced Tasks 2–4: components and routing, cart and checkout, protected routes).",
   "scripts": {
     "dev": "vite",
     "build": "tsc -p tsconfig.json && vite build",
@@ -14,7 +14,8 @@
     "test:watch": "vitest",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build --quiet -o storybook-static",
-    "e2e": "playwright test -c playwright.config.ts"
+    "e2e": "playwright test -c playwright.config.ts",
+    "check:bundles": "node scripts/check-bundles.mjs"
   },
   "dependencies": {
     "react": "^19.1.0",
@@ -47,6 +48,6 @@
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.46.0",
     "vite": "^7.0.0",
-    "vitest": "^3.2.0"
+    "vitest": "^5.1.0"
   }
 }

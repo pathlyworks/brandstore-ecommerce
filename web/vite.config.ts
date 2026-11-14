@@ -18,6 +18,8 @@ export default defineConfig({
       '@observed': at('../docs/migration/observed'),
     },
   },
+  // The manifest lets scripts/check-bundles.mjs prove that the admin chunk is not part of what shoppers load.
+  build: { manifest: true },
   server: { port: 5173 },
   preview: { port: 4174 },
 });

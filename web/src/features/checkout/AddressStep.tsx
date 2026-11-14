@@ -47,8 +47,10 @@ export function AddressStep() {
     'address',
     '/checkout/payment',
   );
-  const token = session?.token ?? null;
-  const saved = useApi(token ? 'addresses' : null, (signal) => fetchAddresses(token ?? '', signal));
+  // Keyed by the account, so a different account's addresses are fetched after signing in as someone else.
+  const saved = useApi(session ? `addresses:${session.user.email}` : null, (signal) =>
+    fetchAddresses(signal),
+  );
   const address = draft.address;
 
   return (

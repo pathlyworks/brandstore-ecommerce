@@ -26,10 +26,17 @@ export const orders = [
   ...body<OrderPage>(ordersOffset5).items,
 ];
 
-/** A JWT-shaped token (alg none, like the kit's) that expires in an hour. */
-export function freshToken(email: string, now = Date.now()): string {
+/** A JWT-shaped token like the kit's (alg none; { sub, role, exp }), valid for `ttlSeconds` (an hour). */
+export function freshToken(
+  email: string,
+  now = Date.now(),
+  role: 'shopper' | 'admin' = 'shopper',
+  ttlSeconds = 3600,
+): string {
   const encode = (value: object) => btoa(JSON.stringify(value)).replace(/=+$/, '');
-  return `${encode({ alg: 'none' })}.${encode({ sub: email, exp: Math.floor(now / 1000) + 3600 })}.test`;
+  const exp = Math.floor(now / 1000) + ttlSeconds;
+  return `${encode({ alg: 'none' })}.${encode({ sub: email, role, exp })}.test`;
 }
 
 export const SHOPPER = { email: 'student@techsphere.test', password: 'Passw0rd!' };
+export const ADMIN = { email: 'admin@techsphere.test', password: 'Admin123!' };

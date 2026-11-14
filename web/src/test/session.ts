@@ -2,15 +2,23 @@
 import type { CartItem } from '@shared/domain';
 import { STORAGE_KEYS } from '../config';
 import { CART_STORAGE_KEY, serializeCart } from '../features/cart/cart.storage';
-import { freshToken, SHOPPER } from './fixtures';
+import { ADMIN, freshToken, SHOPPER } from './fixtures';
 
-export function signInForTest(): void {
+/** A stored session, as AuthProvider reads it on load. `ttlSeconds` below 0 stores an already expired one. */
+export function signInForTest(
+  options: { role?: 'shopper' | 'admin'; ttlSeconds?: number; email?: string } = {},
+): void {
+  const {
+    role = 'shopper',
+    ttlSeconds = 3600,
+    email = role === 'admin' ? ADMIN.email : SHOPPER.email,
+  } = options;
   window.sessionStorage.setItem(
     STORAGE_KEYS.session,
     JSON.stringify({
-      token: freshToken(SHOPPER.email),
-      expiresAt: Date.now() + 3_600_000,
-      user: { email: SHOPPER.email, name: 'Student Shopper', role: 'shopper' },
+      token: freshToken(email, Date.now(), role, ttlSeconds),
+      expiresAt: Date.now() + ttlSeconds * 1000,
+      user: { email, name: role === 'admin' ? 'Admin' : 'Student Shopper', role },
     }),
   );
 }

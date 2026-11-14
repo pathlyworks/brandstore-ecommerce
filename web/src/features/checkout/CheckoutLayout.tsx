@@ -1,13 +1,14 @@
 /**
- * /checkout: a nested layout route. It requires a session (RequireAuth sends the shopper to sign in and back
+ * /checkout: a nested layout route, rendered inside <ProtectedRoute> (app/routes.tsx: sign in and back
  * to this step), stops on an empty cart, holds the draft (CheckoutProvider), shows the progress indicator and
  * renders the current step in its <Outlet />. Each step is its own URL (/checkout/address, /payment, /review),
  * so Back and Forward move between steps and a refresh reopens the same step with the same input.
  */
+import { Suspense } from 'react';
 import { Link, Outlet, useLocation } from 'react-router';
 import { Steps, type StepItem } from '../../components';
-import { EmptyState } from '../../components/StatusMessage';
-import { RequireAuth } from '../account/RequireAuth';
+import { EmptyState, LoadingState } from '../../components/StatusMessage';
+import { SessionExpiryNotice } from '../auth/SessionExpiryNotice';
 import { useCart } from '../cart/CartContext';
 import { selectChargeableLines } from '../cart/cart.selectors';
 import { CheckoutProvider, useCheckout } from './CheckoutContext';
@@ -22,11 +23,9 @@ import { loadPlacedOrders } from './checkout.storage';
 
 export function CheckoutLayout() {
   return (
-    <RequireAuth>
-      <CheckoutProvider>
-        <CheckoutShell />
-      </CheckoutProvider>
-    </RequireAuth>
+    <CheckoutProvider>
+      <CheckoutShell />
+    </CheckoutProvider>
   );
 }
 
@@ -96,8 +95,11 @@ function CheckoutShell() {
   return (
     <div className="flex flex-col gap-lg">
       <h1 className="text-h1 font-extrabold tracking-tight text-text">Checkout</h1>
+      <SessionExpiryNotice />
       <Steps label="Checkout progress" steps={items} />
-      <Outlet />
+      <Suspense fallback={<LoadingState label="Loading the step" />}>
+        <Outlet />
+      </Suspense>
     </div>
   );
 }

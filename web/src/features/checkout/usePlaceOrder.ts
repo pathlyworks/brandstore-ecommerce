@@ -37,7 +37,7 @@ export const confirmationPath = (number: string) =>
 export function usePlaceOrder() {
   const { draft } = useCheckout();
   const { cart, totals, dispatch: cartDispatch } = useCart();
-  const { session, signOut } = useAuth();
+  const { session } = useAuth();
   const navigate = useNavigate();
   const inFlight = useRef(false);
   const [phase, setPhase] = useState<PlacePhase>({ status: 'idle' });
@@ -71,7 +71,7 @@ export function usePlaceOrder() {
       payment: { method: payment.method, reference: describePayment(payment) },
     };
     try {
-      const placed = await placeOrder(body, session.token);
+      const placed = await placeOrder(body);
       const number = placed.number || placed.id;
       rememberPlacedOrder({
         id: placed.id,
@@ -91,9 +91,9 @@ export function usePlaceOrder() {
     } catch (error) {
       inFlight.current = false;
       const appError = toAppError(error);
+      // A 401 never needs handling here: the API client has already ended the session and ProtectedRoute
+      // is sending the shopper to sign in and back to this step, with the cart and the draft kept.
       setPhase({ status: 'error', error: appError });
-      // Session over: sign out; RequireAuth sends the shopper to sign in and back here, draft intact.
-      if (appError.status === 401) signOut();
     }
   }
 

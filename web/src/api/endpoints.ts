@@ -1,5 +1,6 @@
 /** The API calls the React app makes, typed end to end (wire type in, domain type out). */
 import type {
+  AdminSummary,
   ApiAddress,
   ApiCategory,
   ApiOrder,
@@ -14,6 +15,7 @@ import type {
 import type { Address, AuthSession, Order, Paged, Product } from '@shared/domain';
 import { ORDERS_PAGE_SIZE } from '../config';
 import { request } from './client';
+import { sessionFromToken } from '../features/auth/session';
 import { toAddress, toOrder, toOrderPage, toProduct, toProductPage, toUser } from './mappers';
 
 export function fetchCategories(signal?: AbortSignal): Promise<ApiCategory[]> {
@@ -42,23 +44,15 @@ export async function login(email: string, password: string): Promise<AuthSessio
     method: 'POST',
     body: { email, password },
   });
-  return {
-    token: session.token,
-    expiresAt: tokenExpiry(session.token),
-    user: toUser(session.user),
-  };
+  return sessionFromToken(session.token, toUser(session.user));
 }
 
-export async function fetchOrders(
-  page: number,
-  token: string,
-  signal?: AbortSignal,
-): Promise<Paged<Order>> {
+export async function fetchOrders(page: number, signal?: AbortSignal): Promise<Paged<Order>> {
   const offset = (Math.max(1, page) - 1) * ORDERS_PAGE_SIZE;
   return toOrderPage(
     await request<OrderPage>('/account/orders', {
       query: { offset, limit: ORDERS_PAGE_SIZE },
-      token,
+      auth: true,
       signal,
     }),
   );
@@ -84,37 +78,55 @@ export interface CheckoutOrderRequest extends PlaceOrderRequest {
 }
 
 /** POST /orders: 201 { id, number, status }. */
-export function placeOrder(body: CheckoutOrderRequest, token: string): Promise<PlacedOrder> {
-  return request<PlacedOrder>('/orders', { method: 'POST', body, token });
+export function placeOrder(body: CheckoutOrderRequest): Promise<PlacedOrder> {
+  return request<PlacedOrder>('/orders', { method: 'POST', body, auth: true });
 }
 
 /** PATCH /account/orders/:id/cancel: 200 with the cancelled order; 409 when it has shipped already. */
-export async function cancelOrder(id: string, token: string): Promise<Order> {
+export async function cancelOrder(id: string): Promise<Order> {
   return toOrder(
     await request<ApiOrder>(`/account/orders/${encodeURIComponent(id)}/cancel`, {
       method: 'PATCH',
-      token,
+      auth: true,
     }),
   );
 }
 
-export async function fetchAddresses(token: string, signal?: AbortSignal): Promise<Address[]> {
-  return (await request<ApiAddress[]>('/account/addresses', { token, signal })).map(toAddress);
+export async function fetchAddresses(signal?: AbortSignal): Promise<Address[]> {
+  return (await request<ApiAddress[]>('/account/addresses', { auth: true, signal })).map(toAddress);
 }
 
-/** The token's `exp` (seconds) in milliseconds; an unreadable token expires in an hour (the API's lifetime). */
-export function tokenExpiry(token: string, now = Date.now()): number {
-  try {
-    const part = token.split('.')[1] ?? '';
-    const json = atob(
-      part
-        .replace(/-/g, '+')
-        .replace(/_/g, '/')
-        .padEnd(Math.ceil(part.length / 4) * 4, '='),
-    );
-    const exp = (JSON.parse(json) as { exp?: unknown }).exp;
-    return typeof exp === 'number' ? exp * 1000 : now + 3_600_000;
-  } catch {
-    return now + 3_600_000;
-  }
+/** POST /auth/register: 201 { token, user } (signed in); 400 "Email already registered" or invalid input. */
+export async function register(
+  name: string,
+  email: string,
+  password: string,
+): Promise<AuthSession> {
+  const session = await request<Session>('/auth/register', {
+    method: 'POST',
+    body: { name, email, password },
+  });
+  return sessionFromToken(session.token, session.user);
+}
+
+/** GET /admin/summary (admin accounts only), in the app's names. */
+export interface AdminTotals {
+  revenue: number;
+  orders: number;
+  products: number;
+  outOfStock: number;
+  currency: string;
+  note: string;
+}
+
+export async function fetchAdminSummary(signal?: AbortSignal): Promise<AdminTotals> {
+  const raw = await request<AdminSummary>('/admin/summary', { auth: true, signal });
+  return {
+    revenue: raw.revenue,
+    orders: raw.orders,
+    products: raw.products,
+    outOfStock: raw.out_of_stock,
+    currency: raw.currency,
+    note: raw.note,
+  };
 }

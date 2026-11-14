@@ -2,34 +2,34 @@
  * /account: a nested layout route. It guards the section, shows who is signed in and a tab-style nav
  * (NavLinks, so the open section has aria-current), and renders the child route in its <Outlet />.
  */
-import { NavLink, Outlet } from 'react-router';
+import { NavLink, Outlet, useNavigate } from 'react-router';
 import { Button } from '../../components';
 import { cn } from '../../lib/cn';
 import { useAuth } from '../auth/AuthContext';
-import { RequireAuth } from './RequireAuth';
 
 const SECTIONS = [
   { to: '/account/orders', label: 'Orders' },
   { to: '/account/addresses', label: 'Addresses' },
 ] as const;
 
+/** Rendered inside <ProtectedRoute> (app/routes.tsx), so a valid session is guaranteed here. */
 export function AccountLayout() {
-  return (
-    <RequireAuth>
-      <AccountShell />
-    </RequireAuth>
-  );
-}
+  const { session, forgetToken } = useAuth();
+  const navigate = useNavigate();
 
-function AccountShell() {
-  const { session, signOut } = useAuth();
+  // Leave the protected area first; RootLayout ends the session once the home page is showing, so
+  // ProtectedRoute never sees a signed-out user here and sends them to sign in again.
+  function onSignOut() {
+    forgetToken();
+    void navigate('/', { replace: true, state: { signOut: true } });
+  }
   return (
     <div className="flex flex-col gap-md">
       <div className="flex flex-wrap items-center justify-between gap-sm">
         <p className="text-text-muted">
           Signed in as <strong className="text-text">{session?.user.name}</strong>
         </p>
-        <Button variant="secondary" size="sm" onClick={signOut}>
+        <Button variant="secondary" size="sm" onClick={onSignOut}>
           Sign out
         </Button>
       </div>

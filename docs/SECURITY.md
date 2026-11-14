@@ -1,5 +1,7 @@
 # Security note (Phase 2, Task 4)
 
+> **Updated for the React app in Advanced Task 4:** see [`task_4_security.md`](../task_4_security.md) (token storage revisited for a SPA, one 401 handler, protected routes, dependency audit, residual risks). This note still describes the legacy pages.
+
 Plain-language notes on how BrandStore signs people in and what protects them. Each point names the code
 that does it and the check that proves it.
 

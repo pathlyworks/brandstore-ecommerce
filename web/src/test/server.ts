@@ -5,7 +5,7 @@
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { API_BASE } from '../config';
-import { categories, freshToken, orders, products, session, SHOPPER } from './fixtures';
+import { ADMIN, categories, freshToken, orders, products, session, SHOPPER } from './fixtures';
 
 const PAGE_SIZE = 8;
 
@@ -13,14 +13,28 @@ const PAGE_SIZE = 8;
 export const apiState = {
   orders: structuredClone(orders),
   placed: [] as unknown[],
+  /** true → every token is refused (the server ended the session: expired, revoked). */
+  rejectTokens: false,
   reset() {
     this.orders = structuredClone(orders);
     this.placed = [];
+    this.rejectTokens = false;
   },
 };
 
-const authorised = (request: Request) =>
-  request.headers.get('Authorization')?.startsWith('Bearer ') ?? false;
+/** Like the kit's read_token: the Bearer token's claims while `exp` is in the future, else null. */
+function claims(request: Request): { sub: string; role: string } | null {
+  const match = /^Bearer\s+(\S+)$/.exec(request.headers.get('Authorization') ?? '');
+  if (!match?.[1] || apiState.rejectTokens) return null;
+  try {
+    const part = match[1].split('.')[1] ?? '';
+    const data = JSON.parse(atob(part)) as { sub: string; role?: string; exp: number };
+    return data.exp * 1000 > Date.now() ? { sub: data.sub, role: data.role ?? 'shopper' } : null;
+  } catch {
+    return null;
+  }
+}
+const authorised = (request: Request) => claims(request) !== null;
 const unauthorised = () => HttpResponse.json({ error: 'Unauthorized' }, { status: 401 });
 const api = (path: string) => `${API_BASE}${path}`;
 const price = (value: number | string) =>
@@ -64,6 +78,12 @@ export const handlers = [
 
   http.post(api('/auth/login'), async ({ request }) => {
     const { email, password } = (await request.json()) as { email?: string; password?: string };
+    if (email === ADMIN.email && password === ADMIN.password) {
+      return HttpResponse.json({
+        token: freshToken(email, Date.now(), 'admin'),
+        user: { email, name: 'Admin', role: 'admin' },
+      });
+    }
     if (email !== SHOPPER.email || password !== SHOPPER.password) {
       return HttpResponse.json({ error: 'Invalid credentials' }, { status: 401 });
     }
@@ -115,6 +135,42 @@ export const handlers = [
       { id: `o-${100 + n}`, number: `TS-${1000 + n}`, status: 'processing' },
       { status: 201 },
     );
+  }),
+
+  // Like the kit: 400 for a bad email or a password under 8 characters, or a taken email; 201 signed in.
+  http.post(api('/auth/register'), async ({ request }) => {
+    const {
+      email = '',
+      password = '',
+      name = '',
+    } = ((await request.json()) ?? {}) as {
+      email?: string;
+      password?: string;
+      name?: string;
+    };
+    if (!email.includes('@') || password.length < 8)
+      return HttpResponse.json(
+        { error: 'Invalid email or password (min 8 characters)' },
+        { status: 400 },
+      );
+    if (email === SHOPPER.email || email === ADMIN.email)
+      return HttpResponse.json({ error: 'Email already registered' }, { status: 400 });
+    return HttpResponse.json({ token: freshToken(email), user: { email, name } }, { status: 201 });
+  }),
+
+  // Like the kit: 401 without a valid token, 403 for a shopper.
+  http.get(api('/admin/summary'), ({ request }) => {
+    const who = claims(request);
+    if (!who) return unauthorised();
+    if (who.role !== 'admin') return HttpResponse.json({ error: 'Forbidden' }, { status: 403 });
+    return HttpResponse.json({
+      revenue: 25_491,
+      orders: 9,
+      products: 24,
+      out_of_stock: 2,
+      currency: 'EGP',
+      note: 'Revenue is gross sales, not profit',
+    });
   }),
 ];
 
