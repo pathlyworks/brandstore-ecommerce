@@ -46,7 +46,8 @@
     "web:build": "npm run build -w web",
     "web:lint": "npm run lint -w web",
     "web:typecheck": "npm run typecheck -w web",
-    "storybook": "npm run storybook -w web"
+    "storybook": "npm run storybook -w web",
+    "audit": "node scripts/audit-report.mjs"
   },
   "devDependencies": {
     "@lhci/cli": "^0.15.0",

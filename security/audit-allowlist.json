@@ -1,0 +1,4 @@
+{
+  "description": "Advisories accepted for now, each with why and until when (scripts/audit-report.mjs). An expired entry fails the audit.",
+  "entries": []
+}

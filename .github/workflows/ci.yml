@@ -60,6 +60,12 @@ jobs:
       - name: Vite build
         if: success() || failure() # report every check, not only the first that fails
         run: npm run build -w web
+      - name: The admin chunk never ships to shoppers
+        if: success() || failure()
+        run: npm run check:bundles -w web
+      - name: npm audit (policy in task_4_security.md §6)
+        if: success() || failure()
+        run: npm run audit
       - name: Storybook build
         if: success() || failure() # report every check, not only the first that fails
         run: npm run build-storybook -w web

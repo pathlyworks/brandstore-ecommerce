@@ -26,12 +26,7 @@ import { isAbort } from '../../api/client';
 import { cartReducer, type CartAction, type CartState } from './cart.reducer';
 import { selectItemCount, selectTotals } from './cart.selectors';
 import { browserStorage } from '../../lib/browserStorage';
-import {
-  CART_STORAGE_KEY,
-  loadCart,
-  parseStoredCart,
-  saveCart,
-} from './cart.storage';
+import { CART_STORAGE_KEY, loadCart, parseStoredCart, saveCart } from './cart.storage';
 
 export interface CartContextValue {
   cart: CartState;
