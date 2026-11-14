@@ -4,10 +4,10 @@ A storefront in plain HTML, CSS and ES-module JavaScript, built on the **TechSph
 search, filters and pagination; product pages; a cart kept on the device; sign-in with a JWT-protected account
 (orders, addresses); and checkout. There is no framework and no bundler. Vite is used only as a dev server.
 
-**Current task: Advanced Task 1 — legacy audit and React + TypeScript migration architecture.** Deliverable:
-[`task_1_architecture.md`](task_1_architecture.md) (audit, component tree, routing map, state
-matrix, types, Tailwind, testing, waves, estimates, deferred work). Evidence: `docs/migration/`; types: `src/types/`.
-Phase 2 (Task 6) deliverable: [`task_6_handoff.md`](task_6_handoff.md).
+**Current task: Advanced Task 2 — React foundation: typed components, routing and the Tailwind system.**
+Deliverable: [`task_2_react_foundation.md`](task_2_react_foundation.md); the app is in [`web/`](web/README.md)
+(Vite + React + TypeScript, React Router, Tailwind brand tokens, Storybook). `npm run dev` starts it;
+`npm run dev:legacy` the legacy pages. The plan it follows: [`task_1_architecture.md`](task_1_architecture.md).
 
 ## 1. Set up and run
 
@@ -28,9 +28,10 @@ kit's server runs (`src/config.js`). Pick one:
 | :--- | :--- | :--- |
 | A TechSphere API already running (for example, the grader's) | — | `VITE_API_BASE=<its address> npm run dev` |
 | Python 3.9+ | `python3 api/techsphere/server.py` (port 4010; Windows: `python`) | `npm run dev` |
-| Node.js only, no API | — | `VITE_API_URL=/api npm run dev` (our own BrandStore mock on `/api`, same origin) |
+| Node.js only, no API | — | `VITE_API_URL=/api npm run dev:legacy` (legacy pages with our own BrandStore mock on `/api`) |
 
-Then open the address Vite prints (http://localhost:5173), for example `/catalog.html`. `npm run start` does the
+`npm run dev` starts the **React app** (`web/`) on http://localhost:5173; `npm run dev:legacy` starts the legacy
+pages (open `/catalog.html`). `npm run storybook` opens the component stories on http://localhost:6006. `npm run start` does the
 same without Vite, on http://127.0.0.1:8080. On Windows (cmd), set variables first: `set VITE_API_BASE=http://localhost:4010`.
 
 **Test account:** `student@techsphere.test` / `Passw0rd!` (the kit's; our mock has the same account).
@@ -39,9 +40,10 @@ same without Vite, on http://127.0.0.1:8080. On Windows (cmd), set variables fir
 
 | Command | What it runs | Needs |
 | :--- | :--- | :--- |
-| `npm test` | Vitest: unit tests (`tests/unit`), API integration tests (`tests/integration`) and UI integration tests in jsdom with Mock Service Worker (`tests/dom`) | Node only (the few TechSphere-server integration tests are skipped without Python) |
+| `npm run test -w web`, `lint -w web`, `typecheck -w web`, `build-storybook -w web` | The React app: Vitest + RTL + MSW (components, hooks, routes, routing map against the plan, axe on every story), ESLint and the brand-token check, `tsc`, the Storybook build | Node only |
+| `npm test` | The legacy suite below, then `npm run test -w web`. Vitest: unit tests (`tests/unit`), API integration tests (`tests/integration`) and UI integration tests in jsdom with Mock Service Worker (`tests/dom`) | Node only (the few TechSphere-server integration tests are skipped without Python) |
 | `npm run test:coverage` | The same with V8 coverage of `src/state` and `src/utils`; fails below 80% of lines | Node only |
-| `npm run e2e` | Playwright Test, `tests/e2e/specs`: catalog and cart, sign-in and orders, the edge-case sweep, the keyboard pass and checkout | Chromium. If `VITE_API_BASE` is set, that API is used and only the site is started. Otherwise Python starts the kit's server (`playwright.config.mjs`) |
+| `npm run e2e` | Playwright Test: the React app (`web/e2e`, built and served by `vite preview` on :4174) and `tests/e2e/specs`: catalog and cart, sign-in and orders, the edge-case sweep, the keyboard pass and checkout | Chromium. If `VITE_API_BASE` is set, that API is used and only the site is started. Otherwise Python starts the kit's server (`playwright.config.mjs`) |
 | `E2E_BROWSERS=all npm run e2e` | The same specs in Chromium, Firefox and WebKit | `npx playwright install` |
 | `npm run e2e:journeys` | The older journey suite: 36 journeys at desktop and phone sizes | Node; the `auth:` journeys need Python |
 | `npm run e2e:prove` | Breaks four features in a temporary copy and checks that the right e2e test fails | as `e2e` |
@@ -52,6 +54,7 @@ same without Vite, on http://127.0.0.1:8080. On Windows (cmd), set variables fir
 | `npm run audit:legacy`, `api:capture`, `api:fields`, `tokens:tailwind` | Regenerate the migration evidence in `docs/migration/` | Node; `api:capture` needs an API (Python for the kit, or `VITE_API_BASE`) |
 
 **CI** (`.github/workflows/ci.yml`) runs on every pull request:
+- the React app: lint, brand tokens, typecheck, tests, build, Storybook build;
 - lint, format, build and contract;
 - unit and integration tests with coverage;
 - the end-to-end tests in Chromium;
@@ -103,6 +106,7 @@ More detail: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md), [`docs/STORAGE.md`]
 ## 5. Project layout
 
 ```
+web/                 the React + TypeScript app (Vite, React Router, Tailwind, Storybook); see web/README.md
 *.html               pages (index, catalog, product, cart, login, register, account, comparison, 404)
 css/                 tokens.css (design tokens), base, layout, components
 src/                 the app (see Architecture)
@@ -124,6 +128,7 @@ in Netlify's environment and add its origin to `connect-src` and `img-src` in th
 
 | Task | Document |
 | :--- | :--- |
+| Advanced, Task 2 | `task_2_react_foundation.md`, `web/` |
 | Advanced, Task 1 | `task_1_architecture.md`, `docs/migration/`, `src/types/` |
 | Phase 2, Task 6 | `task_6_handoff.md` (edge-case sweep, accessibility, PR and merge conflict, browsers, Lighthouse, demo), `docs/HANDOFF.md`, `docs/lighthouse/`, `docs/demo/` |
 | Phase 2, Task 5 | `task_5_testing.md`, `docs/PR_TASK5.md` |

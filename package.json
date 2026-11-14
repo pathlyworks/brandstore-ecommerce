@@ -2,23 +2,22 @@
   "name": "brandstore",
   "version": "2.0.0-alpha.0",
   "private": true,
-  "description": "BrandStore storefront: static pages driven by ES modules in src/, a REST contract in api/openapi.json and a mock API in mock-server/ (served on /api).",
+  "description": "BrandStore storefront. web/: the React + TypeScript app (Vite, React Router, Tailwind). The legacy static pages (ES modules in src/) stay at the root until cutover.",
   "engines": {
     "node": ">=20"
   },
   "scripts": {
-    "dev": "vite",
+    "dev": "npm run dev -w web",
+    "dev:legacy": "vite",
     "build": "node scripts/build.mjs",
     "preview": "node scripts/serve.mjs dist 4173",
-    "web:dev": "vite web",
-    "web:build": "vite build web",
-    "web:typecheck": "tsc -p web/tsconfig.json",
     "start": "node scripts/serve.mjs . 8080",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "test": "vitest run",
+    "test": "vitest run && npm run test -w web",
+    "test:legacy": "vitest run",
     "test:unit": "vitest run tests/unit",
     "test:integration": "vitest run tests/integration tests/dom",
     "test:coverage": "vitest run --coverage",
@@ -41,30 +40,28 @@
     "audit:legacy": "node scripts/audit-legacy.mjs",
     "api:capture": "node scripts/capture-api.mjs",
     "api:fields": "node scripts/api-field-report.mjs && node scripts/gen-observed-types-check.mjs",
-    "tokens:tailwind": "node scripts/tokens-to-tailwind.mjs"
+    "tokens:tailwind": "node scripts/tokens-to-tailwind.mjs",
+    "web:build": "npm run build -w web",
+    "web:lint": "npm run lint -w web",
+    "web:typecheck": "npm run typecheck -w web",
+    "storybook": "npm run storybook -w web"
   },
   "devDependencies": {
     "@playwright/test": "^1.55.0",
-    "@tailwindcss/vite": "^4.1.0",
-    "@testing-library/react": "^16.3.0",
-    "@types/react": "^19.1.0",
-    "@types/react-dom": "^19.1.0",
-    "@vitejs/plugin-react": "^5.0.0",
     "@vitest/coverage-v8": "^3.2.0",
     "eslint": "^10.1.0",
     "jsdom": "^26.1.0",
     "msw": "^2.7.0",
     "playwright": "^1.55.0",
     "prettier": "^3.8.1",
-    "tailwindcss": "^4.1.0",
     "typescript": "^5.9.3",
     "vite": "^7.0.0",
     "vitest": "^3.2.0"
   },
   "dependencies": {
-    "axios": "1.19.0",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0",
-    "react-router": "^7.6.0"
-  }
+    "axios": "1.19.0"
+  },
+  "workspaces": [
+    "web"
+  ]
 }

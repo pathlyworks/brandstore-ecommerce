@@ -1,25 +1,36 @@
-/** The shell every route renders inside: skip link, header, main (the routes) and footer. */
-import { Link, Outlet } from 'react-router';
+/** The layout route: skip link, Navbar, the matched child route (<Outlet />) and Footer, on every page. */
+import { Outlet } from 'react-router';
+import { Footer, Navbar } from '../components';
+import { useAuth } from '../features/auth/AuthContext';
 import { useCart } from '../features/cart/CartContext';
+import { FOOTER_GROUPS, MAIN_LINKS } from './navigation';
 
 export function RootLayout() {
   const { itemCount } = useCart();
+  const { session } = useAuth();
+  const account = session
+    ? { to: '/account/orders', label: 'Account' }
+    : { to: '/login', label: 'Sign in' };
   return (
-    <>
-      <a href="#main" className="sr-only focus:not-sr-only">
-        Skip to content
+    <div className="flex min-h-(--size-page-min) flex-col bg-bg font-sans text-text">
+      <a
+        href="#main"
+        className="sr-only z-(--z-skip-link) rounded-md bg-surface p-sm font-semibold text-primary focus:not-sr-only focus:fixed focus:top-xs focus:left-xs"
+      >
+        Skip to main content
       </a>
-      <header className="flex items-center justify-between gap-md p-md">
-        <Link to="/">BrandStore</Link>
-        <nav aria-label="Main">
-          <Link to="/products">Products</Link> <Link to="/account/orders">Account</Link>{' '}
-          <Link to="/cart">Cart, {itemCount} items</Link>
-        </nav>
-      </header>
-      <main id="main" className="p-md">
+      <Navbar brand="BrandStore" links={MAIN_LINKS} cartCount={itemCount} account={account} />
+      <main
+        id="main"
+        tabIndex={-1}
+        className="mx-auto w-full max-w-(--container-page) flex-1 px-md py-lg"
+      >
         <Outlet />
       </main>
-      <footer className="p-md">BrandStore</footer>
-    </>
+      <Footer
+        groups={FOOTER_GROUPS}
+        note="© 2026 BrandStore. Prices in EGP from the TechSphere API."
+      />
+    </div>
   );
 }
