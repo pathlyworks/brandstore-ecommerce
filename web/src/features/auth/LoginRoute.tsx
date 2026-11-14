@@ -1,16 +1,18 @@
 /**
- * /login: a controlled form (email, password) validated on submit and as the shopper corrects a field; the
- * password goes only in the POST body. 401 says the email or password is wrong; after signing in the shopper
- * goes back to where they were sent from (?next=, same-site paths only) or to their orders.
+ * /login: the single sign-in path. Every protected screen and every refused request ends here with
+ * ?next=<where the shopper was> (and reason=expired when the session ran out); after signing in the shopper
+ * goes back there (same-site paths only), or to their orders. A controlled form (email, password) validated on
+ * submit and as the shopper corrects a field; the password goes only in the POST body.
  */
 import { useState, type FormEvent } from 'react';
-import { Navigate, useSearchParams } from 'react-router';
+import { Link, Navigate, useSearchParams } from 'react-router';
 import { login } from '../../api/endpoints';
 import { Button, Input } from '../../components';
 import { errorText } from '../../components/StatusMessage';
 import { toAppError } from '../../hooks/useApi';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import { useAuth } from './AuthContext';
+import { isSessionValid, safeNext } from './session';
 
 interface LoginValues {
   email: string;
@@ -29,14 +31,19 @@ export function validateLogin(values: LoginValues): LoginErrors {
   return errors;
 }
 
-/** Only a path on this site ("/account/orders"), never "//evil.example" or "https://…". */
-export function safeNext(next: string | null): string {
-  return next && next.startsWith('/') && !next.startsWith('//') ? next : '/account/orders';
+/** Why the shopper is here, in words: shown above the form. */
+export function signInReason(reason: string | null, next: string, ended: string): string {
+  if (reason === 'expired' && next.startsWith('/checkout'))
+    return 'Your session expired during checkout. Sign in again to finish your order: your cart and the details you entered are kept.';
+  if (reason === 'expired')
+    return 'Your session expired. Sign in again to continue where you were.';
+  if (ended === 'signed-out') return 'You are signed out. Your cart is still here.';
+  return '';
 }
 
 export function LoginRoute() {
   useDocumentTitle('Sign in');
-  const { session, signIn } = useAuth();
+  const { session, ended, signIn } = useAuth();
   const [params] = useSearchParams();
   const [values, setValues] = useState<LoginValues>({ email: '', password: '' });
   const [errors, setErrors] = useState<LoginErrors>({});
@@ -44,9 +51,10 @@ export function LoginRoute() {
   const [pending, setPending] = useState(false);
   const [formError, setFormError] = useState('');
   const next = safeNext(params.get('next'));
+  const notice = signInReason(params.get('reason'), next, ended);
 
   // Signed in (now, or already when the page opened): go on. The redirect is the render, not an effect.
-  if (session) return <Navigate to={next} replace />;
+  if (isSessionValid(session)) return <Navigate to={next} replace />;
 
   function change(field: keyof LoginValues, value: string) {
     const updated = { ...values, [field]: value };
@@ -67,7 +75,7 @@ export function LoginRoute() {
     } catch (error) {
       const appError = toAppError(error);
       setFormError(
-        appError.status === 401
+        appError.code === 'INVALID_CREDENTIALS'
           ? 'The email or password is not right. Check them and try again.'
           : errorText(appError).message,
       );
@@ -84,6 +92,11 @@ export function LoginRoute() {
       <h1 id="page-title" className="text-h1 font-extrabold tracking-tight text-text">
         Sign in
       </h1>
+      {notice && (
+        <p role="status" className="rounded-md bg-primary-soft p-sm text-text">
+          {notice}
+        </p>
+      )}
       {formError && (
         <p role="alert" className="rounded-md border-2 border-danger bg-surface p-sm text-danger">
           {formError}
@@ -112,6 +125,15 @@ export function LoginRoute() {
           Sign in
         </Button>
       </form>
+      <p className="text-text-muted">
+        New here?{' '}
+        <Link
+          to={`/register?next=${encodeURIComponent(next)}`}
+          className="font-semibold text-primary underline"
+        >
+          Create an account
+        </Link>
+      </p>
     </section>
   );
 }

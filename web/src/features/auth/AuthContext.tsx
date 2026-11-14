@@ -1,62 +1,143 @@
 /**
- * AuthProvider: the session in Context (the header, the account routes and the API calls need it). Kept in
- * sessionStorage under the legacy key; an expired session is dropped when read and when its time comes (the
- * timer is cleared when the session changes or the provider unmounts).
+ * AuthProvider: the session in Context, changed only through a reducer (sign in, sign out, expire).
+ *
+ * - Login and register go through `signIn`; logout through `signOut`; a session that runs out (its `exp`
+ *   passes, or the API answers 401) through `expire`. Nothing else writes the session.
+ * - The API client reads the token through the bridge connected here (`connectAuth`), so components never pass
+ *   tokens around, and the client's single 401 handler lands in `expire` (api/client.ts).
+ * - Storage (task_4_security.md §1): the session is kept in memory and mirrored to sessionStorage, so a reload
+ *   keeps the shopper signed in but the token does not outlive the tab. It is dropped when read expired,
+ *   when its time comes (a timer, cleared on change and unmount), on sign-out and on a 401.
+ * - Sign-out also ends the session in this browser's other tabs (a localStorage signal) and removes the
+ *   checkout draft (name, phone, address). It never touches the cart: the cart belongs to the device and
+ *   survives both sign-in and sign-out.
  */
 import {
   createContext,
-  useCallback,
   useContext,
   useEffect,
   useMemo,
+  useReducer,
   useState,
   type ReactNode,
 } from 'react';
 import type { AuthSession } from '@shared/domain';
-import { STORAGE_KEYS } from '../../config';
+import { connectAuth, type AuthBridge } from '../../api/client';
+import { browserStorage } from '../../lib/browserStorage';
+import { clearDraft } from '../checkout/checkout.storage';
+import { isSessionValid, parseStoredSession, SESSION_KEY, SIGN_OUT_SIGNAL_KEY } from './session';
 
-interface AuthContextValue {
+/** Why there is no session: never signed in, signed out, or the session ran out / was refused. */
+export type SessionEnd = 'none' | 'signed-out' | 'expired';
+
+export interface AuthState {
   session: AuthSession | null;
+  ended: SessionEnd;
+}
+
+export type AuthAction = { type: 'signIn'; session: AuthSession } | { type: 'signOut' | 'expire' };
+
+/** Pure. */
+export function authReducer(state: AuthState, action: AuthAction): AuthState {
+  switch (action.type) {
+    case 'signIn':
+      return { session: action.session, ended: 'none' };
+    case 'signOut':
+      return state.session === null && state.ended === 'signed-out'
+        ? state
+        : { session: null, ended: 'signed-out' };
+    case 'expire':
+      return state.session === null ? state : { session: null, ended: 'expired' };
+  }
+}
+
+export interface AuthContextValue extends AuthState {
   signIn: (session: AuthSession) => void;
   signOut: () => void;
+  expire: () => void;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
-function readSession(now = Date.now()): AuthSession | null {
-  try {
-    const text = window.sessionStorage.getItem(STORAGE_KEYS.session);
-    if (!text) return null;
-    const data = JSON.parse(text) as Partial<AuthSession>;
-    if (typeof data.token !== 'string' || typeof data.expiresAt !== 'number' || !data.user)
-      return null;
-    return data.expiresAt > now ? (data as AuthSession) : null;
-  } catch {
-    return null;
-  }
+/**
+ * The session the API client sees. Updated synchronously in the actions below (not in an effect), so a
+ * request made right after sign-in, by a child that renders first, already has the token.
+ */
+const current: { session: AuthSession | null } = { session: null };
+
+function initialState(): AuthState {
+  const session = parseStoredSession(
+    browserStorage('sessionStorage')?.getItem(SESSION_KEY) ?? null,
+  );
+  current.session = session;
+  return { session, ended: 'none' };
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [session, setSession] = useState<AuthSession | null>(readSession);
+  const [state, dispatch] = useReducer(authReducer, undefined, initialState);
 
+  const actions = useMemo(() => {
+    const signIn = (session: AuthSession) => {
+      current.session = session;
+      dispatch({ type: 'signIn', session });
+    };
+    const expire = () => {
+      current.session = null;
+      dispatch({ type: 'expire' });
+    };
+    const signOut = () => {
+      current.session = null;
+      clearDraft();
+      try {
+        browserStorage('localStorage')?.setItem(SIGN_OUT_SIGNAL_KEY, String(Date.now()));
+      } catch {
+        // other tabs keep their session until it expires
+      }
+      dispatch({ type: 'signOut' });
+    };
+    return { signIn, signOut, expire };
+  }, []);
+
+  // The bridge for the API client: connected during the first render (before any child's effect can make a
+  // request) and again in the effect, which also disconnects on unmount.
+  const [bridge] = useState<AuthBridge>(() => {
+    const value: AuthBridge = {
+      getToken: () => (isSessionValid(current.session) ? current.session.token : null),
+      onUnauthorized: () => actions.expire(),
+    };
+    connectAuth(value);
+    return value;
+  });
+  useEffect(() => connectAuth(bridge), [bridge]);
+
+  // Mirror to sessionStorage, and end the session when its time comes.
+  const { session } = state;
   useEffect(() => {
+    const storage = browserStorage('sessionStorage');
     try {
-      if (session) window.sessionStorage.setItem(STORAGE_KEYS.session, JSON.stringify(session));
-      else window.sessionStorage.removeItem(STORAGE_KEYS.session);
+      if (session) storage?.setItem(SESSION_KEY, JSON.stringify(session));
+      else storage?.removeItem(SESSION_KEY);
     } catch {
       // storage blocked: the session lasts for this page only
     }
     if (!session) return undefined;
-    const timer = window.setTimeout(
-      () => setSession(null),
-      Math.max(0, session.expiresAt - Date.now()),
-    );
+    const timer = window.setTimeout(actions.expire, Math.max(0, session.expiresAt - Date.now()));
     return () => window.clearTimeout(timer);
-  }, [session]);
+  }, [session, actions]);
 
-  const signIn = useCallback((next: AuthSession) => setSession(next), []);
-  const signOut = useCallback(() => setSession(null), []);
-  const value = useMemo(() => ({ session, signIn, signOut }), [session, signIn, signOut]);
+  // Signed out in another tab of this browser → signed out here too.
+  useEffect(() => {
+    function onStorage(event: StorageEvent) {
+      if (event.key === SIGN_OUT_SIGNAL_KEY && event.newValue) {
+        current.session = null;
+        dispatch({ type: 'signOut' });
+      }
+    }
+    window.addEventListener('storage', onStorage);
+    return () => window.removeEventListener('storage', onStorage);
+  }, []);
+
+  const value = useMemo(() => ({ ...state, ...actions }), [state, actions]);
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
