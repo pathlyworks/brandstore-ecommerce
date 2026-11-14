@@ -4,10 +4,11 @@ A storefront in plain HTML, CSS and ES-module JavaScript, built on the **TechSph
 search, filters and pagination; product pages; a cart kept on the device; sign-in with a JWT-protected account
 (orders, addresses); and checkout. There is no framework and no bundler. Vite is used only as a dev server.
 
-**Current task: Advanced Task 2 — React foundation: typed components, routing and the Tailwind system.**
-Deliverable: [`task_2_react_foundation.md`](task_2_react_foundation.md); the app is in [`web/`](web/README.md)
-(Vite + React + TypeScript, React Router, Tailwind brand tokens, Storybook). `npm run dev` starts it;
-`npm run dev:legacy` the legacy pages. The plan it follows: [`task_1_architecture.md`](task_1_architecture.md).
+**Current task: Advanced Task 3 — cart Context, multi-step checkout and orders.** Deliverable:
+[`task_3_checkout.md`](task_3_checkout.md): the cart on Context + useReducer with selectors and versioned
+persistence, the checkout at `/checkout` (address, mock payment, review) with input that survives refresh and Back,
+`POST /orders` at most once, the confirmation route, and cancel in the order history. Earlier: Task 2
+[`task_2_react_foundation.md`](task_2_react_foundation.md), Task 1 [`task_1_architecture.md`](task_1_architecture.md).
 
 ## 1. Set up and run
 
@@ -128,6 +129,7 @@ in Netlify's environment and add its origin to `connect-src` and `img-src` in th
 
 | Task | Document |
 | :--- | :--- |
+| Advanced, Task 3 | `task_3_checkout.md`, `web/src/features/cart`, `web/src/features/checkout` |
 | Advanced, Task 2 | `task_2_react_foundation.md`, `web/` |
 | Advanced, Task 1 | `task_1_architecture.md`, `docs/migration/`, `src/types/` |
 | Phase 2, Task 6 | `task_6_handoff.md` (edge-case sweep, accessibility, PR and merge conflict, browsers, Lighthouse, demo), `docs/HANDOFF.md`, `docs/lighthouse/`, `docs/demo/` |

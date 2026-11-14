@@ -25,6 +25,7 @@ const CORE = [
   'Modal',
   'Navbar',
   'Select',
+  'Steps',
   'Table',
   'Tabs',
 ];
@@ -35,7 +36,7 @@ const entries = Object.entries(modules).map(([path, module]) => ({
 }));
 
 describe('stories', () => {
-  it('exist for all 10 core components', () => {
+  it('exist for all 11 core components (the 10 of Task 2 and Steps)', () => {
     expect(entries.map((e) => e.name).sort()).toEqual(CORE);
   });
 

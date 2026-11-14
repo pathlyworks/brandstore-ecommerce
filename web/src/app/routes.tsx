@@ -7,13 +7,7 @@
 import { Navigate, type RouteObject } from 'react-router';
 import { RootLayout } from './RootLayout';
 import { RouteError } from './RouteError';
-import {
-  AddressesRoute,
-  AdminRoute,
-  CheckoutRoute,
-  CompareRoute,
-  RegisterRoute,
-} from './PlannedRoutes';
+import { AddressesRoute, AdminRoute, CompareRoute, RegisterRoute } from './PlannedRoutes';
 import { HomeRoute } from '../features/home/HomeRoute';
 import { ProductsRoute } from '../features/catalog/ProductsRoute';
 import { ProductRoute } from '../features/product/ProductRoute';
@@ -21,6 +15,12 @@ import { CartRoute } from '../features/cart/CartRoute';
 import { LoginRoute } from '../features/auth/LoginRoute';
 import { AccountLayout } from '../features/account/AccountLayout';
 import { OrdersRoute } from '../features/account/OrdersRoute';
+import { CheckoutLayout } from '../features/checkout/CheckoutLayout';
+import { CheckoutIndex } from '../features/checkout/CheckoutIndex';
+import { AddressStep } from '../features/checkout/AddressStep';
+import { PaymentStep } from '../features/checkout/PaymentStep';
+import { ReviewStep } from '../features/checkout/ReviewStep';
+import { ConfirmationRoute } from '../features/checkout/ConfirmationRoute';
 import { NotFoundRoute } from '../features/errors/NotFoundRoute';
 
 export interface RouteHandle {
@@ -37,7 +37,22 @@ export const routes: RouteObject[] = [
       { path: 'products', element: <ProductsRoute />, handle: { component: 'ProductsRoute' } },
       { path: 'products/:id', element: <ProductRoute />, handle: { component: 'ProductRoute' } },
       { path: 'cart', element: <CartRoute />, handle: { component: 'CartRoute' } },
-      { path: 'checkout', element: <CheckoutRoute />, handle: { component: 'CheckoutRoute' } },
+      {
+        path: 'checkout',
+        element: <CheckoutLayout />,
+        handle: { component: 'CheckoutLayout' },
+        children: [
+          { index: true, element: <CheckoutIndex /> },
+          { path: 'address', element: <AddressStep />, handle: { component: 'AddressStep' } },
+          { path: 'payment', element: <PaymentStep />, handle: { component: 'PaymentStep' } },
+          { path: 'review', element: <ReviewStep />, handle: { component: 'ReviewStep' } },
+        ],
+      },
+      {
+        path: 'checkout/confirmation/:number',
+        element: <ConfirmationRoute />,
+        handle: { component: 'ConfirmationRoute' },
+      },
       { path: 'login', element: <LoginRoute />, handle: { component: 'LoginRoute' } },
       { path: 'register', element: <RegisterRoute />, handle: { component: 'RegisterRoute' } },
       {

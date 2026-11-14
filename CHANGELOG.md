@@ -1,5 +1,17 @@
 # Changelog
 
+## Unreleased — Advanced Task 3: cart, checkout and orders (branch `feature/cart-checkout-orders`, PR #8)
+### Added
+- Cart reducer as the single, pure writer (add, update, remove, clear, hydrate, reprice) and total selectors in integer cents, tested against 16 reference cases (`web/scripts/cart-reference.mjs`).
+- Versioned cart storage (`brandstore:cart`, `{version: 2, savedAt, lines}`) with migration from the legacy v1 cart, repair on read, cross-tab sync and re-pricing on load.
+- `/checkout` layout with `/address`, `/payment` (mock: test card, cash on delivery, wallet) and `/review`; per-step validation with a focused error summary; the `Steps` progress component (with stories); the draft in sessionStorage so input survives refresh and Back.
+- `POST /orders` at most once (in-flight ref, busy button, placed order remembered by idempotency key, same key on retry); `/checkout/confirmation/:number`.
+- Cancel (PATCH `/account/orders/:id/cancel`) in the order history behind a confirmation dialog; 409 handled.
+- Tests: reducer, selectors, storage, the checkout flow, cancel; Playwright `web/e2e/checkout.spec.ts`.
+### Changed
+- Routing map in task_1_architecture.md §4 revised for the checkout routes. CI prints Prettier's diff when the format check fails.
+- `npm run build` also builds `web/`; Lighthouse CI budgets (PR #7, review of Task 2).
+
 ## Unreleased — Advanced Task 2: React foundation (branch `feature/react-foundation`, PR #6)
 ### Added
 - `web/` as an npm workspace: Vite + React 19 + TypeScript (strict), React Router 7, Tailwind 4 with the brand tokens only (default palette and sizes removed; `check-tokens.mjs` bans arbitrary colours), Storybook 9 with the accessibility addon.

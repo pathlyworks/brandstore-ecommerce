@@ -1,16 +1,20 @@
 /** The API calls the React app makes, typed end to end (wire type in, domain type out). */
 import type {
+  ApiAddress,
   ApiCategory,
+  ApiOrder,
   ApiProduct,
   OrderPage,
+  PlacedOrder,
+  PlaceOrderRequest,
   ProductPage,
   ProductQuery,
   Session,
 } from '@shared/api';
-import type { AuthSession, Order, Paged, Product } from '@shared/domain';
+import type { Address, AuthSession, Order, Paged, Product } from '@shared/domain';
 import { ORDERS_PAGE_SIZE } from '../config';
 import { request } from './client';
-import { toOrderPage, toProduct, toProductPage, toUser } from './mappers';
+import { toAddress, toOrder, toOrderPage, toProduct, toProductPage, toUser } from './mappers';
 
 export function fetchCategories(signal?: AbortSignal): Promise<ApiCategory[]> {
   return request<ApiCategory[]>('/categories', { signal });
@@ -58,6 +62,44 @@ export async function fetchOrders(
       signal,
     }),
   );
+}
+
+/**
+ * The body the checkout sends to POST /orders. The API requires only `items`; the rest is what a real backend
+ * needs and the TechSphere mock accepts and ignores. `idempotencyKey` is in the body, not an
+ * `Idempotency-Key` header, because the API's CORS allows only the Authorization and Content-Type headers
+ * (a custom header would fail the browser's preflight).
+ */
+export interface CheckoutOrderRequest extends PlaceOrderRequest {
+  idempotencyKey: string;
+  shipping: {
+    fullName: string;
+    phone: string;
+    street: string;
+    city: string;
+    governorate: string;
+    postalCode?: string;
+  };
+  payment: { method: 'card' | 'cod' | 'wallet'; reference: string };
+}
+
+/** POST /orders: 201 { id, number, status }. */
+export function placeOrder(body: CheckoutOrderRequest, token: string): Promise<PlacedOrder> {
+  return request<PlacedOrder>('/orders', { method: 'POST', body, token });
+}
+
+/** PATCH /account/orders/:id/cancel: 200 with the cancelled order; 409 when it has shipped already. */
+export async function cancelOrder(id: string, token: string): Promise<Order> {
+  return toOrder(
+    await request<ApiOrder>(`/account/orders/${encodeURIComponent(id)}/cancel`, {
+      method: 'PATCH',
+      token,
+    }),
+  );
+}
+
+export async function fetchAddresses(token: string, signal?: AbortSignal): Promise<Address[]> {
+  return (await request<ApiAddress[]>('/account/addresses', { token, signal })).map(toAddress);
 }
 
 /** The token's `exp` (seconds) in milliseconds; an unreadable token expires in an hour (the API's lifetime). */

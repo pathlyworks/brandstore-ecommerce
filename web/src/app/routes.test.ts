@@ -25,8 +25,8 @@ function plannedRoutes(): { path: string; component: string }[] {
 }
 
 describe('routing map', () => {
-  it('reads 13 routes from the plan', () => {
-    expect(plannedRoutes()).toHaveLength(13);
+  it('reads 17 routes from the plan', () => {
+    expect(plannedRoutes()).toHaveLength(17);
   });
 
   it('matches task_1_architecture.md §4 exactly (paths and components)', () => {
