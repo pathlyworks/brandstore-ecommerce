@@ -34,7 +34,7 @@ test('an admin gets the admin chunk and the summary', async ({ page }) => {
   const scripts = scriptsLoaded(page);
   await signIn(page, '/admin', ADMIN);
   await expect(page.getByRole('heading', { level: 1, name: 'Admin summary' })).toBeVisible();
-  await expect(page.getByText('Revenue')).toBeVisible();
+  await expect(page.getByText('Revenue', { exact: true })).toBeVisible();
   expect(scripts.filter(isAdminChunk)).toHaveLength(1);
 });
 

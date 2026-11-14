@@ -14,12 +14,13 @@ const SECTIONS = [
 
 /** Rendered inside <ProtectedRoute> (app/routes.tsx), so a valid session is guaranteed here. */
 export function AccountLayout() {
-  const { session, signOut } = useAuth();
+  const { session } = useAuth();
   const navigate = useNavigate();
 
-  // Leave the protected area first, then end the session (the cart stays; the checkout draft is removed).
+  // Leave the protected area first; RootLayout ends the session once the home page is showing, so
+  // ProtectedRoute never sees a signed-out user here and sends them to sign in again.
   function onSignOut() {
-    void Promise.resolve(navigate('/', { replace: true })).then(signOut);
+    void navigate('/', { replace: true, state: { signOut: true } });
   }
   return (
     <div className="flex flex-col gap-md">

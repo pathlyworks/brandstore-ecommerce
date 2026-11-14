@@ -2,8 +2,8 @@
  * The layout route: skip link, Navbar, the matched child route (<Outlet />) and Footer, on every page. The
  * <Suspense> around the outlet covers the lazily loaded routes (admin, checkout).
  */
-import { Suspense } from 'react';
-import { Outlet } from 'react-router';
+import { Suspense, useEffect } from 'react';
+import { Outlet, useLocation, useNavigate } from 'react-router';
 import { Footer, Navbar } from '../components';
 import { LoadingState } from '../components/StatusMessage';
 import { useAuth } from '../features/auth/AuthContext';
@@ -13,7 +13,18 @@ import { FOOTER_GROUPS, MAIN_LINKS } from './navigation';
 
 export function RootLayout() {
   const { itemCount } = useCart();
-  const { session } = useAuth();
+  const { session, signOut } = useAuth();
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // "Sign out" (AccountLayout) navigates here with state { signOut: true }: end the session now that no
+  // protected screen is showing, and drop the state so Back or a refresh does not sign out again.
+  const signOutRequested = (location.state as { signOut?: boolean } | null)?.signOut === true;
+  useEffect(() => {
+    if (!signOutRequested) return;
+    signOut();
+    void navigate(location.pathname + location.search, { replace: true, state: null });
+  }, [signOutRequested, signOut, navigate, location.pathname, location.search]);
   const signedIn = isSessionValid(session);
   const account = signedIn
     ? { to: '/account/orders', label: 'Account' }
