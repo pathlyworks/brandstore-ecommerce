@@ -42,8 +42,14 @@ describe('useApi', () => {
     rerender({ id: 'page-2' });
     expect(signals[0]?.aborted).toBe(true); // the cleanup of the first run aborted it
 
-    await act(async () => second.resolve('page 2'));
-    await act(async () => first.resolve('page 1')); // arrives last, must not win
+    await act(async () => {
+      second.resolve('page 2');
+      await second.promise;
+    });
+    await act(async () => {
+      first.resolve('page 1');
+      await first.promise;
+    }); // arrives last, must not win
     expect(result.current.status).toBe('success');
     expect(result.current.data).toBe('page 2');
   });
@@ -60,7 +66,10 @@ describe('useApi', () => {
     );
     unmount();
     expect(seen?.aborted).toBe(true);
-    await act(async () => pending.resolve('late'));
+    await act(async () => {
+      pending.resolve('late');
+      await pending.promise;
+    });
     expect(errorSpy).not.toHaveBeenCalled();
   });
 
@@ -75,7 +84,10 @@ describe('useApi', () => {
     rerender({ id: 'two' });
     expect(result.current.status).toBe('loading');
     expect(result.current.data).toBe('one');
-    await act(async () => next.resolve('two'));
+    await act(async () => {
+      next.resolve('two');
+      await next.promise;
+    });
     expect(result.current.data).toBe('two');
   });
 

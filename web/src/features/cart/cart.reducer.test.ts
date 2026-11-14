@@ -9,7 +9,7 @@ const product: Product = {
   category: 'laptops',
   price: 3_299_900,
   currency: 'EGP',
-  stock: { status: 'low_stock', available: 3 },
+  stock: { status: 'low', available: 3 },
   rating: 3,
   reviewCount: 10,
   images: [{ url: '/product-placeholder.svg', alt: 'Nova Laptops 1' }],

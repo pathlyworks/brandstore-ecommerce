@@ -25,7 +25,8 @@
   },
   "include": [
     "src",
-    ".storybook",
+    ".storybook/main.ts",
+    ".storybook/preview.tsx",
     "e2e",
     "vite.config.ts",
     "vitest.config.ts",

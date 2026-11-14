@@ -4,7 +4,7 @@ import { formatMoney } from '../../lib/money';
 
 const STOCK_LABEL = {
   in_stock: { tone: 'success', text: 'In stock' },
-  low_stock: { tone: 'warning', text: 'Low stock' },
+  low: { tone: 'warning', text: 'Low stock' },
   out_of_stock: { tone: 'danger', text: 'Out of stock' },
   unknown: { tone: 'neutral', text: 'Stock unknown' },
 } as const;

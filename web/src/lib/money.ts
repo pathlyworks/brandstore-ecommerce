@@ -1,7 +1,7 @@
 /**
  * Money in integer cents (ported from the legacy src/utils/money.js and api/techsphere.js priceToCents).
  */
-import type { ApiPrice, Currency } from '@shared/api';
+import type { ApiPrice } from '@shared/api';
 import type { Cents } from '@shared/domain';
 
 /**
@@ -18,11 +18,7 @@ export function priceToCents(price: ApiPrice | null | undefined): Cents {
 }
 
 /** "EGP 2,499.00"; "Price unavailable" when the amount could not be read. */
-export function formatMoney(
-  cents: Cents,
-  currency: Currency | string = 'EGP',
-  locale = 'en-GB',
-): string {
+export function formatMoney(cents: Cents, currency: string = 'EGP', locale = 'en-GB'): string {
   if (!Number.isFinite(cents)) return 'Price unavailable';
   return new Intl.NumberFormat(locale, { style: 'currency', currency }).format(cents / 100);
 }
