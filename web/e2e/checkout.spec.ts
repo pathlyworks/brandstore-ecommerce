@@ -76,7 +76,7 @@ test('cancel a processing order from the order history', async ({ page }) => {
   const dialog = page.getByRole('dialog', { name: `Cancel order ${id}?` });
   await expect(dialog).toBeVisible();
   await dialog.getByRole('button', { name: 'Cancel the order' }).click();
-  await expect(page.getByRole('status')).toHaveText(`Order ${id} is cancelled.`);
+  await expect(page.getByText(`Order ${id} is cancelled.`)).toBeVisible();
   const row = table
     .getByRole('row')
     .filter({ has: page.getByRole('rowheader', { name: id, exact: true }) });

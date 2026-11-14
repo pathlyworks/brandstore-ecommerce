@@ -116,8 +116,10 @@ describe('multi-step checkout', () => {
       items: [{ productId: 'p-001', qty: 2 }],
       shipping: { fullName: 'Mona Adel', phone: '01012345678', city: 'Dokki', governorate: 'giza' },
       payment: { method: 'card' },
-      idempotencyKey: expect.any(String),
     });
+    expect(typeof (apiState.placed[0] as { idempotencyKey?: unknown }).idempotencyKey).toBe(
+      'string',
+    );
 
     // Confirmation route with the API's order number; the cart and the draft are cleared.
     expect(view.router.state.location.pathname).toBe('/checkout/confirmation/TS-1001');

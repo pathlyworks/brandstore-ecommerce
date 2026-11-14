@@ -188,8 +188,8 @@ export function validatePayment(p: PaymentDraft): FieldErrors<PaymentDraft> {
 }
 
 export function stepErrors(draft: CheckoutDraft, step: CheckoutStep): Record<string, string> {
-  if (step === 'address') return validateAddress(draft.address) as Record<string, string>;
-  if (step === 'payment') return validatePayment(draft.payment) as Record<string, string>;
+  if (step === 'address') return validateAddress(draft.address);
+  if (step === 'payment') return validatePayment(draft.payment);
   return {};
 }
 

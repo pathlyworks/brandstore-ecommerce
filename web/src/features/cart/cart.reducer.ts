@@ -40,7 +40,7 @@ export type CartAction =
   | { type: 'reprice'; products: readonly Product[]; missing: readonly string[] };
 
 export const EMPTY_CART: CartState = Object.freeze({
-  lines: Object.freeze([]) as readonly CartItem[],
+  lines: Object.freeze([]),
 });
 
 /** The most a line may hold: its stock and the per-line limit (at least 1 while the line exists). */

@@ -30,7 +30,7 @@ describe('order history', () => {
     );
     await waitFor(() => expect(within(row('o-001')).getByText('cancelled')).toBeInTheDocument());
     expect(within(row('o-001')).queryByRole('button', { name: /cancel/i })).not.toBeInTheDocument();
-    expect(screen.getByRole('status')).toHaveTextContent('Order o-001 is cancelled.');
+    expect(screen.getByText('Order o-001 is cancelled.')).toHaveAttribute('role', 'status');
     expect(apiState.orders[0]?.status).toBe('cancelled');
   });
 
