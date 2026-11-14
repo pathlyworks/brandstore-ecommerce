@@ -134,4 +134,3 @@ export function saveCart(storage: Storage | null, state: CartState, now = new Da
     return false;
   }
 }
-
