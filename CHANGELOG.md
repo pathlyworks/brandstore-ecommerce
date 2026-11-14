@@ -1,8 +1,12 @@
 # Changelog
 
+## Unreleased — Phase 3, Task 1, revision 2
+- The plan is now `task_1_architecture.md` (and `.pdf`), the name the task asks for; headings name the sections the brief lists (wave estimates, deferred work).
+- `web/`: wave 0 skeleton of the React app — the routing map as route objects (layout, nested routes, 404), `CartProvider` with `createContext` + `useReducer`, Tailwind with the brand tokens. `package.json`: React, React DOM, React Router, Tailwind, React Testing Library; scripts `web:dev`, `web:build`, `web:typecheck`.
+
 ## Unreleased — Advanced Task 1: legacy audit and migration architecture (branch `docs/react-migration-architecture`)
 ### Added
-- `advanced_task_1_migration_plan.md`: audit findings, folder structure, routing map (every legacy feature → route and component), component tree, state-strategy matrix, TypeScript types, Tailwind plan, testing strategy, waves by risk with estimates, deferred work.
+- `task_1_architecture.md`: audit findings, folder structure, routing map (every legacy feature → route and component), component tree, state-strategy matrix, TypeScript types, Tailwind plan, testing strategy, waves by risk with estimates, deferred work.
 - `src/types/api.ts` (wire format, from 38 captured responses) and `src/types/domain.ts`; `npm run typecheck` checks both ways (`src/types/__checks__/`), in CI also against a freshly captured API.
 - Evidence scripts: `audit-legacy.mjs`, `capture-api.mjs`, `api-field-report.mjs`, `gen-observed-types-check.mjs`, `tokens-to-tailwind.mjs`; outputs in `docs/migration/`.
 
