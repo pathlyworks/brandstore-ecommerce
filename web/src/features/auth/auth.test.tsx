@@ -52,7 +52,7 @@ describe('ProtectedRoute', () => {
     expect(router.state.location.pathname + router.state.location.search).toBe(
       '/account/orders?page=2',
     );
-    expect(screen.getByText('Page 2 of 2')).toBeInTheDocument();
+    expect(await screen.findByText('Page 2 of 2')).toBeInTheDocument();
   });
 
   it('returns to the destination after registering, and shows the API’s errors on the right field', async () => {

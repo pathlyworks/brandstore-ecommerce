@@ -7,7 +7,9 @@
  * verify the signature (the mock signs nothing: "alg": "none"), so these claims only decide what the UI
  * shows; the API checks the token on every request and is the real gate (task_4_security.md §2).
  */
-import type { AuthSession, Role } from '@shared/domain';
+import type { AuthSession, User } from '@shared/domain';
+
+type Role = User['role'];
 
 /** sessionStorage key, shared with the legacy pages (same shape). */
 export const SESSION_KEY = 'brandstore:session:v1';

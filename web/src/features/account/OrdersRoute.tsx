@@ -9,7 +9,7 @@ import { useSearchParams } from 'react-router';
 import type { AppError, Order } from '@shared/domain';
 import { cancelOrder, fetchOrders } from '../../api/endpoints';
 import { Badge, Button, Modal, Table, type BadgeTone, type Column } from '../../components';
-import { ErrorState, errorText } from '../../components/StatusMessage';
+import { errorText } from '../../components/StatusMessage';
 import { toAppError } from '../../hooks/useApi';
 import { loadPlacedOrders } from '../checkout/checkout.storage';
 import { useApi } from '../../hooks/useApi';

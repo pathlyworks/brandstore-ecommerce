@@ -1,4 +1,13 @@
 {
   "description": "Advisories accepted for now, each with why and until when (scripts/audit-report.mjs). An expired entry fails the audit.",
-  "entries": []
+  "entries": [
+    {
+      "id": "https://github.com/advisories/GHSA-3g3m-2fjr-6pw4",
+      "package": "glob (via @storybook/react-vite 9)",
+      "severity": "moderate",
+      "scope": "development",
+      "reason": "Only Storybook's build and dev server use it, on our own source files; no untrusted input or AbortSignal reaches it, and nothing of it ships to browsers. npm's only suggested fix is a downgrade to Storybook 8.5, which would lose the accessibility addon set-up. Re-check when Storybook releases a fixed 9.x/10.x.",
+      "expires": "2027-02-14"
+    }
+  ]
 }

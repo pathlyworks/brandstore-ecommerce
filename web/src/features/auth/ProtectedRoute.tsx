@@ -7,7 +7,7 @@
  */
 import type { ReactNode } from 'react';
 import { Link, Navigate, useLocation } from 'react-router';
-import type { Role } from '@shared/domain';
+import type { User } from '@shared/domain';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import { useAuth } from './AuthContext';
 import { isSessionValid } from './session';
@@ -18,7 +18,7 @@ export function loginPathFor(next: string, expired: boolean): string {
   return `/login?${params.toString()}`;
 }
 
-export function ProtectedRoute({ role, children }: { role?: Role; children: ReactNode }) {
+export function ProtectedRoute({ role, children }: { role?: User['role']; children: ReactNode }) {
   const { session, ended } = useAuth();
   const location = useLocation();
   if (!isSessionValid(session)) {
