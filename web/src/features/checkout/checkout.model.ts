@@ -14,7 +14,8 @@ export const STEP_LABELS: Record<CheckoutStep, string> = {
   review: 'Review and place order',
 };
 
-const GOVERNORATE_IDS = [
+/** The governorates the address step offers (the select adds "Choose…" as the empty value). */
+export const GOVERNORATE_IDS = [
   'cairo',
   'giza',
   'alexandria',
