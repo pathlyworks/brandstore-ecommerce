@@ -90,7 +90,10 @@ describe('ProtectedRoute', () => {
     signInForTest();
     renderApp('/admin');
     expect(
-      await screen.findByRole('heading', { level: 1, name: 'This area is for administrators' }),
+      await screen.findByRole('heading', {
+        level: 1,
+        name: 'Access denied: this area is for administrators',
+      }),
     ).toBeInTheDocument();
     expect(screen.queryByRole('link', { name: 'Admin' })).not.toBeInTheDocument();
     expect(adminCalls).toBe(0);

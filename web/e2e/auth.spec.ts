@@ -22,7 +22,7 @@ test('a shopper gets a 403 page at /admin and never downloads the admin code', a
   const scripts = scriptsLoaded(page);
   await signIn(page, '/admin');
   await expect(
-    page.getByRole('heading', { level: 1, name: 'This area is for administrators' }),
+    page.getByRole('heading', { level: 1, name: 'Access denied: this area is for administrators' }),
   ).toBeVisible();
   await page.goto('/products');
   await expect(page.getByRole('list', { name: 'Products' })).toBeVisible();
