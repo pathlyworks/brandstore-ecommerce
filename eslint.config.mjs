@@ -91,6 +91,8 @@ export default [
       'test-results/',
       'coverage/',
       'lighthouse/',
+      // The React app has its own ESLint config (web/eslint.config.js, typescript-eslint and react-hooks).
+      'web/',
     ],
   },
   {

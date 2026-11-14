@@ -29,3 +29,6 @@ api/techsphere/
 
 # Lighthouse reports from scripts/lighthouse.mjs (copies kept in docs/lighthouse/)
 /lighthouse/
+
+# The React app: Storybook build output
+web/storybook-static/
