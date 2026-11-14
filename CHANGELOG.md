@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased — Advanced Task 2: React foundation (branch `feature/react-foundation`, PR #6)
+### Added
+- `web/` as an npm workspace: Vite + React 19 + TypeScript (strict), React Router 7, Tailwind 4 with the brand tokens only (default palette and sizes removed; `check-tokens.mjs` bans arbitrary colours), Storybook 9 with the accessibility addon.
+- Core components with typed props: Button, Input, `Select<T>`, Card, Badge, Modal, `Tabs<T>`, `Table<Row>`, Navbar, Footer; stories for default, hover, focus, disabled, error and loading (or a stated reason).
+- The routing map of task_1_architecture.md §4: layout route, nested `/account` layout with a guard and index redirect, `*` 404; routes for home, products, product, cart, sign-in and orders; placeholders for later waves.
+- `useApi`: fetch per key with an AbortController, cleanup aborts, stale answers ignored, retry.
+- Tests: Vitest + RTL + MSW over the captured API responses, axe on every story, routing map compared with the plan; Playwright `web/e2e` specs (projects `web-<browser>`); CI job "React app (web/)".
+### Changed
+- `npm run dev` starts the React app; the legacy pages moved to `npm run dev:legacy`. `npm test` also runs the web suite. `.npmrc` sets `legacy-peer-deps` (one ESLint 10 for both apps).
+
 ## Unreleased — Phase 3, Task 1, revision 2
 - The plan is now `task_1_architecture.md` (and `.pdf`), the name the task asks for; headings name the sections the brief lists (wave estimates, deferred work).
 - `web/`: wave 0 skeleton of the React app — the routing map as route objects (layout, nested routes, 404), `CartProvider` with `createContext` + `useReducer`, Tailwind with the brand tokens. `package.json`: React, React DOM, React Router, Tailwind, React Testing Library; scripts `web:dev`, `web:build`, `web:typecheck`.

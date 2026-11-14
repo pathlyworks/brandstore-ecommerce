@@ -32,6 +32,9 @@ test('links, nested account routes and Back work without a page load', async ({ 
 
   await page.goto('/account');
   await expect(page).toHaveURL(/\/login\?next=%2Faccount$/);
+  // The guard's redirect replaced /account in the history, so Back skips it and returns to /products.
   await page.goBack();
-  await expect(page).toHaveURL(/\/$/);
+  await expect(page).toHaveURL(/\/products$/);
+  await page.goBack();
+  await expect(page).toHaveURL(/127\.0\.0\.1:\d+\/$/);
 });
