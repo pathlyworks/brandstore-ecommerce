@@ -55,6 +55,12 @@ export interface AuthContextValue extends AuthState {
   signIn: (session: AuthSession) => void;
   signOut: () => void;
   expire: () => void;
+  /**
+   * The first half of "Sign out", done at the click: the API client loses the token and the stored copy is
+   * removed at once, so a reload or a request in the next moment is already signed out. The screen changes
+   * (signOut) once the user has left the protected area.
+   */
+  forgetToken: () => void;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -95,7 +101,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
       dispatch({ type: 'signOut' });
     };
-    return { signIn, signOut, expire };
+    const forgetToken = () => {
+      current.session = null;
+      try {
+        browserStorage('sessionStorage')?.removeItem(SESSION_KEY);
+      } catch {
+        // nothing stored
+      }
+    };
+    return { signIn, signOut, expire, forgetToken };
   }, []);
 
   // The bridge for the API client: connected during the first render (before any child's effect can make a

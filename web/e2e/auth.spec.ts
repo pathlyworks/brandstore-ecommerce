@@ -110,6 +110,7 @@ test('the cart survives sign-in and sign-out', async ({ page }) => {
   await expect(page.getByRole('link', { name: 'Cart, 2 items' })).toBeVisible();
   await page.getByRole('button', { name: 'Sign out' }).click();
   await expect(page).toHaveURL(/127\.0\.0\.1:\d+\/$/);
+  await expect(page.getByRole('banner').getByRole('link', { name: 'Sign in' })).toBeVisible();
   await expect(page.getByRole('link', { name: 'Cart, 2 items' })).toBeVisible();
   await page.goto('/account/orders');
   await expect(page).toHaveURL(/\/login\?next=/);

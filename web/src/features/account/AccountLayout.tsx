@@ -14,12 +14,13 @@ const SECTIONS = [
 
 /** Rendered inside <ProtectedRoute> (app/routes.tsx), so a valid session is guaranteed here. */
 export function AccountLayout() {
-  const { session } = useAuth();
+  const { session, forgetToken } = useAuth();
   const navigate = useNavigate();
 
   // Leave the protected area first; RootLayout ends the session once the home page is showing, so
   // ProtectedRoute never sees a signed-out user here and sends them to sign in again.
   function onSignOut() {
+    forgetToken();
     void navigate('/', { replace: true, state: { signOut: true } });
   }
   return (

@@ -101,9 +101,14 @@ an effect. A child that renders first and requests at once after sign-in already
   password again. The API's rules are checked in the browser first.
   - "Email already registered" (400) is shown on the email field.
   - On success the user is signed in (the API answers 201 with a token) and sent on like a sign-in.
-- **Logout** first leaves the protected area, then ends the session: the button navigates home with
-  `{ signOut: true }`, and `RootLayout` signs out once home is showing. This way `ProtectedRoute` never sees a user
-  who just signed out and sends them to sign in again.
+- **Logout** happens in two halves:
+  1. At the click, `forgetToken()` takes the token away from the API client and deletes the stored copy, so a
+     reload or a request in the next moment is already signed out.
+  2. The button navigates home with `{ signOut: true }`, and `RootLayout` dispatches `signOut` once home is
+     showing. This way `ProtectedRoute` never sees a user who just signed out and sends them to sign in again.
+
+  A Playwright test caught the need for step 1: React Router updates the URL before React renders the new page,
+  so a reload in that instant still found the stored session.
 
 ## 3. ProtectedRoute and the intended destination
 
