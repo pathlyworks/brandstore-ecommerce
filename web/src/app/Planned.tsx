@@ -1,15 +1,22 @@
-/** Placeholder for a route that is mapped but not migrated yet: says which wave brings it and where it lives now. */
-import { useEffect } from 'react';
+/** A route that is in the routing map but migrates in a later wave: says which, and where it lives meanwhile. */
+import { useDocumentTitle } from '../hooks/useDocumentTitle';
 
-export function Planned({ title, wave, legacy }: { title: string; wave: number; legacy: string }) {
-  useEffect(() => {
-    document.title = `${title} · BrandStore`;
-  }, [title]);
+export interface PlannedProps {
+  title: string;
+  wave: number;
+  legacy: string;
+}
+
+export function Planned({ title, wave, legacy }: PlannedProps) {
+  useDocumentTitle(title);
   return (
-    <section aria-labelledby="page-title">
-      <h1 id="page-title">{title}</h1>
-      <p>
-        Migrates in wave {wave}. Until then this page is served by the legacy site ({legacy}).
+    <section aria-labelledby="page-title" className="flex flex-col gap-xs">
+      <h1 id="page-title" className="text-h2 font-bold text-text">
+        {title}
+      </h1>
+      <p className="text-text-muted">
+        Migrates in wave {wave} (task_1_architecture.md §9). Until then this page is served by the
+        legacy site ({legacy}).
       </p>
     </section>
   );
