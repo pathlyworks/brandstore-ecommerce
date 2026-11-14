@@ -2,7 +2,9 @@ name: CI
 
 # Runs on every pull request and on pushes to main: lint, unit + integration tests (with coverage
 # of src/state and src/utils, which must stay at 80% or more), the end-to-end tests against the
-# official TechSphere API, a cross-browser smoke test (Firefox and WebKit) and Lighthouse.
+# official TechSphere API (legacy pages and the React app in web/), a cross-browser smoke test
+# (Firefox and WebKit), Lighthouse, and the React app's own checks (ESLint with typescript-eslint and
+# react-hooks, the brand-token check, tsc, Vitest with RTL/MSW/axe, the Vite build and the Storybook build).
 # Each job starts from a clean checkout.
 on:
   pull_request:
@@ -34,6 +36,32 @@ jobs:
           npm run typecheck
       - run: npm run build
       - run: npm run contract
+
+  web:
+    name: React app (web/) — lint, types, tests, build, Storybook
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install --no-audit --no-fund
+      - name: ESLint (no any, hooks deps, stable keys) and brand tokens only
+        run: npm run lint -w web
+      - name: TypeScript strict (noImplicitAny)
+        run: npm run typecheck -w web
+      - name: Vitest (components, hooks, routes, routing map vs plan, axe on every story)
+        run: npm run test -w web
+      - name: Vite build
+        run: npm run build -w web
+      - name: Storybook build
+        run: npm run build-storybook -w web
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: storybook
+          path: web/storybook-static/
+          retention-days: 14
 
   test:
     name: Unit and integration tests (Vitest, jsdom, MSW) with coverage
@@ -77,7 +105,7 @@ jobs:
           python-version: '3.12'
       - run: npm install --no-audit --no-fund
       - run: npx playwright install --with-deps chromium
-      - name: npm run e2e (Playwright Test specs, Chromium)
+      - name: npm run e2e (Playwright Test specs, Chromium; legacy pages and web/)
         run: npm run e2e
       - name: Older journey suite (desktop and phone)
         run: npm run e2e:journeys
