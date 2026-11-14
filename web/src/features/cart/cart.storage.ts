@@ -135,11 +135,3 @@ export function saveCart(storage: Storage | null, state: CartState, now = new Da
   }
 }
 
-/** window.localStorage, or null where reading it throws (blocked cookies, some private modes). */
-export function browserStorage(kind: 'localStorage' | 'sessionStorage'): Storage | null {
-  try {
-    return typeof window === 'undefined' ? null : window[kind];
-  } catch {
-    return null;
-  }
-}

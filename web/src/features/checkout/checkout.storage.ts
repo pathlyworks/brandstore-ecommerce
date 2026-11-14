@@ -6,7 +6,7 @@
  * Both are validated when read; anything unreadable is replaced by a fresh value.
  */
 import type { Cents } from '@shared/domain';
-import { browserStorage } from '../cart/cart.storage';
+import { browserStorage } from '../../lib/browserStorage';
 import {
   CHECKOUT_STEPS,
   EMPTY_ADDRESS,
