@@ -71,7 +71,10 @@ Cairo time and after every successful deploy, on `/`, `/products`, `/products/p-
 
 - **Budgets** are the same as the pull-request gate (`lighthouserc.json`): performance ≥ 0.90,
   accessibility ≥ 0.95, best practices and SEO ≥ 0.90, LCP ≤ 3,500 ms, CLS ≤ 0.1, TBT ≤ 300 ms,
-  JavaScript ≤ 160,000 bytes, all transfers ≤ 400,000 bytes (mobile profile, simulated slow 4G).
+  JavaScript ≤ 160,000 bytes, all transfers ≤ 400,000 bytes (mobile profile, simulated slow 4G). One
+  exception while "production" is the GitHub Pages preview: its JavaScript budget is 235,000 bytes, because that
+  build also ships the in-browser demo API (MSW and the fixtures, about 73 KB) that a real production build
+  does not. When the production API exists, the budget goes back to 160,000.
 - **Alert:** a missed budget does not turn the pipeline red, because production has already shipped. It opens
   one issue labelled `performance-regression` (or comments on the open one) with the failed assertions and a
   link to the reports. Reports are kept 30 days as the `lighthouse-scheduled` artifact.
@@ -80,7 +83,12 @@ Cairo time and after every successful deploy, on `/`, `/products`, `/products/p-
 - **First finding.** The first production run could not audit `/products`: GitHub Pages answered every deep link
   with HTTP 404 (through `404.html`), although the page then rendered. Search engines treat that as a missing
   page. Fixed in this release: `web/scripts/pages-routes.mjs` writes the app shell at every public route
-  (evidence: `docs/evidence/task7/README.md`).
+  (evidence: `docs/evidence/task7/pages-deep-links.txt`).
+- **Second finding,** from the first run after the fix (GitHub Actions run 43938862558): every page loaded
+  about 198 KB of JavaScript, over the 160,000-byte budget. The extra 73 KB is the preview's demo API, measured
+  against a budget written for a build without it, hence the preview budget above. The same run showed a bug
+  in the alert itself: the Lighthouse command was piped into `tee`, so its failure was hidden and no issue was
+  opened. Fixed (`shell: bash` runs the step with `pipefail`). With the fix, a missed budget fails the step and opens the issue.
 
 Lab scores are not user experience. They are the early warning. Web Vitals from real visits (§4) are the
 measure.

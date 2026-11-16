@@ -21,8 +21,9 @@ with the file it comes from and the command that produces it again.
 | axe violations on key routes | 0 | `web/e2e/a11y.spec.ts` (CI job "End-to-end tests") | `npm run e2e` |
 | Lighthouse CI budgets (PR gate and scheduled) | perf ≥ 0.90, a11y ≥ 0.95, BP/SEO ≥ 0.90, LCP ≤ 3,500 ms, CLS ≤ 0.1, TBT ≤ 300 ms, JS ≤ 160,000 B, total ≤ 400,000 B | `lighthouserc.json`, `lighthouserc.production.json` | `npx lhci autorun --config=…` |
 | GitHub Pages deep links answered 404 (before this release) | `/products` → HTTP 404 | `docs/evidence/task7/pages-deep-links.txt` | `curl -s -o /dev/null -w "%{http_code}" <url>` |
+| First scheduled Lighthouse on production: JavaScript per page | about 198 KB (budget 160,000 B; preview's demo API ≈ 73 KB) | GitHub Actions run 43938862558, artifact `lighthouse-scheduled` | `.github/workflows/lighthouse-scheduled.yml` (Run workflow) |
 | Migration effort, remaining pages | about 3 ideal days (5.5 with cutover; ~7 with 20% contingency) | `task_7_executive_report.md` §6.2 (**estimate**, Task 1 assumptions) | — |
-| Release v2.0.0: CI green on the tag, Release published | see `docs/evidence/task7/release.md` | GitHub Actions | push the tag |
+| Release v2.0.0: CI green on the tag, Release published | see `docs/evidence/task7/release.md` | GitHub Actions | publish a release with a new `v*` tag |
 
 Measurement conditions for every Lighthouse number above are in the `conditions` block of each `summary.json`
 (Lighthouse version, form factor, throttling, screen, runs per page). Both v2.0.0 runs used the same build, the

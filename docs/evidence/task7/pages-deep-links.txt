@@ -6,3 +6,13 @@
 /products/p-001 404
 /cart 404
 /login 404
+
+## After v2.0.0 (2026-11-16T19:24:10Z, main at 1cffe94: web/scripts/pages-routes.mjs)
+/ 200
+/products 200
+/products/p-001 200
+/cart 200
+/login 200
+/account/orders 404
+
+/account/orders stays 404 by design: signed-in routes are never indexed and keep the 404.html fallback.
