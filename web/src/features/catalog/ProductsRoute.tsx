@@ -120,7 +120,17 @@ export function ProductsRoute() {
           aria-busy={products.status === 'loading'}
           className={products.status === 'loading' ? 'opacity-60' : undefined}
         >
-          <ProductGrid products={page.items} label="Products" />
+          {/*
+            Keyed by the result (Task 5, found with the web-vitals library on the preview): with stable product
+            keys alone, a filter that kept a product moved its existing card up the page, a layout shift of
+            0.38 on a phone (CLS counts moved elements, not new ones). A new result now mounts a new grid.
+          */}
+          <ProductGrid
+            key={page.items.map((p) => p.id).join(',')}
+            products={page.items}
+            label="Products"
+            headingLevel={2}
+          />
         </div>
       )}
 

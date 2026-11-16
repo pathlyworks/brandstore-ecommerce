@@ -3,6 +3,7 @@
  * and "Add to cart". A 404 shows "not found" inside the page; other errors offer a retry.
  */
 import { useState, type FormEvent } from 'react';
+import { useToast } from '../../components/Toast';
 import { Link, useParams } from 'react-router';
 import type { Product, Spec } from '@shared/domain';
 import { fetchProduct } from '../../api/endpoints';
@@ -51,6 +52,7 @@ function ProductDetails({ product }: { product: Product }) {
   const [quantity, setQuantity] = useState('1');
   const [tab, setTab] = useState<ProductTab>('overview');
   const [message, setMessage] = useState('');
+  const toast = useToast();
 
   const inCart = cart.lines.find((line) => line.productId === product.id)?.quantity ?? 0;
   const room = clampQuantity(product.stock.available - inCart, MAX_PER_LINE - inCart);
@@ -68,7 +70,9 @@ function ProductDetails({ product }: { product: Product }) {
     event.preventDefault();
     if (error || room === 0) return;
     dispatch({ type: 'add', product, quantity: wanted });
-    setMessage(`Added ${wanted} × ${product.name} to the cart.`);
+    const text = `Added ${wanted} × ${product.name} to the cart.`;
+    setMessage(text);
+    toast.show(text);
     setQuantity('1');
   }
 
@@ -80,6 +84,8 @@ function ProductDetails({ product }: { product: Product }) {
         alt={image.alt}
         width={640}
         height={480}
+        fetchPriority="high"
+        decoding="async"
         className="aspect-(--ratio-media) w-full rounded-md bg-surface object-cover"
       />
       <div className="flex flex-col gap-sm">
@@ -117,9 +123,8 @@ function ProductDetails({ product }: { product: Product }) {
                 : 'Add to cart'}
           </Button>
         </form>
-        <p role="status" className="text-success">
-          {message}
-        </p>
+        {/* Visible confirmation; the toast's live region announces it (one announcement, not two). */}
+        <p className="text-success">{message}</p>
 
         <Tabs<ProductTab>
           label="Product information"

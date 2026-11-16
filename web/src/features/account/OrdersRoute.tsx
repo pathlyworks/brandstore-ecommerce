@@ -8,7 +8,8 @@ import { useRef, useState } from 'react';
 import { useSearchParams } from 'react-router';
 import type { AppError, Order } from '@shared/domain';
 import { cancelOrder, fetchOrders } from '../../api/endpoints';
-import { Badge, Button, Modal, Table, type BadgeTone, type Column } from '../../components';
+import { Badge, Button, Modal, Table, type Column } from '../../components';
+import { STATUS_TONE } from './orderStatus';
 import { errorText } from '../../components/StatusMessage';
 import { toAppError } from '../../hooks/useApi';
 import { loadPlacedOrders } from '../checkout/checkout.storage';
@@ -17,13 +18,6 @@ import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import { formatOrderDate } from '../../lib/dates';
 import { formatMoney } from '../../lib/money';
 import { useAuth } from '../auth/AuthContext';
-
-const STATUS_TONE: Record<Order['status'], BadgeTone> = {
-  processing: 'info',
-  shipped: 'success',
-  delivered: 'success',
-  cancelled: 'neutral',
-};
 
 const BASE_COLUMNS: readonly Column<Order>[] = [
   {
@@ -55,7 +49,11 @@ const BASE_COLUMNS: readonly Column<Order>[] = [
   {
     id: 'status',
     header: 'Status',
-    cell: (order) => <Badge tone={STATUS_TONE[order.status]}>{order.status}</Badge>,
+    cell: (order) => (
+      <Badge tone={STATUS_TONE[order.status]} muted={order.status === 'cancelled'}>
+        {order.status}
+      </Badge>
+    ),
   },
 ];
 
@@ -117,6 +115,7 @@ export function OrdersRoute() {
             variant="secondary"
             size="sm"
             aria-label={`Cancel order ${order.id}`}
+            aria-haspopup="dialog"
             onClick={() => setCancel({ status: 'confirming', order })}
           >
             Cancel

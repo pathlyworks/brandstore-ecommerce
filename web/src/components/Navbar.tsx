@@ -8,6 +8,7 @@ import { useEffect, useId, useRef, useState } from 'react';
 import { Link, NavLink } from 'react-router';
 import { cn } from '../lib/cn';
 import { Badge } from './Badge';
+import { SearchDialog } from './SearchDialog';
 
 export interface NavItem {
   to: string;
@@ -68,6 +69,9 @@ export function Navbar({
         >
           {brand}
         </Link>
+        <div className="ms-auto md:order-last md:ms-0">
+          <SearchDialog />
+        </div>
         <button
           ref={button}
           type="button"

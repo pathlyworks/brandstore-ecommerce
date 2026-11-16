@@ -1,0 +1,19 @@
+# Cache headers for web/dist when it is deployed on Netlify (Task 5 caching strategy; same rules in the report).
+# Vite names every built file after its content (assets/index-H9eopIVZ.js): a changed file gets a new name,
+# so these can be cached for a year and never revalidated.
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# The HTML shell and the service worker name the current assets: always revalidated, so a deploy is seen at once.
+/
+  Cache-Control: no-cache
+/index.html
+  Cache-Control: no-cache
+/sw.js
+  Cache-Control: no-cache
+
+# Unhashed public files (placeholder image, icon, robots.txt): a day, then revalidated.
+/product-placeholder.svg
+  Cache-Control: public, max-age=86400
+/favicon.svg
+  Cache-Control: public, max-age=86400

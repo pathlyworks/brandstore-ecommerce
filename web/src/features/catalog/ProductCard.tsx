@@ -14,18 +14,34 @@ export function StockBadge({ status }: { status: Product['stock']['status'] }) {
   return <Badge tone={tone}>{text}</Badge>;
 }
 
-export function ProductCard({ product }: { product: Product }) {
+/**
+ * `priority`: the cards in the first row (above the fold), loaded at once and the first one with
+ * fetchpriority="high" because it is the LCP element; every other card waits until it is near the screen.
+ */
+export function ProductCard({
+  product,
+  priority = 'lazy',
+  headingLevel = 3,
+}: {
+  product: Product;
+  priority?: 'high' | 'eager' | 'lazy';
+  /** 2 under the page's h1 (/products), 3 under a section's h2 (home). */
+  headingLevel?: 2 | 3;
+}) {
   const image = product.images[0];
   return (
     <Card
       heading={product.name}
+      headingLevel={headingLevel}
       href={`/products/${encodeURIComponent(product.id)}`}
       disabled={product.stock.status === 'out_of_stock'}
       media={
         <img
           src={image.url}
           alt={image.alt}
-          loading="lazy"
+          loading={priority === 'lazy' ? 'lazy' : 'eager'}
+          fetchPriority={priority === 'high' ? 'high' : 'auto'}
+          decoding="async"
           width={320}
           height={240}
           className="aspect-(--ratio-media) w-full object-cover"
@@ -48,15 +64,54 @@ export function ProductCard({ product }: { product: Product }) {
 }
 
 /** A product grid: one stable key per product (its id), never the index. */
-export function ProductGrid({ products, label }: { products: readonly Product[]; label: string }) {
+export function ProductGrid({
+  products,
+  label,
+  headingLevel = 3,
+}: {
+  products: readonly Product[];
+  label: string;
+  headingLevel?: 2 | 3;
+}) {
   return (
     <ul aria-label={label} className="grid grid-cols-1 gap-md md:grid-cols-2 lg:grid-cols-4">
-      {products.map((product) => (
+      {products.map((product, index) => (
         <li key={product.id}>
-          <ProductCard product={product} />
+          <ProductCard
+            product={product}
+            headingLevel={headingLevel}
+            priority={index === 0 ? 'high' : index < 4 ? 'eager' : 'lazy'}
+          />
         </li>
       ))}
     </ul>
+  );
+}
+
+const BAR = 'rounded-sm bg-disabled-bg text-transparent animate-pulse motion-reduce:animate-none';
+
+/**
+ * The same box as a ProductCard while it loads: the same rows and type sizes (the placeholder words
+ * are transparent), so the grid does not move when the products arrive (CLS).
+ */
+export function ProductCardSkeleton() {
+  return (
+    <div
+      aria-hidden="true"
+      className="flex flex-col gap-sm rounded-md border border-border bg-surface p-md shadow-sm"
+    >
+      <div className={`aspect-(--ratio-media) w-full ${BAR}`} />
+      <p className="text-lg font-semibold leading-snug">
+        <span className={BAR}>Product name here</span>
+      </p>
+      <p className="text-sm">
+        <span className={BAR}>Brand · 4.5 of 5 (120 reviews)</span>
+      </p>
+      <div className="mt-auto flex items-center justify-between gap-xs">
+        <span className={`font-bold ${BAR}`}>EGP 00,000.00</span>
+        <Badge loading>In stock</Badge>
+      </div>
+    </div>
   );
 }
 
@@ -65,7 +120,7 @@ export function ProductGridSkeleton({ count = 8 }: { count?: number }) {
     <ul aria-hidden="true" className="grid grid-cols-1 gap-md md:grid-cols-2 lg:grid-cols-4">
       {Array.from({ length: count }, (_, slot) => `skeleton-${slot}`).map((id) => (
         <li key={id}>
-          <Card loading />
+          <ProductCardSkeleton />
         </li>
       ))}
     </ul>

@@ -11,9 +11,9 @@ export interface CardProps {
   heading?: ReactNode;
   headingLevel?: 2 | 3;
   /** Makes the whole card a link to this route. */
-  href?: string;
-  media?: ReactNode;
-  footer?: ReactNode;
+  href?: string | undefined;
+  media?: ReactNode | undefined;
+  footer?: ReactNode | undefined;
   children?: ReactNode;
   loading?: boolean;
   /** Visually and semantically unavailable (aria-disabled), e.g. out of stock. */

@@ -1,0 +1,83 @@
+{
+  "label": "before",
+  "base": "http://localhost:4190",
+  "tags": [
+    "wcag2a",
+    "wcag2aa",
+    "wcag21a",
+    "wcag21aa"
+  ],
+  "axe": "4.14.0",
+  "pages": {
+    "/ @375": {
+      "violations": [],
+      "passes": 20
+    },
+    "/products @375": {
+      "violations": [],
+      "passes": 26
+    },
+    "/products/p-001 @375": {
+      "violations": [],
+      "passes": 27
+    },
+    "/cart @375": {
+      "violations": [],
+      "passes": 22
+    },
+    "/login @375": {
+      "violations": [],
+      "passes": 22
+    },
+    "/register @375": {
+      "violations": [],
+      "passes": 23
+    },
+    "/account/orders @375": {
+      "violations": [],
+      "passes": 26
+    },
+    "/admin @375": {
+      "violations": [],
+      "passes": 21
+    },
+    "/ @1280": {
+      "violations": [],
+      "passes": 20
+    },
+    "/products @1280": {
+      "violations": [],
+      "passes": 27
+    },
+    "/products/p-001 @1280": {
+      "violations": [],
+      "passes": 28
+    },
+    "/cart @1280": {
+      "violations": [],
+      "passes": 21
+    },
+    "/login @1280": {
+      "violations": [],
+      "passes": 23
+    },
+    "/register @1280": {
+      "violations": [],
+      "passes": 24
+    },
+    "/account/orders @1280": {
+      "violations": [],
+      "passes": 25
+    },
+    "/admin @1280": {
+      "violations": [],
+      "passes": 20
+    }
+  },
+  "totals": {
+    "critical": 0,
+    "serious": 0,
+    "moderate": 0,
+    "minor": 0
+  }
+}

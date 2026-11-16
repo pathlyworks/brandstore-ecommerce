@@ -34,7 +34,7 @@ function Forbidden() {
   return (
     <section aria-labelledby="page-title" className="flex flex-col gap-sm">
       <h1 id="page-title" className="text-h1 font-extrabold tracking-tight text-text">
-        This area is for administrators
+        Access denied: this area is for administrators
       </h1>
       <p className="text-text-muted">
         You are signed in with a shopper account, which cannot open it.{' '}

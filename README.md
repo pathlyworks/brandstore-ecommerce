@@ -4,11 +4,14 @@ A storefront in plain HTML, CSS and ES-module JavaScript, built on the **TechSph
 search, filters and pagination; product pages; a cart kept on the device; sign-in with a JWT-protected account
 (orders, addresses); and checkout. There is no framework and no bundler. Vite is used only as a dev server.
 
-**Current task: Advanced Task 4 — protected routes, session handling and security notes.** Deliverable and
-security note: [`task_4_security.md`](task_4_security.md): AuthContext (login, register, logout), ProtectedRoute with
-return to the intended page, one 401 handler in `web/src/api/client.ts`, the cart kept across sign-in and sign-out,
-session expiry during checkout, a lazily loaded admin chunk that shoppers never download, and `npm run audit`.
-Earlier: Task 3 [`task_3_checkout.md`](task_3_checkout.md), Task 2
+**Current task: Advanced Task 5 — admin dashboard, TypeScript hardening, performance and accessibility.**
+Report: [`task_5_dashboard_performance.md`](task_5_dashboard_performance.md) (and `.pdf`), evidence pack
+[`docs/evidence/task5/`](docs/evidence/task5/README.md): the `/admin` dashboard (sales, orders, average order value,
+sales by category, monthly trend, hand-built charts), `DataTable<Row>` with sorting and paging, strict TypeScript with
+`exactOptionalPropertyTypes` and no `any`, lazy routes and a vendor chunk, Lighthouse before/after under identical
+throttling, LCP/INP/CLS from Lighthouse (lab) and the web-vitals library (field), shared-component accessibility,
+and the caching strategy (hashed assets, cache headers, service worker).
+Earlier: Task 4 [`task_4_security.md`](task_4_security.md), Task 3 [`task_3_checkout.md`](task_3_checkout.md), Task 2
 [`task_2_react_foundation.md`](task_2_react_foundation.md), Task 1 [`task_1_architecture.md`](task_1_architecture.md).
 
 ## 1. Set up and run
@@ -131,6 +134,7 @@ in Netlify's environment and add its origin to `connect-src` and `img-src` in th
 | Task | Document |
 | :--- | :--- |
 | Advanced, Task 4 | `task_4_security.md`, `security/`, `web/src/features/auth`, `web/src/api/client.ts` |
+| Advanced, Task 5 | `task_5_dashboard_performance.md`, `docs/evidence/task5/`, `web/src/features/admin`, `web/src/components/Table.tsx`, `web/scripts/` |
 | Advanced, Task 3 | `task_3_checkout.md`, `web/src/features/cart`, `web/src/features/checkout` |
 | Advanced, Task 2 | `task_2_react_foundation.md`, `web/` |
 | Advanced, Task 1 | `task_1_architecture.md`, `docs/migration/`, `src/types/` |

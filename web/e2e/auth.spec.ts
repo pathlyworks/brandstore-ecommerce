@@ -22,7 +22,7 @@ test('a shopper gets a 403 page at /admin and never downloads the admin code', a
   const scripts = scriptsLoaded(page);
   await signIn(page, '/admin');
   await expect(
-    page.getByRole('heading', { level: 1, name: 'This area is for administrators' }),
+    page.getByRole('heading', { level: 1, name: 'Access denied: this area is for administrators' }),
   ).toBeVisible();
   await page.goto('/products');
   await expect(page.getByRole('list', { name: 'Products' })).toBeVisible();
@@ -33,8 +33,8 @@ test('a shopper gets a 403 page at /admin and never downloads the admin code', a
 test('an admin gets the admin chunk and the summary', async ({ page }) => {
   const scripts = scriptsLoaded(page);
   await signIn(page, '/admin', ADMIN);
-  await expect(page.getByRole('heading', { level: 1, name: 'Admin summary' })).toBeVisible();
-  await expect(page.getByText('Revenue', { exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { level: 1, name: 'Store dashboard' })).toBeVisible();
+  await expect(page.getByText('Sales', { exact: true })).toBeVisible();
   expect(scripts.filter(isAdminChunk)).toHaveLength(1);
 });
 

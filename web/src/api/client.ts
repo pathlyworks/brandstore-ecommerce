@@ -50,11 +50,11 @@ export function isAbort(error: unknown): boolean {
 
 export interface RequestOptions {
   method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
-  query?: Record<string, string | number | undefined>;
+  query?: Record<string, string | number | undefined> | undefined;
   body?: unknown;
   /** Send the session's Bearer token; a missing token or a 401 ends the session (see the file comment). */
-  auth?: boolean;
-  signal?: AbortSignal;
+  auth?: boolean | undefined;
+  signal?: AbortSignal | undefined;
 }
 
 export type UnauthorizedReason = 'missing-token' | 'rejected';

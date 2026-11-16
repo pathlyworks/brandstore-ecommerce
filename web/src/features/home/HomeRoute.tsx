@@ -39,27 +39,30 @@ export function HomeRoute() {
         <h2 id="categories-title" className="text-h2 font-bold text-text">
           Shop by category
         </h2>
-        {categories.status === 'loading' && <LoadingState label="Loading categories" />}
-        {categories.status === 'error' && (
-          <ErrorState error={categories.error} onRetry={categories.retry} />
-        )}
-        {categories.status === 'success' &&
-          (categories.data.length === 0 ? (
-            <EmptyState title="No categories yet" />
-          ) : (
-            <ul className="flex flex-wrap gap-xs">
-              {categories.data.map((category) => (
-                <li key={category.id}>
-                  <Link
-                    to={`/products?category=${encodeURIComponent(category.id)}`}
-                    className="inline-flex min-h-(--size-tap-target) items-center rounded-pill border border-border-control bg-surface px-md font-semibold text-text hover:border-primary hover:text-primary"
-                  >
-                    {category.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          ))}
+        {/* Room for two rows of category links: the next section stays put (CLS). */}
+        <div className="min-h-28">
+          {categories.status === 'loading' && <LoadingState label="Loading categories" />}
+          {categories.status === 'error' && (
+            <ErrorState error={categories.error} onRetry={categories.retry} />
+          )}
+          {categories.status === 'success' &&
+            (categories.data.length === 0 ? (
+              <EmptyState title="No categories yet" />
+            ) : (
+              <ul className="flex flex-wrap gap-xs">
+                {categories.data.map((category) => (
+                  <li key={category.id}>
+                    <Link
+                      to={`/products?category=${encodeURIComponent(category.id)}`}
+                      className="inline-flex min-h-(--size-tap-target) items-center rounded-pill border border-border-control bg-surface px-md font-semibold text-text hover:border-primary hover:text-primary"
+                    >
+                      {category.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            ))}
+        </div>
       </section>
 
       <section aria-labelledby="featured-title" className="flex flex-col gap-sm">

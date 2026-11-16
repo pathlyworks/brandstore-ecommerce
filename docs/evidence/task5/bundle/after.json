@@ -1,0 +1,225 @@
+{
+  "label": "after",
+  "initialJs": {
+    "chunks": [
+      "assets/index-H9eopIVZ.js",
+      "assets/vendor-D6DSu3JT.js"
+    ],
+    "raw": 388763,
+    "gzip": 123838
+  },
+  "css": [
+    {
+      "file": "assets/index-DJQX4R1C.css",
+      "raw": 27720,
+      "gzip": 6359
+    }
+  ],
+  "lazyRoutes": [
+    {
+      "route": "src/features/admin/AdminRoute.tsx",
+      "adds": {
+        "raw": 11734,
+        "gzip": 4283
+      }
+    },
+    {
+      "route": "src/features/checkout/CheckoutLayout.tsx",
+      "adds": {
+        "raw": 4539,
+        "gzip": 2139
+      }
+    },
+    {
+      "route": "src/features/checkout/ReviewStep.tsx",
+      "adds": {
+        "raw": 5836,
+        "gzip": 2851
+      }
+    },
+    {
+      "route": "src/features/account/OrdersRoute.tsx",
+      "adds": {
+        "raw": 4063,
+        "gzip": 1860
+      }
+    },
+    {
+      "route": "src/features/checkout/PaymentStep.tsx",
+      "adds": {
+        "raw": 4748,
+        "gzip": 2308
+      }
+    },
+    {
+      "route": "src/features/checkout/AddressStep.tsx",
+      "adds": {
+        "raw": 4570,
+        "gzip": 2333
+      }
+    },
+    {
+      "route": "src/features/auth/RegisterRoute.tsx",
+      "adds": {
+        "raw": 2601,
+        "gzip": 1301
+      }
+    },
+    {
+      "route": "src/features/checkout/ConfirmationRoute.tsx",
+      "adds": {
+        "raw": 1695,
+        "gzip": 711
+      }
+    },
+    {
+      "route": "src/features/account/AccountLayout.tsx",
+      "adds": {
+        "raw": 1135,
+        "gzip": 606
+      }
+    },
+    {
+      "route": "src/features/errors/NotFoundRoute.tsx",
+      "adds": {
+        "raw": 785,
+        "gzip": 406
+      }
+    },
+    {
+      "route": "src/app/PlannedRoutes.tsx",
+      "adds": {
+        "raw": 692,
+        "gzip": 417
+      }
+    },
+    {
+      "route": "src/features/checkout/CheckoutIndex.tsx",
+      "adds": {
+        "raw": 726,
+        "gzip": 540
+      }
+    }
+  ],
+  "chunks": [
+    {
+      "key": "_vendor-D6DSu3JT.js",
+      "file": "assets/vendor-D6DSu3JT.js",
+      "dynamic": false,
+      "raw": 315729,
+      "gzip": 100531
+    },
+    {
+      "key": "index.html",
+      "file": "assets/index-H9eopIVZ.js",
+      "dynamic": false,
+      "raw": 73034,
+      "gzip": 23307
+    },
+    {
+      "key": "src/features/admin/AdminRoute.tsx",
+      "file": "assets/AdminRoute-Cc9dTnid.js",
+      "dynamic": true,
+      "raw": 11632,
+      "gzip": 4180
+    },
+    {
+      "key": "src/features/checkout/CheckoutLayout.tsx",
+      "file": "assets/CheckoutLayout-BTpnVjuN.js",
+      "dynamic": true,
+      "raw": 4063,
+      "gzip": 1808
+    },
+    {
+      "key": "src/features/checkout/ReviewStep.tsx",
+      "file": "assets/ReviewStep-9J6EZXf5.js",
+      "dynamic": true,
+      "raw": 4032,
+      "gzip": 1738
+    },
+    {
+      "key": "src/features/account/OrdersRoute.tsx",
+      "file": "assets/OrdersRoute-Be5KXofP.js",
+      "dynamic": true,
+      "raw": 3961,
+      "gzip": 1757
+    },
+    {
+      "key": "src/features/checkout/PaymentStep.tsx",
+      "file": "assets/PaymentStep-CuL1FtzZ.js",
+      "dynamic": true,
+      "raw": 2944,
+      "gzip": 1195
+    },
+    {
+      "key": "src/features/checkout/AddressStep.tsx",
+      "file": "assets/AddressStep-Ctwz2vPr.js",
+      "dynamic": true,
+      "raw": 2766,
+      "gzip": 1220
+    },
+    {
+      "key": "src/features/auth/RegisterRoute.tsx",
+      "file": "assets/RegisterRoute-ZQIYMBZU.js",
+      "dynamic": true,
+      "raw": 2601,
+      "gzip": 1301
+    },
+    {
+      "key": "src/features/checkout/ConfirmationRoute.tsx",
+      "file": "assets/ConfirmationRoute-IXE1WaIe.js",
+      "dynamic": true,
+      "raw": 1695,
+      "gzip": 711
+    },
+    {
+      "key": "_StepForm-C4NyWcv1.js",
+      "file": "assets/StepForm-C4NyWcv1.js",
+      "dynamic": false,
+      "raw": 1328,
+      "gzip": 782
+    },
+    {
+      "key": "src/features/account/AccountLayout.tsx",
+      "file": "assets/AccountLayout-DsriguaG.js",
+      "dynamic": true,
+      "raw": 1135,
+      "gzip": 606
+    },
+    {
+      "key": "src/features/errors/NotFoundRoute.tsx",
+      "file": "assets/NotFoundRoute-BeRoqh-9.js",
+      "dynamic": true,
+      "raw": 785,
+      "gzip": 406
+    },
+    {
+      "key": "src/app/PlannedRoutes.tsx",
+      "file": "assets/PlannedRoutes-7JTEvCPR.js",
+      "dynamic": true,
+      "raw": 692,
+      "gzip": 417
+    },
+    {
+      "key": "_CheckoutContext-C_WwEN18.js",
+      "file": "assets/CheckoutContext-C_WwEN18.js",
+      "dynamic": false,
+      "raw": 476,
+      "gzip": 331
+    },
+    {
+      "key": "src/features/checkout/CheckoutIndex.tsx",
+      "file": "assets/CheckoutIndex-DrAcvPmQ.js",
+      "dynamic": true,
+      "raw": 250,
+      "gzip": 209
+    },
+    {
+      "key": "_orderStatus-5uM7wnAl.js",
+      "file": "assets/orderStatus-5uM7wnAl.js",
+      "dynamic": false,
+      "raw": 102,
+      "gzip": 103
+    }
+  ]
+}

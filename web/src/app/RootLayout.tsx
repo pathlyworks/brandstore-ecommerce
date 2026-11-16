@@ -6,6 +6,7 @@ import { Suspense, useEffect } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router';
 import { Footer, Navbar } from '../components';
 import { LoadingState } from '../components/StatusMessage';
+import { OfflineBanner } from '../components/OfflineBanner';
 import { useAuth } from '../features/auth/AuthContext';
 import { isSessionValid } from '../features/auth/session';
 import { useCart } from '../features/cart/CartContext';
@@ -42,11 +43,12 @@ export function RootLayout() {
       >
         Skip to main content
       </a>
+      <OfflineBanner />
       <Navbar brand="BrandStore" links={links} cartCount={itemCount} account={account} />
       <main
         id="main"
         tabIndex={-1}
-        className="mx-auto w-full max-w-(--container-page) flex-1 px-md py-lg"
+        className="mx-auto min-h-(--size-main-min) w-full max-w-(--container-page) flex-1 px-md py-lg"
       >
         <Suspense fallback={<LoadingState label="Loading the page" />}>
           <Outlet />

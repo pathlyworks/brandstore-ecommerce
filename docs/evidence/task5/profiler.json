@@ -1,0 +1,196 @@
+{
+  "conditions": "production profiling build, Chromium, CPU 4x slowdown, 1280x900",
+  "results": {
+    "catalog-search-typing": {
+      "commits": 11,
+      "updates": 11,
+      "mountMs": 0,
+      "updateMedianMs": 6.3,
+      "updateP95Ms": 14,
+      "updateMaxMs": 14,
+      "all": [
+        {
+          "id": "app",
+          "phase": "update",
+          "actualDuration": 10.300000000046566,
+          "baseDuration": 41.5999999998603,
+          "path": "/products"
+        },
+        {
+          "id": "app",
+          "phase": "update",
+          "actualDuration": 1.6000000000931323,
+          "baseDuration": 34.299999999813735,
+          "path": "/products"
+        },
+        {
+          "id": "app",
+          "phase": "update",
+          "actualDuration": 10.399999999906868,
+          "baseDuration": 40.700000000186265,
+          "path": "/products"
+        },
+        {
+          "id": "app",
+          "phase": "update",
+          "actualDuration": 7.100000000093132,
+          "baseDuration": 39.800000000046566,
+          "path": "/products"
+        },
+        {
+          "id": "app",
+          "phase": "update",
+          "actualDuration": 2,
+          "baseDuration": 34.799999999813735,
+          "path": "/products"
+        },
+        {
+          "id": "app",
+          "phase": "update",
+          "actualDuration": 5.499999999767169,
+          "baseDuration": 38.299999999580905,
+          "path": "/products"
+        },
+        {
+          "id": "app",
+          "phase": "update",
+          "actualDuration": 4.000000000232831,
+          "baseDuration": 36.800000000046566,
+          "path": "/products"
+        },
+        {
+          "id": "app",
+          "phase": "update",
+          "actualDuration": 6.300000000046566,
+          "baseDuration": 38.3000000002794,
+          "path": "/products"
+        },
+        {
+          "id": "app",
+          "phase": "update",
+          "actualDuration": 14.000000000465661,
+          "baseDuration": 21.700000000419095,
+          "path": "/products"
+        },
+        {
+          "id": "app",
+          "phase": "update",
+          "actualDuration": 2.800000000046566,
+          "baseDuration": 21.800000000512227,
+          "path": "/products"
+        },
+        {
+          "id": "app",
+          "phase": "update",
+          "actualDuration": 8.899999999906868,
+          "baseDuration": 22.90000000060536,
+          "path": "/products"
+        }
+      ]
+    },
+    "cart-quantity-changes": {
+      "commits": 5,
+      "updates": 5,
+      "mountMs": 0,
+      "updateMedianMs": 14.1,
+      "updateP95Ms": 18.4,
+      "updateMaxMs": 18.4,
+      "all": [
+        {
+          "id": "app",
+          "phase": "update",
+          "actualDuration": 18.399999999674037,
+          "baseDuration": 22.59999999939464,
+          "path": "/cart"
+        },
+        {
+          "id": "app",
+          "phase": "update",
+          "actualDuration": 15.899999999674037,
+          "baseDuration": 17.799999999348074,
+          "path": "/cart"
+        },
+        {
+          "id": "app",
+          "phase": "update",
+          "actualDuration": 14.100000000093132,
+          "baseDuration": 18.399999999674037,
+          "path": "/cart"
+        },
+        {
+          "id": "app",
+          "phase": "update",
+          "actualDuration": 13.899999999906868,
+          "baseDuration": 17.99999999976717,
+          "path": "/cart"
+        },
+        {
+          "id": "app",
+          "phase": "update",
+          "actualDuration": 9.00000000023283,
+          "baseDuration": 12.399999999906868,
+          "path": "/cart"
+        }
+      ]
+    },
+    "admin-dashboard": {
+      "commits": 7,
+      "updates": 6,
+      "mountMs": 30.9,
+      "updateMedianMs": 10.7,
+      "updateP95Ms": 47,
+      "updateMaxMs": 47,
+      "all": [
+        {
+          "id": "app",
+          "phase": "mount",
+          "actualDuration": 30.9000000001397,
+          "baseDuration": 14.799999999580905,
+          "path": "/admin"
+        },
+        {
+          "id": "app",
+          "phase": "update",
+          "actualDuration": 19.600000000325963,
+          "baseDuration": 27.0999999998603,
+          "path": "/admin"
+        },
+        {
+          "id": "app",
+          "phase": "update",
+          "actualDuration": 1.3000000000465661,
+          "baseDuration": 15.899999999906868,
+          "path": "/admin"
+        },
+        {
+          "id": "app",
+          "phase": "update",
+          "actualDuration": 10.700000000186265,
+          "baseDuration": 25.5,
+          "path": "/admin"
+        },
+        {
+          "id": "app",
+          "phase": "update",
+          "actualDuration": 47.00000000046566,
+          "baseDuration": 53.60000000032596,
+          "path": "/admin"
+        },
+        {
+          "id": "app",
+          "phase": "update",
+          "actualDuration": 8.400000000139698,
+          "baseDuration": 45.9000000001397,
+          "path": "/admin"
+        },
+        {
+          "id": "app",
+          "phase": "update",
+          "actualDuration": 5.800000000046566,
+          "baseDuration": 47.9000000001397,
+          "path": "/admin"
+        }
+      ]
+    }
+  }
+}

@@ -15,6 +15,7 @@ import type {
 import type { Address, AuthSession, Order, Paged, Product } from '@shared/domain';
 import { ORDERS_PAGE_SIZE } from '../config';
 import { request } from './client';
+import { collectPages } from './paging';
 import { sessionFromToken } from '../features/auth/session';
 import { toAddress, toOrder, toOrderPage, toProduct, toProductPage, toUser } from './mappers';
 
@@ -47,15 +48,29 @@ export async function login(email: string, password: string): Promise<AuthSessio
   return sessionFromToken(session.token, toUser(session.user));
 }
 
-export async function fetchOrders(page: number, signal?: AbortSignal): Promise<Paged<Order>> {
-  const offset = (Math.max(1, page) - 1) * ORDERS_PAGE_SIZE;
+export async function fetchOrders(
+  page: number,
+  signal?: AbortSignal,
+  pageSize: number = ORDERS_PAGE_SIZE,
+): Promise<Paged<Order>> {
+  const offset = (Math.max(1, page) - 1) * pageSize;
   return toOrderPage(
     await request<OrderPage>('/account/orders', {
-      query: { offset, limit: ORDERS_PAGE_SIZE },
+      query: { offset, limit: pageSize },
       auth: true,
       signal,
     }),
   );
+}
+
+/** Every order (the admin dashboard): GET /account/orders, 50 at a time. */
+export function fetchAllOrders(signal?: AbortSignal): Promise<Order[]> {
+  return collectPages((page, s) => fetchOrders(page, s, 50), signal);
+}
+
+/** The whole catalog (the admin dashboard's category table): GET /products page by page (8 per page). */
+export function fetchAllProducts(signal?: AbortSignal): Promise<Product[]> {
+  return collectPages((page, s) => fetchProducts({ page }, s), signal);
 }
 
 /**

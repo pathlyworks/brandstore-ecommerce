@@ -15,7 +15,7 @@ export interface ModalProps {
   /** Buttons at the bottom (e.g. Cancel and Confirm). */
   actions?: ReactNode;
   /** A problem to show at the top of the dialog (role="alert"). */
-  error?: string;
+  error?: string | undefined;
   /** Escape and the backdrop do nothing while true (e.g. while a request runs). */
   busy?: boolean;
   className?: string;

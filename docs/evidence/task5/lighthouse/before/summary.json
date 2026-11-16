@@ -1,0 +1,88 @@
+{
+  "label": "before",
+  "conditions": {
+    "lighthouse": "13.6.0",
+    "formFactor": "mobile",
+    "throttlingMethod": "simulate",
+    "throttling": {
+      "rttMs": 150,
+      "throughputKbps": 1638.4,
+      "requestLatencyMs": 562.5,
+      "downloadThroughputKbps": 1474.5600000000002,
+      "uploadThroughputKbps": 675,
+      "cpuSlowdownMultiplier": 4
+    },
+    "screen": {
+      "mobile": true,
+      "width": 412,
+      "height": 823,
+      "deviceScaleFactor": 1.75,
+      "disabled": false
+    },
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.0.0 Safari/537.36",
+    "runsPerPage": 3,
+    "kept": "median performance score"
+  },
+  "pages": {
+    "home": {
+      "path": "/",
+      "performance": 97,
+      "accessibility": 100,
+      "bestPractices": 100,
+      "seo": 83,
+      "LCP_ms": 2357,
+      "CLS": 0.049,
+      "TBT_ms": 111,
+      "FCP_ms": 766,
+      "scriptBytes": 122089
+    },
+    "products": {
+      "path": "/products",
+      "performance": 81,
+      "accessibility": 99,
+      "bestPractices": 100,
+      "seo": 83,
+      "LCP_ms": 2327,
+      "CLS": 0.367,
+      "TBT_ms": 64,
+      "FCP_ms": 775,
+      "scriptBytes": 122089
+    },
+    "product": {
+      "path": "/products/p-001",
+      "performance": 81,
+      "accessibility": 100,
+      "bestPractices": 100,
+      "seo": 83,
+      "LCP_ms": 765,
+      "CLS": 0.409,
+      "TBT_ms": 23,
+      "FCP_ms": 765,
+      "scriptBytes": 122089
+    },
+    "cart": {
+      "path": "/cart",
+      "performance": 100,
+      "accessibility": 100,
+      "bestPractices": 100,
+      "seo": 82,
+      "LCP_ms": 756,
+      "CLS": 0,
+      "TBT_ms": 44,
+      "FCP_ms": 756,
+      "scriptBytes": 122089
+    },
+    "login": {
+      "path": "/login",
+      "performance": 100,
+      "accessibility": 100,
+      "bestPractices": 100,
+      "seo": 82,
+      "LCP_ms": 774,
+      "CLS": 0,
+      "TBT_ms": 21,
+      "FCP_ms": 774,
+      "scriptBytes": 122089
+    }
+  }
+}

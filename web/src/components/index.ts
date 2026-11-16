@@ -8,6 +8,7 @@ export { Modal, type ModalProps } from './Modal';
 export { Navbar, type NavItem, type NavbarProps } from './Navbar';
 export { Select, type SelectOption, type SelectProps } from './Select';
 export { Spinner } from './Spinner';
-export { Table, type Column, type TableProps } from './Table';
+export { DataTable, Table, type Column, type DataTableProps, type TableProps } from './Table';
+export { pageOf, sortRows, type PageView, type SortState } from './table.model';
 export { Tabs, type TabItem, type TabsProps } from './Tabs';
 export { Steps, type StepItem, type StepState, type StepsProps } from './Steps';
