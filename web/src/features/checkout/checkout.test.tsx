@@ -10,7 +10,7 @@ import { describe, expect, it } from 'vitest';
 import { renderApp } from '../../test/render';
 import { api, apiState, server } from '../../test/server';
 import { cartLine, signInForTest, storeCart } from '../../test/session';
-import { DRAFT_KEY } from './checkout.storage';
+import { DRAFT_KEY } from '../../state/checkout.storage';
 
 async function fillAddress(user = userEvent.setup()) {
   await user.type(await screen.findByLabelText('Full name'), 'Mona Adel');
