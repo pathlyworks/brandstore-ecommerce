@@ -109,7 +109,9 @@ new front end beside them, not their replacement yet (§6).
   (Chromium) and a cross-browser smoke (Firefox, WebKit), Lighthouse CI budgets, and the **deploy preview** (the
   same build GitHub Pages serves, as a downloadable artifact). `main` deploys to GitHub Pages (`pages.yml`).
 - **The release:** pushing the tag `v2.0.0` runs every gate again. The **Release** job runs only when all of them
-  pass and publishes the GitHub Release with the built app attached. The run is linked in the evidence index.
+  pass and publishes the GitHub Release with the built app attached. Result: every gate green on the tag
+  (run https://github.com/pathlyworks/brandstore-ecommerce/actions/runs/43940231189), release published with
+  `brandstore-web-v2.0.0.zip` (`docs/evidence/task7/release.md`).
 - **Environment configuration:** the React app reads its API address only from `VITE_API_BASE`. The one default,
   the API kit's local server for development, lives in the build configuration (`web/vite.config.ts`), not in
   the app's code. Every variable is documented per environment in `.env.example` and `web/.env.example`. The
