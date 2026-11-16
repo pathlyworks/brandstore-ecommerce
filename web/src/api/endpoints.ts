@@ -16,7 +16,7 @@ import type { Address, AuthSession, Order, Paged, Product } from '@shared/domain
 import { ORDERS_PAGE_SIZE } from '../config';
 import { request } from './client';
 import { collectPages } from './paging';
-import { sessionFromToken } from '../features/auth/session';
+import { sessionFromToken } from '../state/session';
 import { toAddress, toOrder, toOrderPage, toProduct, toProductPage, toUser } from './mappers';
 
 export function fetchCategories(signal?: AbortSignal): Promise<ApiCategory[]> {

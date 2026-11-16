@@ -9,8 +9,8 @@ import type { ReactNode } from 'react';
 import { Link, Navigate, useLocation } from 'react-router';
 import type { User } from '@shared/domain';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
-import { useAuth } from './AuthContext';
-import { isSessionValid } from './session';
+import { useAuth } from '../../state/AuthContext';
+import { isSessionValid } from '../../state/session';
 
 export function loginPathFor(next: string, expired: boolean): string {
   const params = new URLSearchParams({ next });

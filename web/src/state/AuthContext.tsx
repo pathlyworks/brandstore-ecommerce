@@ -22,9 +22,9 @@ import {
   type ReactNode,
 } from 'react';
 import type { AuthSession } from '@shared/domain';
-import { connectAuth, type AuthBridge } from '../../api/client';
-import { browserStorage } from '../../lib/browserStorage';
-import { clearDraft } from '../checkout/checkout.storage';
+import { connectAuth, type AuthBridge } from '../api/client';
+import { browserStorage } from '../lib/browserStorage';
+import { clearDraft } from './checkout.storage';
 import { isSessionValid, parseStoredSession, SESSION_KEY, SIGN_OUT_SIGNAL_KEY } from './session';
 
 /** Why there is no session: never signed in, signed out, or the session ran out / was refused. */

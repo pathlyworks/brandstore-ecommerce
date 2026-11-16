@@ -11,8 +11,8 @@ import { Button, Input } from '../../components';
 import { errorText } from '../../components/StatusMessage';
 import { toAppError } from '../../hooks/useApi';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
-import { useAuth } from './AuthContext';
-import { isSessionValid, safeNext } from './session';
+import { useAuth } from '../../state/AuthContext';
+import { isSessionValid, safeNext } from '../../state/session';
 
 interface LoginValues {
   email: string;

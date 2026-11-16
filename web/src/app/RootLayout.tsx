@@ -7,18 +7,18 @@ import { Outlet, useLocation, useNavigate } from 'react-router';
 import { Footer, Navbar } from '../components';
 import { LoadingState } from '../components/StatusMessage';
 import { OfflineBanner } from '../components/OfflineBanner';
-import { useAuth } from '../features/auth/AuthContext';
-import { isSessionValid } from '../features/auth/session';
-import { useCart } from '../features/cart/CartContext';
+import { useAuth } from '../state/AuthContext';
+import { isSessionValid } from '../state/session';
+import { useCart } from '../state/CartContext';
 import { FOOTER_GROUPS, MAIN_LINKS } from './navigation';
 
 export function RootLayout() {
   const { itemCount } = useCart();
-  const { session, signOut } = useAuth();
+  const { session, signOut, forgetToken } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
 
-  // "Sign out" (AccountLayout) navigates here with state { signOut: true }: end the session now that no
+  // "Sign out" (header) navigates here with state { signOut: true }: end the session now that no
   // protected screen is showing, and drop the state so Back or a refresh does not sign out again.
   const signOutRequested = (location.state as { signOut?: boolean } | null)?.signOut === true;
   useEffect(() => {
@@ -44,7 +44,22 @@ export function RootLayout() {
         Skip to main content
       </a>
       <OfflineBanner />
-      <Navbar brand="BrandStore" links={links} cartCount={itemCount} account={account} />
+      <Navbar
+        brand="BrandStore"
+        links={links}
+        cartCount={itemCount}
+        account={account}
+        // Forget the token at once, leave any protected screen, then end the session on the home page (so
+        // ProtectedRoute never sees a signed-out user and sends them to sign in again).
+        onSignOut={
+          signedIn
+            ? () => {
+                forgetToken();
+                void navigate('/', { replace: true, state: { signOut: true } });
+              }
+            : undefined
+        }
+      />
       <main
         id="main"
         tabIndex={-1}

@@ -28,9 +28,13 @@ export function selectUnavailableLines(state: CartState): readonly CartItem[] {
   return state.lines.filter((l) => !(l.stock > 0 && Number.isFinite(l.unitPrice)));
 }
 
-/** Every unit in the cart (the header badge). */
+/**
+ * Units the shopper can buy (the header badge and the cart's caption): the same count as the order summary.
+ * Out-of-stock lines stay in the cart, listed as unavailable, but are not counted (Phase 2 rule; the ported
+ * Phase 2 test found the badge counting them while the summary did not).
+ */
 export function selectItemCount(state: CartState): number {
-  return state.lines.reduce((n, l) => n + l.quantity, 0);
+  return selectChargeableLines(state).reduce((n, l) => n + l.quantity, 0);
 }
 
 export function selectLineTotal(line: CartItem): Cents {

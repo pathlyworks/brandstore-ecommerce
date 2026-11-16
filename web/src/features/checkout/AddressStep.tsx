@@ -5,9 +5,9 @@ import { ErrorState, LoadingState } from '../../components/StatusMessage';
 import { fetchAddresses } from '../../api/endpoints';
 import { useApi } from '../../hooks/useApi';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
-import { useAuth } from '../auth/AuthContext';
-import { useCheckout } from './CheckoutContext';
-import { GOVERNORATES, type AddressDraft, type Governorate } from './checkout.model';
+import { useAuth } from '../../state/AuthContext';
+import { useCheckout } from '../../state/CheckoutContext';
+import { GOVERNORATES, type AddressDraft, type Governorate } from '../../state/checkout.model';
 import { ErrorSummary, fieldId, useStepSubmit } from './StepForm';
 
 type TextField = Exclude<keyof AddressDraft, 'governorate' | 'savedAddressId'>;

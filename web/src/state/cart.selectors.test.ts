@@ -5,8 +5,8 @@
  */
 import { describe, expect, it } from 'vitest';
 import type { CartItem, Product } from '@shared/domain';
-import { toProduct } from '../../api/mappers';
-import { products as apiProducts } from '../../test/fixtures';
+import { toProduct } from '../api/mappers';
+import { products as apiProducts } from '../test/fixtures';
 import reference from './cart-reference.json';
 import { cartReducer, EMPTY_CART, type CartState } from './cart.reducer';
 import {

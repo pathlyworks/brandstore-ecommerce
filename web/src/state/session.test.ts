@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { freshToken } from '../../test/fixtures';
+import { freshToken } from '../test/fixtures';
 import { authReducer } from './AuthContext';
 import {
   isSessionValid,

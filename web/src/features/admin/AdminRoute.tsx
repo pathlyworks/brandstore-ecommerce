@@ -23,7 +23,7 @@ import { useApi } from '../../hooks/useApi';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import { formatOrderDate } from '../../lib/dates';
 import { formatMoney } from '../../lib/money';
-import { useAuth } from '../auth/AuthContext';
+import { useAuth } from '../../state/AuthContext';
 import { STATUS_TONE } from '../account/orderStatus';
 import { BarChart } from './BarChart';
 import { buildDashboard, type CategoryRow, type MonthPoint } from './dashboard.model';

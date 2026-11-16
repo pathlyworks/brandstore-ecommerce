@@ -18,12 +18,12 @@ import { useNavigate } from 'react-router';
 import type { AppError } from '@shared/domain';
 import { placeOrder, type CheckoutOrderRequest } from '../../api/endpoints';
 import { toAppError } from '../../hooks/useApi';
-import { useAuth } from '../auth/AuthContext';
-import { useCart } from '../cart/CartContext';
-import { selectOrderItems } from '../cart/cart.selectors';
-import { useCheckout } from './CheckoutContext';
-import { describePayment, normalisePhone } from './checkout.model';
-import { clearDraft, loadPlacedOrders, rememberPlacedOrder } from './checkout.storage';
+import { useAuth } from '../../state/AuthContext';
+import { useCart } from '../../state/CartContext';
+import { selectOrderItems } from '../../state/cart.selectors';
+import { useCheckout } from '../../state/CheckoutContext';
+import { describePayment, normalisePhone } from '../../state/checkout.model';
+import { clearDraft, loadPlacedOrders, rememberPlacedOrder } from '../../state/checkout.storage';
 
 interface PlaceFailed {
   status: 'error';

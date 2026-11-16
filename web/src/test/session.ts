@@ -1,7 +1,7 @@
 /** Test helpers: a signed-in session and a stored cart, written where the providers read them. */
 import type { CartItem } from '@shared/domain';
 import { STORAGE_KEYS } from '../config';
-import { CART_STORAGE_KEY, serializeCart } from '../features/cart/cart.storage';
+import { CART_STORAGE_KEY, serializeCart } from '../state/cart.storage';
 import { ADMIN, freshToken, SHOPPER } from './fixtures';
 
 /** A stored session, as AuthProvider reads it on load. `ttlSeconds` below 0 stores an already expired one. */
