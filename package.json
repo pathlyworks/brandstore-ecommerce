@@ -18,9 +18,9 @@
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "test": "vitest run && npm run test -w web",
-    "test:legacy": "vitest run",
-    "test:unit": "vitest run tests/unit",
+    "test": "vitest run",
+    "test:legacy": "vitest run --project legacy",
+    "test:unit": "vitest run tests/unit web/src",
     "test:integration": "vitest run tests/integration tests/dom",
     "test:coverage": "vitest run --coverage",
     "test:node": "node --import ./tests/support/use-vitest-shim.mjs --test \"tests/unit/*.test.js\" \"tests/integration/*.test.js\"",
@@ -47,7 +47,8 @@
     "web:lint": "npm run lint -w web",
     "web:typecheck": "npm run typecheck -w web",
     "storybook": "npm run storybook -w web",
-    "audit": "node scripts/audit-report.mjs"
+    "audit": "node scripts/audit-report.mjs",
+    "test:web": "vitest run --project @brandstore/web"
   },
   "devDependencies": {
     "@lhci/cli": "^0.16.1",
