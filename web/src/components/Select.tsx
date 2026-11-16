@@ -18,8 +18,8 @@ export interface SelectProps<T extends string> {
   options: readonly SelectOption<T>[];
   value: T;
   onChange: (value: T) => void;
-  hint?: string;
-  error?: string;
+  hint?: string | undefined;
+  error?: string | undefined;
   disabled?: boolean;
   loading?: boolean;
   hideLabel?: boolean;

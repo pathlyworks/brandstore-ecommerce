@@ -23,7 +23,7 @@ export interface Column<Row> {
   header: string;
   cell: (row: Row) => ReactNode;
   /** Makes the column sortable by this value. */
-  sortValue?: (row: Row) => string | number;
+  sortValue?: ((row: Row) => string | number) | undefined;
   align?: 'start' | 'end';
   /** The cell names the row (a <th scope="row">), e.g. the product name. */
   rowHeader?: boolean;

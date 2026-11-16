@@ -9,8 +9,8 @@ import { Spinner } from './Spinner';
 
 export interface InputProps extends Omit<ComponentPropsWithRef<'input'>, 'id'> {
   label: string;
-  hint?: string;
-  error?: string;
+  hint?: string | undefined;
+  error?: string | undefined;
   hideLabel?: boolean;
   loading?: boolean;
   id?: string;

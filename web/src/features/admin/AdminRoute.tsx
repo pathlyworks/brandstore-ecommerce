@@ -32,7 +32,15 @@ export const ADMIN_MODULE_MARKER = 'brandstore-admin-summary';
 
 const percent = new Intl.NumberFormat('en-GB', { style: 'percent', maximumFractionDigits: 1 });
 
-function KpiCard({ label, value, detail }: { label: string; value?: string; detail?: string }) {
+function KpiCard({
+  label,
+  value,
+  detail,
+}: {
+  label: string;
+  value?: string | undefined;
+  detail?: string | undefined;
+}) {
   return (
     <div className="flex flex-col gap-2xs rounded-md border border-border bg-surface p-md shadow-sm">
       <dt className="text-sm font-semibold text-text-muted">{label}</dt>
