@@ -3,7 +3,7 @@
 Advanced Task 6 deliverable. Date: 2026-11-16.
 Repository: https://github.com/pathlyworks/brandstore-ecommerce · Pull request: **#15**
 (`feature/testing-quality-gates` → `main`) · Code review: [`code_review.md`](code_review.md) ·
-Deliberately broken checkout: pull request **#16** (§5).
+Deliberately broken checkout: pull request **#17** (§5) · Peer pull request reviewed: **#16**.
 
 | The brief asks for                                                                                                                                                                    | Where                                                                                                          |
 | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------- |
@@ -104,8 +104,8 @@ Every pull request runs `.github/workflows/ci.yml`; a red job blocks the merge.
 | Build                                | `lint`, `web`                                           | the legacy build, the Vite build or the Storybook build fails; the admin chunk ships to shoppers                                                   |
 | Lighthouse CI budgets                | `lighthouse`: `lhci autorun --config=lighthouserc.json` | a budget is missed (below)                                                                                                                         |
 
-**Coverage, measured** (`npm run test:coverage`, v8, lines): `web/src/state` **98.1%**, `web/src/components`
-**97.3%**; legacy `src/state` and `src/utils` above 80%. The floors are in `vitest.config.js` (`thresholds`), so the
+**Coverage, measured** (`npm run test:coverage`, v8, lines; 528 tests in 47 files): `web/src/state` **96.3%**,
+`web/src/components` **92.7%**; legacy `src/state` 98.1% and `src/utils` 96.7%. The floors are in `vitest.config.js` (`thresholds`), so the
 command itself fails below them; the grader-style run with thresholds off reports the same numbers.
 
 **Lighthouse CI budgets for the React app** (`lighthouserc.json`; mobile profile, median of 3 runs per page, pages
@@ -128,10 +128,20 @@ The legacy site keeps its own budgets (`lighthouserc.legacy.json`).
 
 ## 5. A deliberately broken checkout fails CI (demonstrated once)
 
-Pull request **#16** (`demo/broken-checkout`, not merged) changes one character in the checkout's money logic:
-free shipping from 100.00 becomes free shipping only _above_ 100.00 (`<` → `<=` in `shippingFor`), the kind of slip
-that charges real customers. CI on that pull request is red: the unit/component job fails on the shipping-rule tests
-(Phase 2 port and selectors), and the run is linked from the pull request. It was closed without merging.
+Pull request [**#17**](https://github.com/pathlyworks/brandstore-ecommerce/pull/17) (`demo/broken-checkout`, closed
+without merging) changes one character in the checkout's money logic: free shipping from 100.00 becomes free shipping
+only _above_ 100.00 (`>=` → `>` in `shippingFor`), the kind of slip that charges real customers 7.99 they do not owe.
+
+CI on that pull request was red ([run 43926913772](https://github.com/pathlyworks/brandstore-ecommerce/actions/runs/43926913772)):
+
+| Job                           | Result | Why                                                                                                                                                                                                                                             |
+| :---------------------------- | :----- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Unit / integration (coverage) | failed | 2 tests: `cart.phase2.test.ts` "charges 7.99 below 100.00, nothing from 100.00" (`expected [0, 799, 799, 0] to deeply equal [0, 799, 0, 0]`) and `cart.selectors.test.ts` "free from the threshold" (`expected 799 to be 0`); 526 others passed |
+| React app (web/)              | failed | the same shipping tests                                                                                                                                                                                                                         |
+| Lint                          | failed | the branch-name rule (`demo/` is not an allowed prefix), unrelated to the bug                                                                                                                                                                   |
+| Cross-browser smoke           | passed | the end-to-end journeys use a cart under or well over 100.00, so only the unit tests catch the boundary                                                                                                                                         |
+
+The boundary is exactly what the Phase 2 port protects: the merge was blocked by the tests, not by a reviewer.
 
 ## 6. How to run
 
