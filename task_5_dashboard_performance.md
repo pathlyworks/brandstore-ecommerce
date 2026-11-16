@@ -201,57 +201,52 @@ consumer does not re-render.
 
 ## 5. Core Web Vitals: lab and field
 
-`web/src/app/vitals.ts` uses the **web-vitals** library (5.1) to report **Largest Contentful Paint (LCP)**,
-**Interaction to Next Paint (INP)** and **Cumulative Layout Shift (CLS)**. Each value is logged to the console
-(for example `[web-vitals] LCP 280 ms good /products`, as measured) and kept in `window.__webVitals`. `web/scripts/field-vitals.mjs`
-opens the deployed preview (the production build served by `vite preview`), clicks and types as a shopper
-would, and saves every report (`web-vitals/preview.json`).
+The three Core Web Vitals, each from two sources:
 
-| Page                        | Metric | Lab (Lighthouse, Moto G Power, slow 4G, 4× CPU) | Field: web-vitals, phone (Pixel 7 emulation, no throttling) | Field: web-vitals, desktop |
-| :-------------------------- | :----- | ----------------------------------------------: | ----------------------------------------------------------: | -------------------------: |
-| `/products`                 | LCP    |                                        2,426 ms |                                               280 ms (good) |              272 ms (good) |
-|                             | INP    |     not measured (no interactions in a lab run) |                                                16 ms (good) |               24 ms (good) |
-|                             | CLS    |                                               0 |                                                    0 (good) |                   0 (good) |
-| `/products/p-001` / `p-003` | LCP    |                                        2,504 ms |                                               148 ms (good) |              192 ms (good) |
-|                             | INP    |                                    not measured |                                                16 ms (good) |               24 ms (good) |
-|                             | CLS    |                                               0 |                                                    0 (good) |                   0 (good) |
-| `/cart`                     | LCP    |                                          778 ms |                                               108 ms (good) |              140 ms (good) |
-|                             | CLS    |                                               0 |                                                    0 (good) |                   0 (good) |
+- **Lab: Lighthouse** (`web/scripts/measure.mjs`, §4.1): one synthetic load of the production build on an
+  emulated Moto G Power with simulated slow 4G and a 4× slower CPU, median of 3 runs.
+- **Field: the web-vitals library logged in the deployed preview.** `web/src/app/vitals.ts` reports
+  **Largest Contentful Paint (LCP)**, **Interaction to Next Paint (INP)** and **Cumulative Layout Shift (CLS)**
+  with the web-vitals library (5.1): each value is written to the browser console as a `[web-vitals]` line
+  (metric, value, rating, page) and kept in `window.__webVitals`. The deployed preview is
+  **https://pathlyworks.github.io/brandstore-ecommerce/** (§5.1). `web/scripts/field-vitals.mjs` opened it on
+  16 Nov, clicked and typed as a shopper would, and saved every logged report (`web-vitals/deployed.json`).
 
-**Lab vs field.** Lab data (Lighthouse) is one synthetic page load on a simulated slow phone and network,
-with no user: it is repeatable, so it is what we compare before and after, but it cannot measure INP (no
-interactions) and only sees layout shifts during the load. Field data comes from real visits in real
-browsers: real devices and networks, real clicks, the whole life of the page. Here the "field" numbers are
-our own scripted sessions on one fast machine (that is why LCP is ten times lower than in the lab); real field
-data needs the React app deployed and the same reports sent from shoppers' browsers to an analytics endpoint,
-then read at the 75th percentile (as the Chrome UX Report does).
+| Page                        | Metric | Lab: Lighthouse (mobile, throttled)           | Field: web-vitals, deployed preview, phone | Field: web-vitals, deployed preview, desktop |
+| :-------------------------- | :----- | :-------------------------------------------- | :----------------------------------------- | :------------------------------------------- |
+| `/products`                 | LCP    | 2,426 ms                                      | 876 ms (good)                              | 832 ms (good)                                |
+|                             | INP    | not measurable (a lab run has no interaction) | 32 ms (good)                               | 24 ms (good)                                 |
+|                             | CLS    | 0                                             | 0 (good)                                   | 0 (good)                                     |
+| `/products/p-001` / `p-003` | LCP    | 2,504 ms                                      | 340 ms (good)                              | 332 ms (good)                                |
+|                             | INP    | not measurable                                | 16 ms (good)                               | 16 ms (good)                                 |
+|                             | CLS    | 0                                             | 0 (good)                                   | 0 (good)                                     |
+| `/cart`                     | LCP    | 778 ms                                        | 188 ms (good)                              | 188 ms (good)                                |
+|                             | CLS    | 0                                             | 0 (good)                                   | 0 (good)                                     |
 
-### 5.1 On the deployed preview (GitHub Pages)
+The phone column is Chromium emulating a Pixel 7 without network or CPU throttling; desktop is 1280 × 900. The
+same script on the production build served locally by `vite preview` gave lower LCPs (`web-vitals/preview.json`),
+because the deployed files come over the internet and the preview build loads its in-browser API first (§5.1).
+
+**The difference between lab and field data.** Lab data is one synthetic page load under fixed, simulated
+conditions with no user. It is repeatable, which is why the before/after comparison in §4 uses it, but it
+cannot measure INP (INP needs real interactions: clicks, taps, key presses) and only sees layout shifts that
+happen during the load. Field data is collected in the browsers that actually use the site: their real
+devices and networks, their real clicks, the whole life of the page, so it includes INP and the shifts that
+happen after an interaction. It varies from visit to visit, so it is read as a distribution (Google uses the
+75th percentile of real visits). Our field numbers are our own scripted sessions on the deployed preview, not
+real shoppers: that is why its LCP is lower than the lab's slow-phone simulation. Real-user field data would
+need the same reports sent from shoppers' browsers to an analytics endpoint.
+
+### 5.1 The deployed preview (GitHub Pages)
 
 The React app is published at **https://pathlyworks.github.io/brandstore-ecommerce/** by
 `.github/workflows/pages.yml` on every push to `main`. GitHub Pages has no backend, so that build answers the
 API in the browser with the same MSW handlers the tests use (`src/demo/installDemoApi.ts`, included only when
 `VITE_DEMO_API=1`): the numbers on its dashboard are the fixtures' (EGP 20,093.00 sales, 9 orders, EGP 2,870.43
 average order value). Deep links load through `404.html`, so the browser logs one 404 for the page itself
-before the app takes over; that is how GitHub Pages serves single-page apps.
-
-The web-vitals library logged these in that deployed preview (`web-vitals/deployed.json`, measured on
-16 Nov with `field-vitals.mjs`, real clicks, no throttling):
-
-| Page (deployed)   | Metric | Phone (Pixel 7 emulation) |       Desktop |
-| :---------------- | :----- | ------------------------: | ------------: |
-| `/products`       | LCP    |             876 ms (good) | 832 ms (good) |
-|                   | INP    |              32 ms (good) |  24 ms (good) |
-|                   | CLS    |                  0 (good) |      0 (good) |
-| `/products/p-003` | LCP    |             340 ms (good) | 332 ms (good) |
-|                   | INP    |              16 ms (good) |  16 ms (good) |
-|                   | CLS    |                  0 (good) |      0 (good) |
-| `/cart`           | LCP    |             188 ms (good) | 188 ms (good) |
-|                   | CLS    |                  0 (good) |      0 (good) |
-
-The measured LCP on `/products` is higher than on the local preview (876 vs 280 ms) for two reasons: the files
-come over the internet from GitHub's servers, and the preview build loads its in-browser API (fixtures and
-MSW, 72 kB gzip) before the first render. A real deployment calls a real API instead.
+before the app takes over; that is how GitHub Pages serves single-page apps. The in-browser API (fixtures and
+MSW, 72 kB gzip) loads before the first render, which is why the deployed LCP is higher than locally; a real
+deployment calls a real API instead.
 
 **What only the field measurement found.** The first field run measured **CLS 0.379 on `/products` on a phone**
 (0.161 on desktop, `web-vitals/preview-before-grid-fix.json`) although Lighthouse said 0: after choosing a
