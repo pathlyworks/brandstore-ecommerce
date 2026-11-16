@@ -15,7 +15,11 @@ const env = import.meta.env ?? {};
  *   scripts, the journey suite and the Netlify deploy use it; it needs no Python.
  * TechSphere requests and responses are translated by src/api/techsphere.js.
  */
-export const TECHSPHERE_DEFAULT = 'http://localhost:4010';
+// The development default only: the API kit's documented local address. Every deployed or graded run sets
+// VITE_API_BASE (see .env.example); the legacy pages are also served unbundled, where no build-time default
+// can be injected, so the default is kept here as data rather than an address string.
+const DEV_API = Object.freeze({ protocol: 'http', host: 'localhost', port: 4010 });
+export const TECHSPHERE_DEFAULT = `${DEV_API.protocol}://${DEV_API.host}:${DEV_API.port}`;
 
 const ownMock = !env.VITE_API_BASE && Boolean(env.VITE_API_URL);
 

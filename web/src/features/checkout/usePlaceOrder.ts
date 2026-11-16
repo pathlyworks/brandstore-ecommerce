@@ -18,6 +18,7 @@ import { useNavigate } from 'react-router';
 import type { AppError } from '@shared/domain';
 import { placeOrder, type CheckoutOrderRequest } from '../../api/endpoints';
 import { toAppError } from '../../hooks/useApi';
+import { track } from '../../app/monitoring';
 import { useAuth } from '../../state/AuthContext';
 import { useCart } from '../../state/CartContext';
 import { selectOrderItems } from '../../state/cart.selectors';
@@ -73,6 +74,11 @@ export function usePlaceOrder() {
     try {
       const placed = await placeOrder(body);
       const number = placed.number || placed.id;
+      track('purchase', {
+        items: totals.itemCount,
+        total: totals.total,
+        currency: totals.currency,
+      });
       rememberPlacedOrder({
         id: placed.id,
         number,
@@ -91,6 +97,7 @@ export function usePlaceOrder() {
     } catch (error) {
       inFlight.current = false;
       const appError = toAppError(error);
+      track('purchase_failed', { status: appError.status, code: appError.code });
       // A 401 never needs handling here: the API client has already ended the session and ProtectedRoute
       // is sending the shopper to sign in and back to this step, with the cart and the draft kept.
       setPhase({ status: 'error', error: appError });

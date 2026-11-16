@@ -1,6 +1,6 @@
 {
   "name": "brandstore",
-  "version": "2.0.0-alpha.0",
+  "version": "2.0.0",
   "private": true,
   "description": "BrandStore storefront. web/: the React + TypeScript app (Vite, React Router, Tailwind). The legacy static pages (ES modules in src/) stay at the root until cutover.",
   "engines": {

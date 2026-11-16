@@ -1,0 +1,8 @@
+# GitHub Pages deep links: HTTP status (curl -s -o /dev/null -w '%{http_code}')
+
+## Before v2.0.0 (2026-11-16T19:10:28Z, main at 9fb7f33)
+/ 200
+/products 404
+/products/p-001 404
+/cart 404
+/login 404

@@ -15,6 +15,7 @@ import { formatMoney } from '../../lib/money';
 import { StockBadge } from '../catalog/ProductCard';
 import { clampQuantity, MAX_PER_LINE } from '../../state/cart.reducer';
 import { useCart } from '../../state/CartContext';
+import { track } from '../../app/monitoring';
 
 const SPEC_COLUMNS: readonly Column<Spec>[] = [
   { id: 'label', header: 'Specification', cell: (spec) => spec.label, rowHeader: true },
@@ -70,6 +71,7 @@ function ProductDetails({ product }: { product: Product }) {
     event.preventDefault();
     if (error || room === 0) return;
     dispatch({ type: 'add', product, quantity: wanted });
+    track('add_to_cart', { productId: product.id, quantity: wanted });
     const text = `Added ${wanted} × ${product.name} to the cart.`;
     setMessage(text);
     toast.show(text);

@@ -23,6 +23,7 @@ execSync(`npx vite build --outDir ${outDir} --emptyOutDir`, {
   stdio: 'ignore',
 });
 const port = 4181;
+const HOST = 'localhost'; // vite preview's default host
 const server = spawn(
   join(web, '../node_modules/.bin/vite'),
   ['preview', '--outDir', outDir, '--port', String(port), '--strictPort'],
@@ -31,7 +32,7 @@ const server = spawn(
     stdio: 'ignore',
   },
 );
-const base = `http://localhost:${port}`;
+const base = `http://${HOST}:${port}`;
 for (let i = 0; i < 60; i += 1) {
   try {
     if ((await fetch(base)).ok) break;

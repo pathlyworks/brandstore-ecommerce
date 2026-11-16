@@ -19,3 +19,4 @@ test-results/
 storybook-static/
 dist-profile/
 .lighthouseci/
+docs/deck/png/

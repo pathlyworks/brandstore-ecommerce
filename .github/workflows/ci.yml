@@ -7,10 +7,19 @@ name: CI
 # (Firefox and WebKit), Lighthouse, and the React app's own checks (ESLint with typescript-eslint and
 # react-hooks, the brand-token check, tsc, Vitest with RTL/MSW/axe, the Vite build and the Storybook build).
 # Each job starts from a clean checkout.
+#
+# Task 7 (production readiness): every pull request also gets a deploy preview (the "Deploy preview" job
+# builds the production bundle and publishes it as the `deploy-preview` artifact; main is deployed to GitHub
+# Pages by pages.yml), and a version tag (v*) runs every gate again and, only when all of them pass, publishes
+# the GitHub Release (the "Release" job). Builds carry VITE_RELEASE, the name error reports are tagged with.
 on:
   pull_request:
   push:
     branches: [main]
+    tags: ['v*']
+
+env:
+  VITE_RELEASE: ${{ github.ref_type == 'tag' && github.ref_name || github.sha }}
 
 concurrency:
   group: ci-${{ github.ref }}
@@ -26,7 +35,8 @@ jobs:
         with:
           node-version: 22
       - run: npm install --no-audit --no-fund
-      - name: Branch name follows CONTRIBUTING.md
+      - name: Branch name follows CONTRIBUTING.md (not for release tags)
+        if: github.ref_type != 'tag'
         run: node scripts/check-branch.mjs "${{ github.head_ref || github.ref_name }}"
       - run: npm run lint
       - run: npm run format:check
@@ -210,3 +220,63 @@ jobs:
           name: lighthouse
           path: lighthouse/
           retention-days: 30
+
+  preview:
+    name: Deploy preview (production build of the React app)
+    if: github.event_name == 'pull_request'
+    needs: [lint, web]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install --no-audit --no-fund
+      - name: Build exactly what GitHub Pages serves, for this pull request
+        run: npm run build -w web
+        env:
+          VITE_BASE: /
+          VITE_DEMO_API: '1'
+          VITE_API_BASE: https://techsphere-api.demo.invalid
+      - run: node web/scripts/pages-routes.mjs web/dist
+      - uses: actions/upload-artifact@v4
+        with:
+          name: deploy-preview
+          path: web/dist
+          retention-days: 14
+      - name: How to open the preview
+        run: |
+          {
+            echo "### Deploy preview"
+            echo "Download the **deploy-preview** artifact of this run, then: \`npx serve -s dist\` and open http://localhost:3000."
+            echo "It is the same build GitHub Pages serves after merge (API answered in the browser, VITE_DEMO_API=1)."
+            echo "Release name in error reports: \`$VITE_RELEASE\`."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  release:
+    name: Release (only on a v* tag, after every gate passed)
+    if: github.ref_type == 'tag'
+    needs: [lint, web, test, e2e, cross-browser, lighthouse]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install --no-audit --no-fund
+      - name: Build the React app for the release
+        run: npm run build -w web
+      - name: Publish the GitHub Release with the build attached
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          (cd web/dist && zip -qr "../../brandstore-web-${GITHUB_REF_NAME}.zip" .)
+          notes=$(awk -v tag="${GITHUB_REF_NAME#v}" '$0 ~ "^## \\[?"tag {on=1; next} on && /^## / {exit} on' CHANGELOG.md)
+          if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
+            gh release upload "$GITHUB_REF_NAME" "brandstore-web-${GITHUB_REF_NAME}.zip" --clobber
+          else
+            gh release create "$GITHUB_REF_NAME" "brandstore-web-${GITHUB_REF_NAME}.zip" \
+              --title "BrandStore $GITHUB_REF_NAME" --notes "${notes:-See CHANGELOG.md}" --verify-tag
+          fi

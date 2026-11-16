@@ -1,0 +1,88 @@
+{
+  "label": "v2.0.0-mobile",
+  "conditions": {
+    "lighthouse": "13.6.0",
+    "formFactor": "mobile",
+    "throttlingMethod": "simulate",
+    "throttling": {
+      "rttMs": 150,
+      "throughputKbps": 1638.4,
+      "requestLatencyMs": 562.5,
+      "downloadThroughputKbps": 1474.5600000000002,
+      "uploadThroughputKbps": 675,
+      "cpuSlowdownMultiplier": 4
+    },
+    "screen": {
+      "mobile": true,
+      "width": 412,
+      "height": 823,
+      "deviceScaleFactor": 1.75,
+      "disabled": false
+    },
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.0.0 Safari/537.36",
+    "runsPerPage": 3,
+    "kept": "median performance score"
+  },
+  "pages": {
+    "home": {
+      "path": "/",
+      "performance": 98,
+      "accessibility": 100,
+      "bestPractices": 100,
+      "seo": 100,
+      "LCP_ms": 2191,
+      "CLS": 0,
+      "TBT_ms": 118,
+      "FCP_ms": 775,
+      "scriptBytes": 125066
+    },
+    "products": {
+      "path": "/products",
+      "performance": 98,
+      "accessibility": 100,
+      "bestPractices": 100,
+      "seo": 100,
+      "LCP_ms": 2131,
+      "CLS": 0,
+      "TBT_ms": 106,
+      "FCP_ms": 768,
+      "scriptBytes": 125066
+    },
+    "product": {
+      "path": "/products/p-001",
+      "performance": 98,
+      "accessibility": 100,
+      "bestPractices": 100,
+      "seo": 100,
+      "LCP_ms": 2071,
+      "CLS": 0,
+      "TBT_ms": 104,
+      "FCP_ms": 768,
+      "scriptBytes": 125066
+    },
+    "cart": {
+      "path": "/cart",
+      "performance": 100,
+      "accessibility": 100,
+      "bestPractices": 100,
+      "seo": 100,
+      "LCP_ms": 766,
+      "CLS": 0,
+      "TBT_ms": 79,
+      "FCP_ms": 766,
+      "scriptBytes": 125066
+    },
+    "login": {
+      "path": "/login",
+      "performance": 100,
+      "accessibility": 100,
+      "bestPractices": 100,
+      "seo": 100,
+      "LCP_ms": 772,
+      "CLS": 0,
+      "TBT_ms": 76,
+      "FCP_ms": 772,
+      "scriptBytes": 125066
+    }
+  }
+}
