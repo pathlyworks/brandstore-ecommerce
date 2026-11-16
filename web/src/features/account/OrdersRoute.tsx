@@ -10,6 +10,7 @@ import type { AppError, Order } from '@shared/domain';
 import { cancelOrder, fetchOrders } from '../../api/endpoints';
 import { Badge, Button, Modal, Table, type Column } from '../../components';
 import { STATUS_TONE } from './orderStatus';
+import { BuyAgain } from './BuyAgain';
 import { errorText } from '../../components/StatusMessage';
 import { toAppError } from '../../hooks/useApi';
 import { loadPlacedOrders } from '../../state/checkout.storage';
@@ -45,6 +46,11 @@ const BASE_COLUMNS: readonly Column<Order>[] = [
     align: 'end',
     cell: (order) => formatMoney(order.total, order.currency),
     sortValue: (o) => o.total,
+  },
+  {
+    id: 'again',
+    header: 'Buy again',
+    cell: (order) => <BuyAgain order={order} />,
   },
   {
     id: 'status',
