@@ -46,7 +46,7 @@ export function selectSubtotal(state: CartState): Cents {
 }
 
 export function shippingFor(subtotal: Cents): Cents {
-  return subtotal <= 0 || subtotal >= FREE_SHIPPING_FROM ? 0 : SHIPPING_FEE;
+  return subtotal <= 0 || subtotal > FREE_SHIPPING_FROM ? 0 : SHIPPING_FEE;
 }
 
 export function selectTotals(state: CartState): CartTotals {
