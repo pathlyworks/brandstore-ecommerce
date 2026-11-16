@@ -25,7 +25,7 @@ describe('monitoring sink (monitoring_plan.md)', () => {
   });
 
   it('sends nothing without an endpoint, and a beacon when one is configured', () => {
-    const beacon = vi.fn(() => true);
+    const beacon = vi.fn<(url: string, data?: BodyInit | null) => boolean>(() => true);
     Object.defineProperty(navigator, 'sendBeacon', { value: beacon, configurable: true });
     captureError(new Error('first'), 'route');
     expect(beacon).not.toHaveBeenCalled();
