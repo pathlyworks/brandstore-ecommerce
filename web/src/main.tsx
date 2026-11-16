@@ -23,17 +23,29 @@ const onRender: ProfilerOnRenderCallback = (id, phase, actualDuration, baseDurat
   (w.__profile ??= []).push({ id, phase, actualDuration, baseDuration, path: location.pathname });
 };
 
-createRoot(root).render(
-  <StrictMode>
-    {import.meta.env.VITE_PROFILE === '1' ? (
-      <Profiler id="app" onRender={onRender}>
-        {app}
-      </Profiler>
-    ) : (
-      app
-    )}
-  </StrictMode>,
-);
+function start(container: HTMLElement) {
+  createRoot(container).render(
+    <StrictMode>
+      {import.meta.env.VITE_PROFILE === '1' ? (
+        <Profiler id="app" onRender={onRender}>
+          {app}
+        </Profiler>
+      ) : (
+        app
+      )}
+    </StrictMode>,
+  );
+}
+
+// The GitHub Pages preview (VITE_DEMO_API=1) answers the API in the browser; other builds leave this out.
+if (import.meta.env.VITE_DEMO_API === '1') {
+  void import('./demo/installDemoApi').then(({ installDemoApi }) => {
+    installDemoApi();
+    start(root);
+  });
+} else {
+  start(root);
+}
 
 reportWebVitals();
 registerServiceWorker();
