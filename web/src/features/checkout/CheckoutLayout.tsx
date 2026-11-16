@@ -9,17 +9,17 @@ import { Link, Outlet, useLocation } from 'react-router';
 import { Steps, type StepItem } from '../../components';
 import { EmptyState, LoadingState } from '../../components/StatusMessage';
 import { SessionExpiryNotice } from '../auth/SessionExpiryNotice';
-import { useCart } from '../cart/CartContext';
-import { selectChargeableLines } from '../cart/cart.selectors';
-import { CheckoutProvider, useCheckout } from './CheckoutContext';
+import { useCart } from '../../state/CartContext';
+import { selectChargeableLines } from '../../state/cart.selectors';
+import { CheckoutProvider, useCheckout } from '../../state/CheckoutContext';
 import {
   blockingStep,
   CHECKOUT_STEPS,
   isStepValid,
   STEP_LABELS,
   type CheckoutStep,
-} from './checkout.model';
-import { loadPlacedOrders } from './checkout.storage';
+} from '../../state/checkout.model';
+import { loadPlacedOrders } from '../../state/checkout.storage';
 
 export function CheckoutLayout() {
   return (

@@ -153,7 +153,12 @@ describe('Modal', () => {
           open={open}
           title="Empty the cart?"
           onClose={() => setOpen(false)}
-          actions={<button onClick={() => setOpen(false)}>Cancel</button>}
+          actions={
+            <>
+              <button onClick={() => setOpen(false)}>Cancel</button>
+              <button onClick={() => setOpen(false)}>Empty the cart</button>
+            </>
+          }
         >
           <p>Sure?</p>
         </Modal>
@@ -169,6 +174,39 @@ describe('Modal', () => {
     expect(dialog).toHaveAttribute('aria-modal', 'true');
     expect(within(dialog).getByRole('button', { name: 'Cancel' })).toHaveFocus();
     await userEvent.keyboard('{Escape}');
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    expect(opener).toHaveFocus();
+  });
+
+  it('traps focus: Tab and Shift+Tab cycle inside the dialog, never back to the page', async () => {
+    render(
+      <>
+        <Harness />
+        <button>Behind the dialog</button>
+      </>,
+    );
+    await userEvent.click(screen.getByRole('button', { name: 'Open' }));
+    const dialog = screen.getByRole('dialog', { name: 'Empty the cart?' });
+    const inside = within(dialog).getAllByRole('button');
+    expect(inside.length).toBeGreaterThan(1); // Cancel and Empty the cart: something to cycle through
+    for (let i = 0; i < inside.length * 2 + 1; i += 1) {
+      await userEvent.tab();
+      expect(dialog).toContainElement(document.activeElement as HTMLElement);
+    }
+    for (let i = 0; i < inside.length * 2 + 1; i += 1) {
+      await userEvent.tab({ shift: true });
+      expect(dialog).toContainElement(document.activeElement as HTMLElement);
+    }
+    expect(screen.getByRole('button', { name: 'Behind the dialog' })).not.toHaveFocus();
+  });
+
+  it('gives focus back to the trigger after closing with a button inside', async () => {
+    render(<Harness />);
+    const opener = screen.getByRole('button', { name: 'Open' });
+    await userEvent.click(opener);
+    await userEvent.click(
+      within(screen.getByRole('dialog')).getByRole('button', { name: 'Cancel' }),
+    );
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     expect(opener).toHaveFocus();
   });

@@ -14,7 +14,7 @@
     "test:watch": "vitest",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build --quiet -o storybook-static",
-    "e2e": "playwright test -c playwright.config.ts",
+    "e2e": "playwright test -c ../playwright.config.mjs --project=web-chromium",
     "check:bundles": "node scripts/check-bundles.mjs"
   },
   "dependencies": {

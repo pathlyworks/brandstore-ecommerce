@@ -4,7 +4,7 @@
  * to the same checkout step with the cart and the entered details kept).
  */
 import { useEffect, useState } from 'react';
-import { useAuth } from './AuthContext';
+import { useAuth } from '../../state/AuthContext';
 
 const WARN_BEFORE_MS = 5 * 60_000;
 

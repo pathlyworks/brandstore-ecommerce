@@ -13,8 +13,8 @@ import { useApi } from '../../hooks/useApi';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import { formatMoney } from '../../lib/money';
 import { StockBadge } from '../catalog/ProductCard';
-import { clampQuantity, MAX_PER_LINE } from '../cart/cart.reducer';
-import { useCart } from '../cart/CartContext';
+import { clampQuantity, MAX_PER_LINE } from '../../state/cart.reducer';
+import { useCart } from '../../state/CartContext';
 
 const SPEC_COLUMNS: readonly Column<Spec>[] = [
   { id: 'label', header: 'Specification', cell: (spec) => spec.label, rowHeader: true },

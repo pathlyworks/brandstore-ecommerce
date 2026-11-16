@@ -10,9 +10,9 @@ import { EmptyState } from '../../components/StatusMessage';
 import { OrderSummary } from './OrderSummary';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import { formatMoney } from '../../lib/money';
-import { maxQuantity } from './cart.reducer';
-import { selectLineTotal, selectUnavailableLines } from './cart.selectors';
-import { useCart } from './CartContext';
+import { maxQuantity } from '../../state/cart.reducer';
+import { selectLineTotal, selectUnavailableLines } from '../../state/cart.selectors';
+import { useCart } from '../../state/CartContext';
 
 type QuantityValue = `${number}`;
 
@@ -180,7 +180,10 @@ export function CartRoute() {
           </>
         }
       >
-        <p>This removes all {itemCount} items. You cannot undo it.</p>
+        <p>
+          This removes all {cart.lines.length} {cart.lines.length === 1 ? 'product' : 'products'}{' '}
+          from your cart. You cannot undo it.
+        </p>
       </Modal>
     </section>
   );

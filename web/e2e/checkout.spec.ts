@@ -84,3 +84,48 @@ test('cancel a processing order from the order history', async ({ page }) => {
   await page.reload();
   await expect(row.getByText('cancelled')).toBeVisible(); // the API kept it
 });
+
+test('an API 500 at "Place order": the shopper sees it, keeps everything, and "Try again" places one order', async ({
+  page,
+}) => {
+  await signIn(page, '/products/p-003');
+  await page.getByRole('button', { name: 'Add to cart' }).click();
+  await page.goto('/checkout/address');
+  await page.getByLabel('Full name').fill('Mona Adel');
+  await page.getByLabel('Mobile number').fill('010 1234 5678');
+  await page.getByLabel('Street and building').fill('12 Tahrir Street');
+  await page.getByLabel('City or district').fill('Dokki');
+  await page.getByLabel('Governorate').selectOption('giza');
+  await page.getByRole('button', { name: 'Continue to payment' }).click();
+  await page.getByRole('radio', { name: /^Cash on delivery/ }).check();
+  await page.getByRole('button', { name: 'Continue to review' }).click();
+  await expect(page).toHaveURL(/\/checkout\/review$/);
+
+  // The first POST /orders fails on the server; later ones reach the API.
+  let failed = 0;
+  const posts: string[] = [];
+  await page.route('**/orders', async (route) => {
+    if (route.request().method() !== 'POST') return route.fallback();
+    posts.push(route.request().postData() ?? '');
+    if (failed === 0) {
+      failed += 1;
+      return route.fulfill({ status: 500, json: { error: 'Internal error' } });
+    }
+    return route.fallback();
+  });
+  await page.getByRole('button', { name: /^Place order/ }).click();
+  await expect(page.getByRole('alert')).toBeVisible();
+  await expect(page).toHaveURL(/\/checkout\/review$/);
+  await expect(page.getByText('Cash on delivery')).toBeVisible(); // nothing lost
+  await expect(page.getByRole('link', { name: 'Cart, 1 item' })).toBeVisible();
+
+  await page.getByRole('button', { name: 'Try again' }).click();
+  await expect(page).toHaveURL(/\/checkout\/confirmation\/TS-\d+$/);
+  expect(posts).toHaveLength(2);
+  // The retry sends the same idempotency key: the server can tell it is the same order.
+  const keys = posts.map(
+    (body) => (JSON.parse(body) as { idempotencyKey?: string }).idempotencyKey,
+  );
+  expect(keys[0]).toBeTruthy();
+  expect(keys[1]).toBe(keys[0]);
+});

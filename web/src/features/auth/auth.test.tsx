@@ -12,9 +12,9 @@ import { renderApp } from '../../test/render';
 import { api, apiState, server } from '../../test/server';
 import { cartLine, signInForTest, storeCart } from '../../test/session';
 import { ADMIN, SHOPPER } from '../../test/fixtures';
-import { CART_STORAGE_KEY } from '../cart/cart.storage';
-import { DRAFT_KEY } from '../checkout/checkout.storage';
-import { SIGN_OUT_SIGNAL_KEY } from './session';
+import { CART_STORAGE_KEY } from '../../state/cart.storage';
+import { DRAFT_KEY } from '../../state/checkout.storage';
+import { SIGN_OUT_SIGNAL_KEY } from '../../state/session';
 
 async function signInWith(user: UserEvent, account = SHOPPER) {
   await user.type(await screen.findByLabelText('Email'), account.email);

@@ -1,5 +1,5 @@
 /**
- * Run from web/ (npm run test -w web). The live routing map must match the plan: every route of the table in task_1_architecture.md §4 exists
+ * The live routing map must match the plan: every route of the table in task_1_architecture.md §4 exists
  * with the component the plan names, and the app has no route the plan does not list.
  */
 import { readFileSync } from 'node:fs';
@@ -8,7 +8,7 @@ import { describe, expect, it } from 'vitest';
 import { routeMap } from './routes';
 
 function plannedRoutes(): { path: string; component: string }[] {
-  const doc = readFileSync(resolve(process.cwd(), '..', 'task_1_architecture.md'), 'utf8');
+  const doc = readFileSync(resolve(__dirname, '../../../task_1_architecture.md'), 'utf8');
   const section = doc.slice(
     doc.indexOf('## 4. Routing map'),
     doc.indexOf('**Every legacy feature mapped**'),

@@ -21,6 +21,8 @@ export interface NavbarProps {
   cartCount: number;
   /** "Sign in" or the account link. */
   account: NavItem;
+  /** Signed in: a "Sign out" button in the header (every page, not only the account page). */
+  onSignOut?: (() => void) | undefined;
   /** The cart count is not known yet (e.g. reading storage). */
   loading?: boolean;
   /** Start with the mobile menu open (stories). */
@@ -40,6 +42,7 @@ export function Navbar({
   links,
   cartCount,
   account,
+  onSignOut,
   loading = false,
   defaultOpen = false,
 }: NavbarProps) {
@@ -100,6 +103,20 @@ export function Navbar({
                 {account.label}
               </NavLink>
             </li>
+            {onSignOut && (
+              <li>
+                <button
+                  type="button"
+                  className={linkClass({ isActive: false })}
+                  onClick={() => {
+                    setOpen(false);
+                    onSignOut();
+                  }}
+                >
+                  Sign out
+                </button>
+              </li>
+            )}
             <li>
               <NavLink
                 to="/cart"

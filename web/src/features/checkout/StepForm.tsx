@@ -5,8 +5,13 @@
  */
 import { useEffect, useRef, useState, type FormEvent, type ReactNode, type RefObject } from 'react';
 import { Navigate, useNavigate } from 'react-router';
-import { useCheckout } from './CheckoutContext';
-import { blockingStep, stepErrors, STEP_LABELS, type CheckoutStep } from './checkout.model';
+import { useCheckout } from '../../state/CheckoutContext';
+import {
+  blockingStep,
+  stepErrors,
+  STEP_LABELS,
+  type CheckoutStep,
+} from '../../state/checkout.model';
 
 export const fieldId = (step: CheckoutStep, field: string) => `checkout-${step}-${field}`;
 

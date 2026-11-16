@@ -5,11 +5,11 @@ import { Button, Table, type Column } from '../../components';
 import { ErrorState } from '../../components/StatusMessage';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import { formatMoney } from '../../lib/money';
-import { useCart } from '../cart/CartContext';
-import { selectChargeableLines, selectLineTotal } from '../cart/cart.selectors';
+import { useCart } from '../../state/CartContext';
+import { selectChargeableLines, selectLineTotal } from '../../state/cart.selectors';
 import { OrderSummary } from '../cart/OrderSummary';
-import { useCheckout } from './CheckoutContext';
-import { describePayment, GOVERNORATES, normalisePhone } from './checkout.model';
+import { useCheckout } from '../../state/CheckoutContext';
+import { describePayment, GOVERNORATES, normalisePhone } from '../../state/checkout.model';
 import { StepGuard } from './StepForm';
 import { usePlaceOrder } from './usePlaceOrder';
 

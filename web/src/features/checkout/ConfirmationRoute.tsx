@@ -6,7 +6,7 @@
 import { Link, useParams } from 'react-router';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import { formatMoney } from '../../lib/money';
-import { loadPlacedOrders } from './checkout.storage';
+import { loadPlacedOrders } from '../../state/checkout.storage';
 
 export function ConfirmationRoute() {
   const { number = '' } = useParams();

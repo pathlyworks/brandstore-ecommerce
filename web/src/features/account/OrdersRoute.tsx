@@ -12,12 +12,12 @@ import { Badge, Button, Modal, Table, type Column } from '../../components';
 import { STATUS_TONE } from './orderStatus';
 import { errorText } from '../../components/StatusMessage';
 import { toAppError } from '../../hooks/useApi';
-import { loadPlacedOrders } from '../checkout/checkout.storage';
+import { loadPlacedOrders } from '../../state/checkout.storage';
 import { useApi } from '../../hooks/useApi';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import { formatOrderDate } from '../../lib/dates';
 import { formatMoney } from '../../lib/money';
-import { useAuth } from '../auth/AuthContext';
+import { useAuth } from '../../state/AuthContext';
 
 const BASE_COLUMNS: readonly Column<Order>[] = [
   {

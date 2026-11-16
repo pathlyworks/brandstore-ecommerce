@@ -1,7 +1,8 @@
 name: CI
 
-# Runs on every pull request and on pushes to main: lint, unit + integration tests (with coverage
-# of src/state and src/utils, which must stay at 80% or more), the end-to-end tests against the
+# Runs on every pull request and on pushes to main. Quality gates (Task 6): type-check, lint, every unit and
+# component test with coverage floors (React app: 75% of lines on web/src/state and web/src/components;
+# legacy site: 80% on src/state and src/utils), the end-to-end tests against the
 # official TechSphere API (legacy pages and the React app in web/), a cross-browser smoke test
 # (Firefox and WebKit), Lighthouse, and the React app's own checks (ESLint with typescript-eslint and
 # react-hooks, the brand-token check, tsc, Vitest with RTL/MSW/axe, the Vite build and the Storybook build).
@@ -97,7 +98,7 @@ jobs:
         with:
           python-version: '3.12'
       - run: npm install --no-audit --no-fund
-      - name: npm test (unit + integration) with coverage thresholds
+      - name: npm test (both apps, unit + component + integration) with coverage floors (fails below them)
         run: npm run test:coverage
       - name: Types still match a freshly captured TechSphere API (contract drift)
         run: |
@@ -195,8 +196,14 @@ jobs:
           done
       - name: Lighthouse on the home, catalog, product and cart pages (mobile and desktop)
         run: node scripts/lighthouse.mjs http://127.0.0.1:4173 lighthouse
-      - name: Lighthouse CI budgets (lighthouserc.json)
-        run: npx lhci autorun
+      - name: Lighthouse CI budgets, legacy site (lighthouserc.legacy.json)
+        run: npx lhci autorun --config=lighthouserc.legacy.json
+      - name: Serve the React app (web/dist, built above with VITE_API_BASE)
+        run: |
+          npm run preview -w web -- --host 127.0.0.1 --port 4174 --strictPort &
+          for i in $(seq 1 30); do curl -sf http://127.0.0.1:4174/ >/dev/null && break; sleep 1; done
+      - name: Lighthouse CI budgets, React app (lighthouserc.json; fails the job when a budget is missed)
+        run: npx lhci autorun --config=lighthouserc.json
       - uses: actions/upload-artifact@v4
         if: always()
         with:

@@ -5,8 +5,8 @@
 import { useNavigate } from 'react-router';
 import { Button, Input, Select } from '../../components';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
-import { useCheckout } from './CheckoutContext';
-import { TEST_CARDS, type PaymentMethod, type TestCard } from './checkout.model';
+import { useCheckout } from '../../state/CheckoutContext';
+import { TEST_CARDS, type PaymentMethod, type TestCard } from '../../state/checkout.model';
 import { ErrorSummary, fieldId, StepGuard, useStepSubmit } from './StepForm';
 
 const METHODS: readonly { value: Exclude<PaymentMethod, ''>; label: string; hint: string }[] = [
