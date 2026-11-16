@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>BrandStore storefront: Black Friday readiness</title>
+<style>
+  @page { size: 1280px 720px; margin: 0; }
+  :root {
+    --ink: #111827; --text: #1f2937; --muted: #4b5563; --line: #e5e7eb; --bg: #ffffff; --soft: #f3f4f6;
+    --primary: #2563eb; --primary-deep: #1e3a8a; --primary-soft: #eff6ff;
+    --good: #047857; --good-soft: #ecfdf5; --warn: #b45309; --warn-soft: #fef3c7; --bad: #b91c1c; --bad-soft: #fef2f2;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: #d1d5db; }
+  body { font-family: Inter, 'DejaVu Sans', sans-serif; color: var(--text); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .slide { width: 1280px; height: 720px; background: var(--bg); position: relative; overflow: hidden;
+           padding: 56px 72px 64px; page-break-after: always; break-after: page; display: flex; flex-direction: column; }
+  .slide:last-child { page-break-after: auto; break-after: auto; }
+  .kicker { font-size: 15px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--primary); margin: 0 0 10px; }
+  h1 { font-size: 40px; line-height: 1.15; margin: 0 0 18px; color: var(--ink); font-weight: 800; letter-spacing: -.01em; }
+  h2 { font-size: 20px; margin: 0 0 8px; color: var(--ink); }
+  p, li { font-size: 19px; line-height: 1.45; }
+  ul { margin: 0; padding-inline-start: 22px; }
+  li { margin: 0 0 6px; }
+  .src { position: absolute; inset-inline: 72px; bottom: 22px; font-size: 12.5px; color: var(--muted);
+         border-top: 1px solid var(--line); padding-top: 8px; display: flex; justify-content: space-between; gap: 24px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; flex: 1; }
+  .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+  .grid4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+  .card { border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; background: #fff; }
+  .card.soft { background: var(--soft); border-color: var(--soft); }
+  .card h2 { font-size: 19px; }
+  .card p, .card li { font-size: 16.5px; }
+  .tag { display: inline-block; font-size: 13px; font-weight: 700; padding: 3px 10px; border-radius: 999px; }
+  .tag.good { background: var(--good-soft); color: var(--good); }
+  .tag.warn { background: var(--warn-soft); color: var(--warn); }
+  .tag.bad { background: var(--bad-soft); color: var(--bad); }
+  .tag.info { background: var(--primary-soft); color: var(--primary-deep); }
+  table { width: 100%; border-collapse: collapse; font-size: 16px; }
+  th, td { text-align: start; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-size: 13px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); font-weight: 700; }
+  td.n, th.n { text-align: end; font-variant-numeric: tabular-nums; }
+  .big { font-size: 46px; font-weight: 800; color: var(--ink); line-height: 1; font-variant-numeric: tabular-nums; }
+  .big small { font-size: 20px; font-weight: 700; color: var(--muted); }
+  .stat p { font-size: 15.5px; margin: 8px 0 0; color: var(--muted); }
+  .answer { background: var(--primary-deep); color: #fff; border-radius: 14px; padding: 24px 28px; }
+  .answer p { font-size: 22px; margin: 0; color: #fff; }
+  .answer strong { color: #fff; }
+  .title { background: var(--primary-deep); color: #fff; }
+  .title h1 { color: #fff; font-size: 50px; max-width: 980px; }
+  .title .kicker { color: #bfdbfe; }
+  .title p { color: #dbeafe; }
+  .title .src { color: #bfdbfe; border-color: #3b5bab; }
+  .pill-row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 10px; }
+  .muted { color: var(--muted); }
+  .bar { height: 14px; border-radius: 4px; background: var(--primary); }
+  .bar.warn { background: var(--warn); }
+  .bar.bad { background: var(--bad); }
+  .barrow { display: grid; grid-template-columns: 150px 1fr 110px; gap: 14px; align-items: center; margin: 10px 0; font-size: 16.5px; }
+  .barrow .v { text-align: end; font-variant-numeric: tabular-nums; font-weight: 700; }
+  .track { position: relative; height: 14px; background: var(--soft); border-radius: 4px; }
+  .track .line { position: absolute; top: -6px; bottom: -6px; width: 2px; background: var(--ink); }
+  .quad h2 { display: flex; align-items: center; gap: 10px; }
+  code { font-family: 'DejaVu Sans Mono', monospace; font-size: .88em; background: var(--soft); padding: 1px 5px; border-radius: 4px; }
+</style>
+</head>
+<body>
+
+<!-- 1. Title and the answer -->
+<section class="slide title">
+  <p class="kicker">BrandStore · Platform rebuild · Executive presentation · 16 November 2026</p>
+  <h1>Ship the React storefront for Black Friday. Hold the last two legacy pages until January.</h1>
+  <p style="font-size:22px;max-width:1000px;margin-top:6px">
+    Release v2.0.0 is built, tested and released through CI: catalog, product, cart, checkout, sign-in, order
+    history and the admin dashboard, on one typed component system. Three backend items stand between it and the
+    peak: the production API, a monitoring endpoint and a load test.
+  </p>
+  <div class="pill-row" style="margin-top:26px">
+    <span class="tag info" style="font-size:15px">Decision needed: go for Black Friday on v2.0.0</span>
+    <span class="tag info" style="font-size:15px">Funding: backend items 6–8 on slide 10</span>
+    <span class="tag info" style="font-size:15px">Deploy freeze: 48 h before to 24 h after</span>
+  </div>
+  <div class="src"><span>For Dina Mostafa, VP Engineering · Ahmed, Senior Front-End Engineer</span><span>1</span></div>
+</section>
+
+<!-- 2. One-slide decision summary -->
+<section class="slide">
+  <p class="kicker">The decision on one page</p>
+  <h1>What ships, what waits, and what it depends on</h1>
+  <div class="grid3" style="flex:1">
+    <div class="card">
+      <h2><span class="tag good">Ships now · v2.0.0</span></h2>
+      <ul>
+        <li>13 routes in React + TypeScript, account and admin protected</li>
+        <li>3-step checkout; a broken checkout cannot merge (proved, PR #17)</li>
+        <li>Admin dashboard: sales, orders, categories</li>
+        <li>Mobile Lighthouse 98–100, CLS 0, accessibility 100</li>
+        <li>534 tests; 96.3% / 92.7% line coverage on state / components</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h2><span class="tag warn">Waits until January</span></h2>
+      <ul>
+        <li>Addresses and compare pages: the legacy pages serve them</li>
+        <li>Cutover: redirects, deleting the legacy code</li>
+        <li>Cookie sessions (needs a backend)</li>
+        <li>About 7 days of work (estimate), none of it sells more on Black Friday, all of it is change risk in the freeze</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h2><span class="tag bad">Open before the peak</span></h2>
+      <ul>
+        <li>Production API at an HTTPS address (backend)</li>
+        <li>Monitoring endpoint receiving errors and Web Vitals</li>
+        <li>Load test of checkout at peak traffic</li>
+        <li>Catalog on 3G: 4.5 s to content today; fix planned</li>
+      </ul>
+    </div>
+  </div>
+  <div class="answer" style="margin-top:18px"><p><strong>Recommendation:</strong> approve the go on v2.0.0, fund the three backend items, and agree the freeze window.</p></div>
+  <div class="src"><span>Sources: task_7_executive_report.md §1, §6, §7; evidence index docs/evidence/task7/README.md</span><span>2</span></div>
+</section>
+
+<!-- 3. Situation -->
+<section class="slide">
+  <p class="kicker">Situation</p>
+  <h1>The legacy site works, but every new feature meant editing 9 pages</h1>
+  <div class="grid4" style="margin-top:8px">
+    <div class="card stat"><div class="big">0<small> of 70</small></div><p>modules type-checked (5,796 lines of untyped JavaScript)</p></div>
+    <div class="card stat"><div class="big">9<small> pages</small></div><p>each with its own copy of the header and footer, drifted into 4 versions</p></div>
+    <div class="card stat"><div class="big">9<small> carts</small></div><p>the cart store was created again on every page and synced through storage events</p></div>
+    <div class="card stat"><div class="big">34<small> requests</small></div><p>separate unminified module files on the catalog page; no bundler, no cache-busting</p></div>
+  </div>
+  <div class="grid2" style="margin-top:22px;flex:0">
+    <div class="card soft"><h2>Missing for the business</h2><p>No checkout page, no admin view, no protected routes. Mobile layout shift on catalog (CLS 0.143) and cart (0.112).</p></div>
+    <div class="card soft"><h2>Worth keeping</h2><p>A strong test suite: 162 unit tests, state logic at 99.86% line coverage. Its tests were ported, not rewritten.</p></div>
+  </div>
+  <div class="src"><span>Source: Task 1 audit, task_1_architecture.md §1; docs/migration/audit.md (npm run audit:legacy); docs/lighthouse/README.md (CI run 43459653927)</span><span>3</span></div>
+</section>
+
+<!-- 4. Complication -->
+<section class="slide">
+  <p class="kicker">Complication</p>
+  <h1>Black Friday is the worst week to discover how a front end breaks</h1>
+  <div class="grid2">
+    <div>
+      <ul>
+        <li><strong>Traffic peaks</strong> on the routes campaigns link to: the catalog and product pages.</li>
+        <li><strong>Mobile networks are slower</strong> under load; the same build behaves differently on 3G.</li>
+        <li><strong>Every change is risk</strong> in the freeze window, including migration work that is otherwise safe.</li>
+        <li><strong>We have no real-user data yet</strong>: the shop has run only against the TechSphere API kit and our own scripted sessions.</li>
+      </ul>
+    </div>
+    <div class="card soft">
+      <h2>So the question is not only "is it built?"</h2>
+      <p>It is: is it measured, guarded by CI, observable in production, and is the unfinished part clearly separated from what we ship?</p>
+      <p class="muted" style="font-size:16px">The next slides answer each in turn: evidence, what shipped, trade-offs, readiness, monitoring.</p>
+    </div>
+  </div>
+  <div class="src"><span>Source: stakeholder brief; task_7_executive_report.md §1, §9</span><span>4</span></div>
+</section>
+
+<!-- 5. Evidence: before and after -->
+<section class="slide">
+  <p class="kicker">Evidence · before and after</p>
+  <h1>Faster on mobile than the legacy site, with no layout shift</h1>
+  <table>
+    <thead><tr><th>Lighthouse, mobile, slow 4G</th><th class="n">Legacy site</th><th class="n">React, Task 4</th><th class="n">React v2.0.0</th></tr></thead>
+    <tbody>
+      <tr><td>Performance, home</td><td class="n">98</td><td class="n">97</td><td class="n"><strong>98</strong></td></tr>
+      <tr><td>Performance, catalog <code>/products</code></td><td class="n">91</td><td class="n">81</td><td class="n"><strong>98</strong></td></tr>
+      <tr><td>Performance, product page</td><td class="n">94</td><td class="n">81</td><td class="n"><strong>98</strong></td></tr>
+      <tr><td>Performance, cart</td><td class="n">95</td><td class="n">100</td><td class="n"><strong>100</strong></td></tr>
+      <tr><td>Accessibility, every page above</td><td class="n">100</td><td class="n">99–100</td><td class="n"><strong>100</strong></td></tr>
+      <tr><td>SEO, every page above</td><td class="n">100</td><td class="n">82–83</td><td class="n"><strong>100</strong></td></tr>
+      <tr><td>Layout shift (CLS), worst page</td><td class="n">0.143</td><td class="n">0.409</td><td class="n"><strong>0</strong></td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:16.5px;margin-top:14px"><strong>The honest cost:</strong> first-visit JavaScript is 125 KB transferred (legacy: 11–44 KB a page). 81% of it is React and its router. It is capped in CI at 160 KB.</p>
+  <div class="src"><span>Sources: docs/lighthouse/README.md (legacy) · docs/evidence/task5/lighthouse/before/summary.json · docs/evidence/task7/lighthouse/v2.0.0-mobile/summary.json (median of 3 runs, identical conditions)</span><span>5</span></div>
+</section>
+
+<!-- 6. Evidence: quality -->
+<section class="slide">
+  <p class="kicker">Evidence · quality gates</p>
+  <h1>A broken checkout cannot reach customers: we proved it</h1>
+  <div class="grid4">
+    <div class="card stat"><div class="big">534</div><p>unit and component tests, 48 files, all passing</p></div>
+    <div class="card stat"><div class="big">96.3<small>%</small></div><p>line coverage of the state layer (floor 75%)</p></div>
+    <div class="card stat"><div class="big">92.7<small>%</small></div><p>line coverage of the shared components (floor 75%)</p></div>
+    <div class="card stat"><div class="big">0</div><p>axe accessibility violations on the key routes, end to end</p></div>
+  </div>
+  <div class="grid2" style="margin-top:20px;flex:0">
+    <div class="card"><h2>7 gates on every pull request</h2><p>Lint and format · strict type-check · tests with coverage floors · builds · Playwright end to end · cross-browser smoke · Lighthouse budgets. Plus a deploy preview of the exact production build.</p></div>
+    <div class="card"><h2>The drill: PR #17</h2><p>One character changed in the shipping rule (free from 100.00 became "above" 100.00). CI went red on two tests and the change could not merge.</p></div>
+  </div>
+  <div class="src"><span>Sources: docs/evidence/task7/coverage.json (npm run test:coverage) · web/e2e/a11y.spec.ts · task_6_testing_quality.md §5, CI run 43926913772</span><span>6</span></div>
+</section>
+
+<!-- 7. What shipped -->
+<section class="slide">
+  <p class="kicker">What shipped</p>
+  <h1>Routes, a component system, checkout and the dashboard</h1>
+  <div class="grid2">
+    <div class="card"><h2>Routes</h2><p>13 working routes: home, catalog, product, cart, 3 checkout steps and confirmation, sign-in, register, order history, admin, 404. Account, checkout and admin are protected, with a return path after sign-in.</p></div>
+    <div class="card"><h2>Component system</h2><p>17 typed shared components (Button, Input, Select, Modal with focus trap, DataTable with sorting and paging, Tabs, Steps…), 11 in Storybook, axe on every story, brand colours only.</p></div>
+    <div class="card"><h2>Checkout</h2><p>One pure cart reducer in integer cents; 3 validated steps; the draft survives refresh and Back; exactly one order however fast the clicks; a clear error and a safe retry when the API fails.</p></div>
+    <div class="card"><h2>Admin dashboard</h2><p>Sales, orders, average order value, sales by category and by month, each chart with its table. Admin only, in a separate download shoppers never receive.</p></div>
+  </div>
+  <p style="font-size:16px;margin:14px 0 0" class="muted"><strong>Not a complete migration:</strong> the legacy pages are still live. Addresses and compare are served by them until wave 5.</p>
+  <div class="src"><span>Sources: web/src/app/routes.tsx · web/src/components/ · task_3_checkout.md · task_5_dashboard_performance.md §1</span><span>7</span></div>
+</section>
+
+<!-- 8. Trade-offs -->
+<section class="slide">
+  <p class="kicker">Trade-offs made</p>
+  <h1>What we chose, what it costs, and when we revisit it</h1>
+  <table>
+    <thead><tr><th style="width:24%">Decision</th><th style="width:28%">Gained</th><th style="width:28%">Costs</th><th>Revisit</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Token storage</strong>: memory, mirrored to sessionStorage</td><td>reload keeps the session; nothing after the tab closes</td><td>injected script could read it; each new tab signs in</td><td>cookie sessions, with a backend (wave 6)</td></tr>
+      <tr><td><strong>Migration in waves</strong>, legacy live beside React</td><td>each wave shipped and tested alone; one shared cart</td><td>two front ends until cutover</td><td>cutover in January (wave 5)</td></tr>
+      <tr><td><strong>Deferred migration waves</strong>: addresses, compare, cutover</td><td>no change risk in the freeze</td><td>shoppers use 2 legacy pages for now</td><td>wave 5, about 7 days (estimate)</td></tr>
+      <tr><td><strong>Client-side rendering only</strong></td><td>simple hosting, SEO 100</td><td>125 KB of JavaScript first; slow on 3G</td><td>if real-user LCP misses target</td></tr>
+      <tr><td><strong>Preview on GitHub Pages</strong>, API in the browser</td><td>a free, public, shareable preview</td><td>not production: no backend, no logs</td><td>when the production API exists</td></tr>
+    </tbody>
+  </table>
+  <div class="src"><span>Sources: task_4_security.md §1 · task_1_architecture.md §9–10 · task_7_executive_report.md §6</span><span>8</span></div>
+</section>
+
+<!-- 9. Deferred work -->
+<section class="slide">
+  <p class="kicker">Deferred work, explicit</p>
+  <h1>What we will not migrate in this wave, and why</h1>
+  <table>
+    <thead><tr><th style="width:30%">Item</th><th>Reason it waits</th><th style="width:14%">Wave</th><th class="n" style="width:14%">Effort (est.)</th></tr></thead>
+    <tbody>
+      <tr><td>Addresses page</td><td>API cannot create an address; the legacy page works</td><td>5 · January</td><td class="n">2 days</td></tr>
+      <tr><td>Compare page</td><td>static, rarely visited, nothing depends on it</td><td>5 · January</td><td class="n">1 day</td></tr>
+      <tr><td>Cutover: redirects, delete legacy code, mock API, Axios</td><td>not in the freeze; legacy pages are the fallback</td><td>5 · January</td><td class="n">2.5 days</td></tr>
+      <tr><td>Cookie sessions, enforced CSP with nonces</td><td>needs a backend</td><td>6 · with backend</td><td class="n">backend-led</td></tr>
+      <tr><td>Funnel counting and dashboards</td><td>needs an events endpoint and storage</td><td>6 · with backend</td><td class="n">1 day</td></tr>
+      <tr><td>Arabic and right-to-left</td><td>doubles visual QA</td><td>own project · Q1</td><td class="n">—</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:16px;margin-top:12px" class="muted">Effort in ideal days, one developer at 6 focused hours a day; wave 5 totals 5.5 days, about 7 with 20% contingency (estimates, Task 1 method).</p>
+  <div class="src"><span>Sources: task_7_executive_report.md §6.2 · task_1_architecture.md §9–10</span><span>9</span></div>
+</section>
+
+<!-- 10. Readiness checklist -->
+<section class="slide">
+  <p class="kicker">Black Friday readiness checklist</p>
+  <h1>Five items done, three need the backend, two need a decision</h1>
+  <div class="grid2" style="grid-template-columns: 1.15fr 1fr">
+    <table>
+      <tbody>
+        <tr><td>1. CI green on the tagged release v2.0.0</td><td><span class="tag good">done</span></td></tr>
+        <tr><td>2. Broken checkout cannot merge</td><td><span class="tag good">done</span></td></tr>
+        <tr><td>3. Lighthouse budgets on PRs and daily on production</td><td><span class="tag good">done</span></td></tr>
+        <tr><td>4. Error, Web Vitals and funnel hooks in the app</td><td><span class="tag good">done</span></td></tr>
+        <tr><td>5. Rollback to the previous release in one step</td><td><span class="tag good">done</span></td></tr>
+        <tr><td>6. Production API at an HTTPS address</td><td><span class="tag bad">backend</span></td></tr>
+        <tr><td>7. Monitoring endpoint and alerts live</td><td><span class="tag bad">backend</span></td></tr>
+        <tr><td>8. Load test of checkout at peak</td><td><span class="tag bad">backend</span></td></tr>
+        <tr><td>9. Catalog content under 4 s on 3G</td><td><span class="tag warn">front end</span></td></tr>
+        <tr><td>10. Freeze window and on-call rota</td><td><span class="tag warn">decision</span></td></tr>
+      </tbody>
+    </table>
+    <div>
+      <h2>Top risks</h2>
+      <ul style="font-size:17px">
+        <li><strong>3G shoppers</strong> wait 4.5 s on the catalog. Mitigation: start the catalog request with the JavaScript; cache it at the CDN.</li>
+        <li><strong>API under peak load</strong> never tested beyond the kit. Mitigation: load test; checkout already retries safely.</li>
+        <li><strong>No real-user baseline</strong>. Mitigation: watch-only for 2 weeks, then set alert thresholds.</li>
+        <li><strong>Session readable by injected script</strong>. Mitigation: no raw HTML, one-hour tokens; cookies in wave 6.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="src"><span>Sources: task_7_executive_report.md §7 · docs/evidence/task7/lighthouse/v2.0.0-3g/summary.json</span><span>10</span></div>
+</section>
+
+<!-- 11. 3G -->
+<section class="slide">
+  <p class="kicker">Evidence · the route most at risk</p>
+  <h1>On 3G, the catalog is the slowest page to show its products</h1>
+  <div style="max-width:1000px">
+    <p class="muted" style="font-size:16px;margin:0 0 6px">Largest Contentful Paint, Lighthouse "regular 3G" (300 ms RTT, 700 kbps, 4× CPU), median of 3 runs. Line: 4,000 ms, where Google rates LCP "poor".</p>
+    <div class="barrow"><span><code>/products</code></span><div class="track"><div class="bar bad" style="width:74.5%"></div><div class="line" style="left:66.7%"></div></div><span class="v">4,467 ms</span></div>
+    <div class="barrow"><span><code>/products/p-001</code></span><div class="track"><div class="bar bad" style="width:73.9%"></div><div class="line" style="left:66.7%"></div></div><span class="v">4,435 ms</span></div>
+    <div class="barrow"><span><code>/</code> home</span><div class="track"><div class="bar bad" style="width:73.8%"></div><div class="line" style="left:66.7%"></div></div><span class="v">4,426 ms</span></div>
+    <div class="barrow"><span><code>/cart</code></span><div class="track"><div class="bar warn" style="width:62.8%"></div><div class="line" style="left:66.7%"></div></div><span class="v">3,767 ms</span></div>
+    <div class="barrow"><span><code>/login</code></span><div class="track"><div class="bar" style="width:25.3%"></div><div class="line" style="left:66.7%"></div></div><span class="v">1,515 ms</span></div>
+  </div>
+  <p style="font-size:17px;margin-top:16px">Pages that wait for the API before their first content pay twice: 125 KB of JavaScript, then the API round trip. Cart and sign-in render without an API call. <strong>Fix:</strong> start the first catalog request in parallel with the JavaScript and cache it at the CDN; the CI budget keeps it from regressing.</p>
+  <div class="src"><span>Source: docs/evidence/task7/lighthouse/v2.0.0-3g/summary.json (node web/scripts/measure.mjs web/dist v2.0.0-3g --task 7 --profile 3g)</span><span>11</span></div>
+</section>
+
+<!-- 12. Monitoring -->
+<section class="slide">
+  <p class="kicker">Monitoring plan</p>
+  <h1>Realistic without analytics data: hooks now, counting with the backend</h1>
+  <div class="grid4" style="grid-template-columns: repeat(4,1fr)">
+    <div class="card"><h2>Error tracking</h2><p><span class="tag good">live</span></p><p>Uncaught errors, unhandled rejections and route errors captured; sent once the endpoint is set.</p></div>
+    <div class="card"><h2>Scheduled Lighthouse</h2><p><span class="tag good">live</span></p><p>Daily and after each deploy on production, same budgets as PRs; a miss opens an issue.</p></div>
+    <div class="card"><h2>Web Vitals</h2><p><span class="tag good">live</span></p><p>LCP, INP and CLS from every page view with the web-vitals library, through the same sink.</p></div>
+    <div class="card"><h2>Funnel events</h2><p><span class="tag warn">3 of 7 wired</span></p><p>Product → cart → checkout steps → purchase. Counting needs the backend's events endpoint.</p></div>
+  </div>
+  <div class="card soft" style="margin-top:20px">
+    <h2>Response process</h2>
+    <p style="font-size:16.5px;margin:0">Accessibility regression in CI: the merge is blocked; fix in the same PR, add a test. Drop in checkout completion: check errors, then the API, then the last deploy; roll back first if a deploy is in the window. Thresholds are starting points until two weeks of real traffic set the baseline.</p>
+  </div>
+  <div class="src"><span>Source: monitoring_plan.md · web/src/app/monitoring.ts · .github/workflows/lighthouse-scheduled.yml</span><span>12</span></div>
+</section>
+
+<!-- 13. Recommendations -->
+<section class="slide">
+  <p class="kicker">Recommendations</p>
+  <h1>Protect, invest, investigate, defer</h1>
+  <div class="grid2 quad">
+    <div class="card"><h2><span class="tag good">Protect</span></h2><p>The CI gates (coverage floors, end-to-end checkout, axe, Lighthouse budgets), the cart reducer and its tests, the idempotent checkout. They stopped PR #17 and make a release safe in the freeze.</p></div>
+    <div class="card"><h2><span class="tag info">Invest</span></h2><p>The production API, the monitoring endpoint and a checkout load test; the 3G fix for the catalog. These are the only open items between v2.0.0 and Black Friday.</p></div>
+    <div class="card"><h2><span class="tag warn">Investigate</span></h2><p>Real-user Web Vitals after launch: how many shoppers are on slow networks? Server-side rendering for the catalog only if real LCP misses target. Which error-tracking vendor.</p></div>
+    <div class="card"><h2><span class="tag bad">Defer</span></h2><p>Addresses and compare pages, cutover, cookie sessions, Arabic, visual regression tests. None sells more on Black Friday; each adds risk in the freeze.</p></div>
+  </div>
+  <div class="src"><span>Source: task_7_executive_report.md §10</span><span>13</span></div>
+</section>
+
+<!-- 14. Appendix -->
+<section class="slide">
+  <p class="kicker">Appendix · evidence</p>
+  <h1>Where every number comes from</h1>
+  <table style="font-size:14.5px">
+    <thead><tr><th>Number</th><th>Evidence file</th><th>Re-run</th></tr></thead>
+    <tbody>
+      <tr><td>Legacy audit (70 modules, 9 pages, 9 carts, 34 requests)</td><td>docs/migration/audit.md</td><td><code>npm run audit:legacy</code></td></tr>
+      <tr><td>Legacy Lighthouse (91–98, CLS 0.143)</td><td>docs/lighthouse/README.md</td><td>CI job "Lighthouse"</td></tr>
+      <tr><td>React Task 4 Lighthouse</td><td>docs/evidence/task5/lighthouse/before/summary.json</td><td><code>web/scripts/measure.mjs</code></td></tr>
+      <tr><td>React v2.0.0 Lighthouse, slow 4G and 3G</td><td>docs/evidence/task7/lighthouse/v2.0.0-*/summary.json</td><td><code>measure.mjs … --task 7 [--profile 3g]</code></td></tr>
+      <tr><td>Tests and coverage (534; 96.3% / 92.7%)</td><td>docs/evidence/task7/coverage.json</td><td><code>npm run test:coverage</code></td></tr>
+      <tr><td>Broken checkout blocked</td><td>task_6_testing_quality.md §5</td><td>CI run 43926913772</td></tr>
+      <tr><td>Field Web Vitals (scripted sessions)</td><td>docs/evidence/task5/web-vitals/deployed.json</td><td><code>web/scripts/field-vitals.mjs</code></td></tr>
+      <tr><td>Effort for deferred work</td><td>task_7_executive_report.md §6.2 (estimate)</td><td>—</td></tr>
+      <tr><td>Release v2.0.0, CI on the tag</td><td>docs/evidence/task7/release.md</td><td>push the tag</td></tr>
+    </tbody>
+  </table>
+  <div class="src"><span>Full index: docs/evidence/task7/README.md · Report: task_7_executive_report.md · Repository: github.com/pathlyworks/brandstore-ecommerce</span><span>14</span></div>
+</section>
+
+</body>
+</html>

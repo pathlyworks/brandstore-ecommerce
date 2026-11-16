@@ -4,9 +4,11 @@
  * browser that runs the app. Each report is logged to the console ("[web-vitals] LCP 812 ms good /products")
  * and kept in window.__webVitals, where web/scripts/field-vitals.mjs reads it on the deployed preview.
  * reportAllChanges: CLS and INP are logged each time they grow, not only when the page is hidden.
- * A real site would send these to an analytics endpoint (navigator.sendBeacon); this project has none.
+ * Task 7: each report also goes to the monitoring sink (src/app/monitoring.ts), which sends it with
+ * navigator.sendBeacon when VITE_MONITORING_ENDPOINT is set (monitoring_plan.md).
  */
 import { onCLS, onINP, onLCP, type Metric } from 'web-vitals';
+import { record } from './monitoring';
 
 export interface VitalReport {
   name: Metric['name'];
@@ -31,6 +33,7 @@ function log(metric: Metric) {
     navigationType: metric.navigationType,
   };
   (window.__webVitals ??= []).push(report);
+  record({ type: 'vital', name: report.name, value: report.value, rating: report.rating });
   console.info(
     `[web-vitals] ${report.name} ${report.value}${report.name === 'CLS' ? '' : ' ms'} ${report.rating} ${report.path}`,
   );

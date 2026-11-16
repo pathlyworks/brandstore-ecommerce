@@ -10,10 +10,19 @@ import tailwindcss from '@tailwindcss/vite';
 
 const at = (path: string) => fileURLToPath(new URL(path, import.meta.url));
 
+/**
+ * Environment-based configuration (Task 7). The app reads its API address from VITE_API_BASE only
+ * (src/config.ts). The one default, for development, is the API kit's local server, and it lives here, in the
+ * build configuration, not in application code: CI, grading and the deployed builds set VITE_API_BASE.
+ * Every variable is listed in web/.env.example.
+ */
+const DEV_API_BASE = 'http://localhost:4010';
+
 export default defineConfig({
   // "/" normally; "/brandstore-ecommerce/" for the GitHub Pages preview (.github/workflows/pages.yml).
   base: process.env.VITE_BASE ?? '/',
   plugins: [react(), tailwindcss()],
+  define: { 'import.meta.env.VITE_API_DEV_DEFAULT': JSON.stringify(DEV_API_BASE) },
   resolve: {
     alias: {
       // VITE_PROFILE=1 builds with React's profiling build, so <Profiler> reports real timings in a

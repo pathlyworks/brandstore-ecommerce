@@ -9,6 +9,10 @@
  *   throttling (150 ms RTT, 1.6 Mbps down, 4x CPU slowdown), the same Chromium build;
  * - pages /, /products, /products/p-001, /cart, /login; `runs` runs per page, the median performance run is kept.
  * Output: docs/evidence/task5/lighthouse/<label>/<page>.json (full LHR) and summary.json.
+ *
+ * Task 7 options: `--profile 3g` replaces the network with Lighthouse's "regular 3G" preset (300 ms RTT,
+ * 700 kbps, 4x CPU), the profile Dina asked about before Black Friday; `--task 7` writes to
+ * docs/evidence/task7/lighthouse/<label>/ instead.
  */
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
@@ -28,13 +32,27 @@ const opt = (name, fallback) => {
 };
 const runs = opt('runs', 3);
 const port = opt('port', 4180);
+const HOST = '127.0.0.1'; // the preview server binds here only
+const sopt = (name, fallback) => {
+  const i = args.indexOf(`--${name}`);
+  return i > -1 ? args[i + 1] : fallback;
+};
+const profile = sopt('profile', 'default');
+const THREE_G = {
+  rttMs: 300,
+  throughputKbps: 700,
+  requestLatencyMs: 300 * 3.75,
+  downloadThroughputKbps: 700 * 0.9,
+  uploadThroughputKbps: 700 * 0.9,
+  cpuSlowdownMultiplier: 4,
+};
 const repo = fileURLToPath(new URL('../../', import.meta.url));
-const out = join(repo, 'docs/evidence/task5/lighthouse', label);
+const out = join(repo, `docs/evidence/task${sopt('task', '5')}/lighthouse`, label);
 mkdirSync(out, { recursive: true });
 
 // A server left on this port from an earlier run would be measured instead of <dist-dir>: refuse.
 try {
-  await fetch(`http://127.0.0.1:${port}`);
+  await fetch(`http://${HOST}:${port}`);
   throw new Error(`port ${port} is already in use; stop that server first`);
 } catch (error) {
   if (String(error).includes('already in use')) throw error;
@@ -51,19 +69,10 @@ const PAGES = {
 // vite itself (not through npx), so server.kill() below stops the server and frees the port.
 const server = spawn(
   join(repo, 'node_modules/.bin/vite'),
-  [
-    'preview',
-    '--outDir',
-    resolve(distArg),
-    '--port',
-    String(port),
-    '--strictPort',
-    '--host',
-    '127.0.0.1',
-  ],
+  ['preview', '--outDir', resolve(distArg), '--port', String(port), '--strictPort', '--host', HOST],
   { cwd: join(repo, 'web'), stdio: 'ignore' },
 );
-const base = `http://127.0.0.1:${port}`;
+const base = `http://${HOST}:${port}`;
 for (let i = 0; i < 60; i += 1) {
   try {
     if ((await fetch(base)).ok) break;
@@ -86,6 +95,7 @@ try {
         port: chrome.port,
         output: 'json',
         logLevel: 'error',
+        ...(profile === '3g' ? { throttling: THREE_G } : {}),
       });
       results.push(r.lhr);
     }

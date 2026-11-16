@@ -1,6 +1,6 @@
 {
   "name": "@brandstore/web",
-  "version": "0.2.0",
+  "version": "2.0.0",
   "private": true,
   "type": "module",
   "description": "BrandStore React + TypeScript app (Advanced Tasks 2–4: components and routing, cart and checkout, protected routes).",

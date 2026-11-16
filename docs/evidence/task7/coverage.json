@@ -1,0 +1,37 @@
+{
+  "command": "npx vitest run --coverage (2026-11-16, branch feature/production-readiness)",
+  "tests": "534 passed in 48 files",
+  "lines": {
+    "src/state (legacy)": {
+      "covered": 158,
+      "total": 161,
+      "pct": 98.1
+    },
+    "src/utils (legacy)": {
+      "covered": 234,
+      "total": 242,
+      "pct": 96.7
+    },
+    "web/src/components": {
+      "covered": 202,
+      "total": 218,
+      "pct": 92.7
+    },
+    "web/src/state": {
+      "covered": 316,
+      "total": 328,
+      "pct": 96.3
+    },
+    "all measured": {
+      "covered": 910,
+      "total": 949,
+      "pct": 95.89
+    }
+  },
+  "floors": {
+    "web/src/state": 75,
+    "web/src/components": 75,
+    "src/state (legacy)": 80,
+    "src/utils (legacy)": 80
+  }
+}

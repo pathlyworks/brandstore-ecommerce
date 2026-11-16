@@ -1,0 +1,66 @@
+name: Scheduled Lighthouse (production)
+
+# Monitoring plan (monitoring_plan.md §3): Lighthouse CI against the deployed site, every day and after each
+# deploy, with the same budgets as the pull-request gate (lighthouserc.production.json). A missed budget does
+# not turn the pipeline red (production has already shipped); it opens, or comments on, one issue labelled
+# "performance-regression", which is the alert the on-call engineer works from. Reports are kept 30 days.
+on:
+  schedule:
+    - cron: '17 5 * * *' # 07:17 Cairo time, before the morning traffic
+  workflow_run:
+    workflows: ['Deploy preview (GitHub Pages)']
+    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: lighthouse-scheduled
+  cancel-in-progress: false
+
+jobs:
+  lighthouse:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install --no-audit --no-fund
+      - name: Lighthouse CI on the production URLs (median of 3 runs per page)
+        id: lhci
+        continue-on-error: true
+        run: npx lhci autorun --config=lighthouserc.production.json 2>&1 | tee lhci.log
+      - name: Summary
+        if: always()
+        run: |
+          {
+            echo "### Scheduled Lighthouse: ${{ steps.lhci.outcome }}"
+            echo '```'
+            grep -E "✘|failure for|expected|All results processed|Assertion" lhci.log | head -40 || true
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lighthouse-scheduled
+          path: lighthouse/scheduled/
+          retention-days: 30
+      - name: Alert - open or update the performance-regression issue
+        if: steps.lhci.outcome == 'failure'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          run_url="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          body=$(printf 'A Lighthouse budget was missed on production.\n\nRun: %s\n\n```\n%s\n```\n\nResponse process: monitoring_plan.md §6.' \
+            "$run_url" "$(grep -E '✘|expected' lhci.log | head -20)")
+          gh label create performance-regression --color B60205 --description "Scheduled Lighthouse budget missed" 2>/dev/null || true
+          open=$(gh issue list --label performance-regression --state open --json number --jq '.[0].number')
+          if [ -n "$open" ]; then
+            gh issue comment "$open" --body "$body"
+          else
+            gh issue create --title "Lighthouse budget missed on production" --label performance-regression --body "$body"
+          fi

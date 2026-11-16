@@ -1,5 +1,30 @@
 # Changelog
 
+## [2.0.0] — 2026-11-16 — Advanced Task 7: production readiness
+
+The React + TypeScript storefront (`web/`) as the first tagged release of the rebuild. The legacy pages stay
+live until cutover (wave 5, `task_7_executive_report.md` §6).
+
+### Added
+- CI: a **Deploy preview** job on every pull request (the production build GitHub Pages serves, as the
+  `deploy-preview` artifact); version tags (`v*`) run every gate again and a **Release** job publishes the
+  GitHub Release with the build attached, only when all gates pass; `VITE_RELEASE` names each build.
+- Monitoring hooks (`web/src/app/monitoring.ts`): uncaught errors, unhandled rejections and route errors;
+  Web Vitals through the same sink; funnel events named (`add_to_cart`, `purchase`, `purchase_failed`
+  wired); sent with `navigator.sendBeacon` when `VITE_MONITORING_ENDPOINT` is set. Tests in `monitoring.test.ts`.
+- Scheduled Lighthouse CI against production (`.github/workflows/lighthouse-scheduled.yml`,
+  `lighthouserc.production.json`): daily and after each deploy; a missed budget opens a
+  `performance-regression` issue.
+- `.env.example` and `web/.env.example` documenting every variable per environment.
+- `monitoring_plan.md`, `task_7_executive_report.md`, `executive_presentation.pdf` (source in `docs/deck/`).
+
+### Changed
+- API base URL from the environment only: `web/src/config.ts` reads `VITE_API_BASE`; the development default
+  (the API kit on port 4010) is defined in `web/vite.config.ts`, not in application code.
+- GitHub Pages: the app shell is written at every public route (`web/scripts/pages-routes.mjs`), so deep
+  links answer 200 instead of 404.
+- The branch-name check is skipped for release tags.
+
 ## Unreleased — Advanced Task 5: dashboard, TypeScript, performance and accessibility (branch `feature/admin-dashboard-perf-a11y`, PR #11)
 ### Added
 - `/admin` store dashboard: sales, orders and average order value (sales ÷ orders not cancelled) from `GET /admin/summary`; sales by category and per month from all orders and the catalog, reconciled with the summary; hand-built HTML/SVG charts (`BarChart<Datum>`), each with a table of its numbers; the orders in a paged table.

@@ -2,8 +2,8 @@ name: Deploy preview (GitHub Pages)
 
 # The React app (web/) as a public preview: https://pathlyworks.github.io/brandstore-ecommerce/
 # GitHub Pages has no backend, so this build answers the TechSphere API in the browser with the same MSW
-# handlers the tests use (VITE_DEMO_API=1, src/demo/installDemoApi.ts). 404.html is a copy of index.html so
-# deep links (/products/p-001) load the app. The web-vitals library logs LCP, INP and CLS in the console there.
+# handlers the tests use (VITE_DEMO_API=1, src/demo/installDemoApi.ts). web/scripts/pages-routes.mjs writes the app
+# shell at every public route (200, Task 7) and as 404.html for the rest, so deep links load the app. The web-vitals library logs LCP, INP and CLS in the console there.
 on:
   push:
     branches: [main]
@@ -33,7 +33,9 @@ jobs:
           VITE_BASE: /brandstore-ecommerce/
           VITE_DEMO_API: '1'
           VITE_API_BASE: https://techsphere-api.demo.invalid
-      - run: cp web/dist/index.html web/dist/404.html
+          VITE_RELEASE: ${{ github.sha }}
+      - name: App shell at every public route (200 instead of 404 on deep links) and 404.html
+        run: node web/scripts/pages-routes.mjs web/dist
       - uses: actions/upload-pages-artifact@v3
         with:
           path: web/dist

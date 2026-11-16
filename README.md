@@ -113,7 +113,7 @@ More detail: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md), [`docs/STORAGE.md`]
 ```
 web/                 the React + TypeScript app (Vite, React Router, Tailwind, Storybook); see web/README.md
 *.html               pages (index, catalog, product, cart, login, register, account, comparison, 404)
-css/                 tokens.css (design tokens), base, layout, components
+css/                 base.css (design tokens), layout, components, utilities
 src/                 the app (see Architecture)
 api/openapi.json     our own API contract; api/techsphere/ = the official API kit (openapi.yaml, server.py)
 mock-server/         our BrandStore mock (served on /api by npm run start, Vite and the Netlify function)
@@ -129,10 +129,27 @@ Netlify runs `npm run build`, publishes `dist/` and serves our mock from `netlif
 (`netlify.toml` sets `VITE_API_URL=/api`). To deploy against a real TechSphere API instead, set `VITE_API_BASE`
 in Netlify's environment and add its origin to `connect-src` and `img-src` in the Content-Security-Policy.
 
+### Environments and releases (Advanced Task 7)
+
+| Environment | Where | API address (`VITE_API_BASE`) |
+| :-- | :-- | :-- |
+| Development | `npm run dev` | unset: the API kit on port 4010 (default in `web/vite.config.ts`) |
+| CI and grading | GitHub Actions, the grader | the API the job starts |
+| Deploy preview | every pull request: the `deploy-preview` artifact of the CI run | answered in the browser (`VITE_DEMO_API=1`) |
+| Preview site | https://pathlyworks.github.io/brandstore-ecommerce/ (`pages.yml`, on every push to `main`) | answered in the browser |
+| Production | not yet: needs the production API (`task_7_executive_report.md` §7) | the API's https address |
+
+Every variable is documented in `.env.example` and `web/.env.example`. **Releasing:** update `CHANGELOG.md`,
+merge, then `git tag -a vX.Y.Z -m "…" && git push origin vX.Y.Z`. The tag runs every CI gate again; the
+Release job publishes the GitHub Release (with the built app) only when all of them pass. Monitoring:
+`monitoring_plan.md`.
+
 ## 7. Documents
 
 | Task | Document |
 | :--- | :--- |
+| Advanced, Task 7 | `task_7_executive_report.md`, `executive_presentation.pdf` (source `docs/deck/`), `monitoring_plan.md`, `docs/evidence/task7/` |
+| Advanced, Task 6 | `task_6_testing_quality.md`, `code_review.md` |
 | Advanced, Task 4 | `task_4_security.md`, `security/`, `web/src/features/auth`, `web/src/api/client.ts` |
 | Advanced, Task 5 | `task_5_dashboard_performance.md`, `docs/evidence/task5/`, `web/src/features/admin`, `web/src/components/Table.tsx`, `web/scripts/` |
 | Advanced, Task 3 | `task_3_checkout.md`, `web/src/features/cart`, `web/src/features/checkout` |

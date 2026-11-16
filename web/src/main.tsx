@@ -5,8 +5,11 @@ import { RouterProvider } from 'react-router';
 import { router } from './app/router';
 import { Providers } from './app/providers';
 import { reportWebVitals } from './app/vitals';
+import { installErrorTracking } from './app/monitoring';
 import { registerServiceWorker } from './app/serviceWorker';
 import './styles/index.css';
+
+installErrorTracking();
 
 const root = document.getElementById('root');
 if (!root) throw new Error('index.html has no #root element');

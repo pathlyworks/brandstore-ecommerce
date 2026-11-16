@@ -64,16 +64,16 @@ web/                                   the React app (wave 0); legacy stays at t
 │  │  ├─ product/                      ProductRoute, Gallery, PurchasePanel, SpecsTable, RecentStrip
 │  │  ├─ cart/                         CartRoute, CartLines, OrderSummary, SavedList, CartContext.tsx, cart.reducer.ts
 │  │  ├─ checkout/                     CheckoutRoute, checkout.action.ts
-│  │  ├─ auth/                         LoginRoute, RegisterRoute, AuthContext.tsx, RequireAuth.tsx
+│  │  ├─ auth/                         LoginRoute, RegisterRoute, ProtectedRoute.tsx (planned as RequireAuth)
 │  │  ├─ account/                      AccountLayout, OrdersRoute, AddressesRoute, loaders/actions
-│  │  ├─ admin/                        AdminRoute (summary), RequireRole.tsx
+│  │  ├─ admin/                        AdminRoute (summary); role check in ProtectedRoute
 │  │  ├─ home/                         HomeRoute, Hero, CategoryTiles, FeaturedProducts, Deals, Testimonials, Newsletter
 │  │  └─ errors/                       NotFoundRoute, RouteErrorBoundary
 │  ├─ components/                      shared, presentational, with stories: Price, ProductImage, ProductCard,
 │  │                                   QuantityStepper, StatusMessage, Button, FormField, ErrorSummary, Skeleton
 │  ├─ hooks/                           useAnnounce, useSessionStorage, useDebouncedValue, useDocumentTitle
-│  ├─ lib/                             ported pure modules: money.ts, cart-math.ts, dates.ts, query-string.ts,
-│  │                                   storage.ts, validate.ts, jwt.ts (from src/utils, src/state)
+│  ├─ lib/                             ported pure modules: money.ts, dates.ts, browserStorage.ts, cn.ts; as built, the
+│  │                                   cart, checkout and token logic is in state/ (from src/utils, src/state)
 │  └─ styles/                          index.css (@import "tailwindcss"), theme.css (generated from tokens)
 └─ tests/
    ├─ unit/        lib/ and reducers (ported Phase 2 unit tests)
