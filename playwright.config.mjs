@@ -56,7 +56,13 @@ export default defineConfig({
           name: `web-${name}`,
           testDir: 'web/e2e',
           testMatch: '**/*.spec.ts',
-          use: { ...devices[DEVICE[name]], baseURL: `http://127.0.0.1:${WEB_PORT}` },
+          // The app registers a service worker (Task 5). Requests it makes are not seen by page.route, so the
+          // specs that mock responses run without it; web/e2e/task5.spec.ts allows it for the offline test.
+          use: {
+            ...devices[DEVICE[name]],
+            baseURL: `http://127.0.0.1:${WEB_PORT}`,
+            serviceWorkers: 'block',
+          },
         }))
       : []),
   ],
