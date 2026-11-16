@@ -14,18 +14,34 @@ export function StockBadge({ status }: { status: Product['stock']['status'] }) {
   return <Badge tone={tone}>{text}</Badge>;
 }
 
-export function ProductCard({ product }: { product: Product }) {
+/**
+ * `priority`: the cards in the first row (above the fold), loaded at once and the first one with
+ * fetchpriority="high" because it is the LCP element; every other card waits until it is near the screen.
+ */
+export function ProductCard({
+  product,
+  priority = 'lazy',
+  headingLevel = 3,
+}: {
+  product: Product;
+  priority?: 'high' | 'eager' | 'lazy';
+  /** 2 under the page's h1 (/products), 3 under a section's h2 (home). */
+  headingLevel?: 2 | 3;
+}) {
   const image = product.images[0];
   return (
     <Card
       heading={product.name}
+      headingLevel={headingLevel}
       href={`/products/${encodeURIComponent(product.id)}`}
       disabled={product.stock.status === 'out_of_stock'}
       media={
         <img
           src={image.url}
           alt={image.alt}
-          loading="lazy"
+          loading={priority === 'lazy' ? 'lazy' : 'eager'}
+          fetchPriority={priority === 'high' ? 'high' : 'auto'}
+          decoding="async"
           width={320}
           height={240}
           className="aspect-(--ratio-media) w-full object-cover"
@@ -48,12 +64,24 @@ export function ProductCard({ product }: { product: Product }) {
 }
 
 /** A product grid: one stable key per product (its id), never the index. */
-export function ProductGrid({ products, label }: { products: readonly Product[]; label: string }) {
+export function ProductGrid({
+  products,
+  label,
+  headingLevel = 3,
+}: {
+  products: readonly Product[];
+  label: string;
+  headingLevel?: 2 | 3;
+}) {
   return (
     <ul aria-label={label} className="grid grid-cols-1 gap-md md:grid-cols-2 lg:grid-cols-4">
-      {products.map((product) => (
+      {products.map((product, index) => (
         <li key={product.id}>
-          <ProductCard product={product} />
+          <ProductCard
+            product={product}
+            headingLevel={headingLevel}
+            priority={index === 0 ? 'high' : index < 4 ? 'eager' : 'lazy'}
+          />
         </li>
       ))}
     </ul>

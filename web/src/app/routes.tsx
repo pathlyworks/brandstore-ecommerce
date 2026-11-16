@@ -8,26 +8,46 @@
  * (ProtectedRoute) is in this eagerly loaded file and wraps the lazily loaded screens, so a guarded screen's
  * code is fetched only once the guard lets the user through.
  *
- * Code splitting: the admin area and the checkout steps are separate chunks (React.lazy; RootLayout's
+ * Code splitting (Task 5: every route but the home page; Task 4: the admin area and the checkout steps) are separate chunks (React.lazy; RootLayout's
  * <Suspense> shows a loading state while one downloads). A shopper never downloads the admin chunk.
  */
 import { lazy } from 'react';
 import { Navigate, type RouteObject } from 'react-router';
 import { ProtectedRoute } from '../features/auth/ProtectedRoute';
-import { RegisterRoute } from '../features/auth/RegisterRoute';
 import { RootLayout } from './RootLayout';
 import { RouteError } from './RouteError';
-import { AddressesRoute, CompareRoute } from './PlannedRoutes';
 import { HomeRoute } from '../features/home/HomeRoute';
-import { ProductsRoute } from '../features/catalog/ProductsRoute';
-import { ProductRoute } from '../features/product/ProductRoute';
-import { CartRoute } from '../features/cart/CartRoute';
 import { LoginRoute } from '../features/auth/LoginRoute';
-import { AccountLayout } from '../features/account/AccountLayout';
-import { OrdersRoute } from '../features/account/OrdersRoute';
-import { ConfirmationRoute } from '../features/checkout/ConfirmationRoute';
-import { NotFoundRoute } from '../features/errors/NotFoundRoute';
+import { CartRoute } from '../features/cart/CartRoute';
+import { ProductRoute } from '../features/product/ProductRoute';
+import { ProductsRoute } from '../features/catalog/ProductsRoute';
 
+// Lazy (Task 5): the screens a visit rarely starts on: register, account, orders, order confirmation,
+// planned pages, 404 (and since Task 4 the checkout steps and admin). The shopper's landing screens (home,
+// catalog, product, cart, sign-in) stay in the main chunk: making them lazy too saved 20 kB but delayed
+// their first paint by a second round trip (Lighthouse LCP 0.76 s → 2.4–3.1 s on /cart, /login,
+// /products/:id; docs/evidence/task5/lighthouse/lazy-all).
+const RegisterRoute = lazy(() =>
+  import('../features/auth/RegisterRoute').then((m) => ({ default: m.RegisterRoute })),
+);
+const AccountLayout = lazy(() =>
+  import('../features/account/AccountLayout').then((m) => ({ default: m.AccountLayout })),
+);
+const OrdersRoute = lazy(() =>
+  import('../features/account/OrdersRoute').then((m) => ({ default: m.OrdersRoute })),
+);
+const ConfirmationRoute = lazy(() =>
+  import('../features/checkout/ConfirmationRoute').then((m) => ({ default: m.ConfirmationRoute })),
+);
+const NotFoundRoute = lazy(() =>
+  import('../features/errors/NotFoundRoute').then((m) => ({ default: m.NotFoundRoute })),
+);
+const AddressesRoute = lazy(() =>
+  import('./PlannedRoutes').then((m) => ({ default: m.AddressesRoute })),
+);
+const CompareRoute = lazy(() =>
+  import('./PlannedRoutes').then((m) => ({ default: m.CompareRoute })),
+);
 const AdminRoute = lazy(() => import('../features/admin/AdminRoute'));
 const CheckoutLayout = lazy(() =>
   import('../features/checkout/CheckoutLayout').then((m) => ({ default: m.CheckoutLayout })),

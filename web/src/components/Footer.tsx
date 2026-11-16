@@ -1,4 +1,5 @@
 /** Footer: link groups and the small print (one component instead of 9 copies in 4 versions). */
+import { memo } from 'react';
 import { Link } from 'react-router';
 import type { NavItem } from './Navbar';
 
@@ -12,7 +13,7 @@ export interface FooterProps {
   note: string;
 }
 
-export function Footer({ groups, note }: FooterProps) {
+function FooterBase({ groups, note }: FooterProps) {
   return (
     <footer className="mt-xl bg-dark text-text-on-dark">
       <div className="mx-auto grid max-w-(--container-page) gap-lg px-md py-lg md:grid-cols-3">
@@ -42,3 +43,11 @@ export function Footer({ groups, note }: FooterProps) {
     </footer>
   );
 }
+
+/**
+ * Memoised because the React Profiler showed it re-rendering on every cart change (RootLayout reads the
+ * cart for the header count) although its props never change. Median commit of a cart quantity change:
+ * 14.1 ms without, 11.0 ms with (medians of 3 and 4 runs, CPU 4x; noisy, small, but free:
+ * docs/evidence/task5/profiler-footer-memo.json). The only memo added in Task 5.
+ */
+export const Footer = memo(FooterBase);

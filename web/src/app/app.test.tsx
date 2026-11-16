@@ -37,7 +37,8 @@ describe('layout route', () => {
 describe('/products', () => {
   it('shows a skeleton, then 8 products with stable keys', async () => {
     renderApp('/products');
-    expect(screen.getByRole('status')).toHaveTextContent(/loading products/i);
+    // /products is a lazy route (Task 5): a loading status shows while its chunk and then its data load.
+    expect(await screen.findByRole('status')).toHaveTextContent(/loading/i);
     const list = await screen.findByRole('list', { name: 'Products' });
     expect(within(list).getAllByRole('listitem')).toHaveLength(8);
     expect(screen.getByRole('status')).toHaveTextContent('24 products');
