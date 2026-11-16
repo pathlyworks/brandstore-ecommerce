@@ -19,7 +19,9 @@ import {
 
 function deepFreeze<T>(value: T): T {
   if (value && typeof value === 'object') {
-    Object.values(value).forEach((v) => deepFreeze(v));
+    Object.values(value as object).forEach((v: unknown) => {
+      deepFreeze(v);
+    });
     Object.freeze(value);
   }
   return value;
