@@ -1,0 +1,126 @@
+{
+  "label": "before",
+  "initialJs": {
+    "chunks": [
+      "assets/index-BqpBKRZM.js"
+    ],
+    "raw": 386660,
+    "gzip": 121445
+  },
+  "css": [
+    {
+      "file": "assets/index-YNPeBVJL.css",
+      "raw": 25806,
+      "gzip": 5952
+    }
+  ],
+  "lazyRoutes": [
+    {
+      "route": "src/features/checkout/CheckoutLayout.tsx",
+      "adds": {
+        "raw": 4471,
+        "gzip": 2100
+      }
+    },
+    {
+      "route": "src/features/checkout/ReviewStep.tsx",
+      "adds": {
+        "raw": 5719,
+        "gzip": 2783
+      }
+    },
+    {
+      "route": "src/features/checkout/PaymentStep.tsx",
+      "adds": {
+        "raw": 4641,
+        "gzip": 2250
+      }
+    },
+    {
+      "route": "src/features/checkout/AddressStep.tsx",
+      "adds": {
+        "raw": 4468,
+        "gzip": 2273
+      }
+    },
+    {
+      "route": "src/features/admin/AdminRoute.tsx",
+      "adds": {
+        "raw": 1275,
+        "gzip": 648
+      }
+    },
+    {
+      "route": "src/features/checkout/CheckoutIndex.tsx",
+      "adds": {
+        "raw": 653,
+        "gzip": 492
+      }
+    }
+  ],
+  "chunks": [
+    {
+      "key": "index.html",
+      "file": "assets/index-BqpBKRZM.js",
+      "dynamic": false,
+      "raw": 386660,
+      "gzip": 121445
+    },
+    {
+      "key": "src/features/checkout/CheckoutLayout.tsx",
+      "file": "assets/CheckoutLayout-cLF3jh1c.js",
+      "dynamic": true,
+      "raw": 4034,
+      "gzip": 1795
+    },
+    {
+      "key": "src/features/checkout/ReviewStep.tsx",
+      "file": "assets/ReviewStep-yKhHq9gv.js",
+      "dynamic": true,
+      "raw": 3988,
+      "gzip": 1714
+    },
+    {
+      "key": "src/features/checkout/PaymentStep.tsx",
+      "file": "assets/PaymentStep-BMPst3TJ.js",
+      "dynamic": true,
+      "raw": 2910,
+      "gzip": 1181
+    },
+    {
+      "key": "src/features/checkout/AddressStep.tsx",
+      "file": "assets/AddressStep-BTRJhRWW.js",
+      "dynamic": true,
+      "raw": 2737,
+      "gzip": 1204
+    },
+    {
+      "key": "_StepForm-mk7DQ3s2.js",
+      "file": "assets/StepForm-mk7DQ3s2.js",
+      "dynamic": false,
+      "raw": 1294,
+      "gzip": 764
+    },
+    {
+      "key": "src/features/admin/AdminRoute.tsx",
+      "file": "assets/AdminRoute-BY4scpnv.js",
+      "dynamic": true,
+      "raw": 1275,
+      "gzip": 648
+    },
+    {
+      "key": "_CheckoutContext-CHIKoLV9.js",
+      "file": "assets/CheckoutContext-CHIKoLV9.js",
+      "dynamic": false,
+      "raw": 437,
+      "gzip": 305
+    },
+    {
+      "key": "src/features/checkout/CheckoutIndex.tsx",
+      "file": "assets/CheckoutIndex-cpinowfV.js",
+      "dynamic": true,
+      "raw": 216,
+      "gzip": 187
+    }
+  ]
+}

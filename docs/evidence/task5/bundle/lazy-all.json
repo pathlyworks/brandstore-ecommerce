@@ -1,0 +1,309 @@
+{
+  "label": "after",
+  "initialJs": {
+    "chunks": [
+      "assets/index-9XaTwxUP.js",
+      "assets/vendor-BoeIJjaA.js"
+    ],
+    "raw": 370839,
+    "gzip": 118799
+  },
+  "css": [
+    {
+      "file": "assets/index-DJQX4R1C.css",
+      "raw": 27720,
+      "gzip": 6359
+    }
+  ],
+  "lazyRoutes": [
+    {
+      "route": "src/features/admin/AdminRoute.tsx",
+      "adds": {
+        "raw": 15775,
+        "gzip": 5959
+      }
+    },
+    {
+      "route": "src/features/product/ProductRoute.tsx",
+      "adds": {
+        "raw": 9321,
+        "gzip": 4274
+      }
+    },
+    {
+      "route": "src/features/checkout/ReviewStep.tsx",
+      "adds": {
+        "raw": 11079,
+        "gzip": 5058
+      }
+    },
+    {
+      "route": "src/features/checkout/CheckoutLayout.tsx",
+      "adds": {
+        "raw": 4543,
+        "gzip": 2143
+      }
+    },
+    {
+      "route": "src/features/account/OrdersRoute.tsx",
+      "adds": {
+        "raw": 8104,
+        "gzip": 3537
+      }
+    },
+    {
+      "route": "src/features/catalog/ProductsRoute.tsx",
+      "adds": {
+        "raw": 5066,
+        "gzip": 2460
+      }
+    },
+    {
+      "route": "src/features/cart/CartRoute.tsx",
+      "adds": {
+        "raw": 9156,
+        "gzip": 4078
+      }
+    },
+    {
+      "route": "src/features/checkout/PaymentStep.tsx",
+      "adds": {
+        "raw": 6249,
+        "gzip": 3211
+      }
+    },
+    {
+      "route": "src/features/checkout/AddressStep.tsx",
+      "adds": {
+        "raw": 6076,
+        "gzip": 3244
+      }
+    },
+    {
+      "route": "src/features/auth/LoginRoute.tsx",
+      "adds": {
+        "raw": 3299,
+        "gzip": 1739
+      }
+    },
+    {
+      "route": "src/features/auth/RegisterRoute.tsx",
+      "adds": {
+        "raw": 3291,
+        "gzip": 1732
+      }
+    },
+    {
+      "route": "src/features/checkout/ConfirmationRoute.tsx",
+      "adds": {
+        "raw": 1695,
+        "gzip": 709
+      }
+    },
+    {
+      "route": "src/features/account/AccountLayout.tsx",
+      "adds": {
+        "raw": 1135,
+        "gzip": 602
+      }
+    },
+    {
+      "route": "src/features/errors/NotFoundRoute.tsx",
+      "adds": {
+        "raw": 785,
+        "gzip": 404
+      }
+    },
+    {
+      "route": "src/app/PlannedRoutes.tsx",
+      "adds": {
+        "raw": 692,
+        "gzip": 415
+      }
+    },
+    {
+      "route": "src/features/checkout/CheckoutIndex.tsx",
+      "adds": {
+        "raw": 730,
+        "gzip": 538
+      }
+    }
+  ],
+  "chunks": [
+    {
+      "key": "_vendor-BoeIJjaA.js",
+      "file": "assets/vendor-BoeIJjaA.js",
+      "dynamic": false,
+      "raw": 315729,
+      "gzip": 100531
+    },
+    {
+      "key": "index.html",
+      "file": "assets/index-9XaTwxUP.js",
+      "dynamic": false,
+      "raw": 55110,
+      "gzip": 18268
+    },
+    {
+      "key": "src/features/admin/AdminRoute.tsx",
+      "file": "assets/AdminRoute-CCmPpyZT.js",
+      "dynamic": true,
+      "raw": 11665,
+      "gzip": 4196
+    },
+    {
+      "key": "src/features/product/ProductRoute.tsx",
+      "file": "assets/ProductRoute-wBu5QmU8.js",
+      "dynamic": true,
+      "raw": 4656,
+      "gzip": 2197
+    },
+    {
+      "key": "src/features/checkout/ReviewStep.tsx",
+      "file": "assets/ReviewStep-D5_8zJqQ.js",
+      "dynamic": true,
+      "raw": 4114,
+      "gzip": 1778
+    },
+    {
+      "key": "src/features/checkout/CheckoutLayout.tsx",
+      "file": "assets/CheckoutLayout-BWNaRsKJ.js",
+      "dynamic": true,
+      "raw": 4063,
+      "gzip": 1810
+    },
+    {
+      "key": "_Table-DuU7g3VV.js",
+      "file": "assets/Table-DuU7g3VV.js",
+      "dynamic": false,
+      "raw": 4008,
+      "gzip": 1660
+    },
+    {
+      "key": "src/features/account/OrdersRoute.tsx",
+      "file": "assets/OrdersRoute-DnZESGSh.js",
+      "dynamic": true,
+      "raw": 3994,
+      "gzip": 1774
+    },
+    {
+      "key": "src/features/catalog/ProductsRoute.tsx",
+      "file": "assets/ProductsRoute-DKKWS0mK.js",
+      "dynamic": true,
+      "raw": 3632,
+      "gzip": 1579
+    },
+    {
+      "key": "src/features/cart/CartRoute.tsx",
+      "file": "assets/CartRoute-BV3EYJa_.js",
+      "dynamic": true,
+      "raw": 3218,
+      "gzip": 1445
+    },
+    {
+      "key": "src/features/checkout/PaymentStep.tsx",
+      "file": "assets/PaymentStep-DsMIQF05.js",
+      "dynamic": true,
+      "raw": 3011,
+      "gzip": 1219
+    },
+    {
+      "key": "src/features/checkout/AddressStep.tsx",
+      "file": "assets/AddressStep-B0I3DvY2.js",
+      "dynamic": true,
+      "raw": 2838,
+      "gzip": 1252
+    },
+    {
+      "key": "src/features/auth/LoginRoute.tsx",
+      "file": "assets/LoginRoute-DBoWVrtH.js",
+      "dynamic": true,
+      "raw": 2642,
+      "gzip": 1322
+    },
+    {
+      "key": "src/features/auth/RegisterRoute.tsx",
+      "file": "assets/RegisterRoute-DtSS6v27.js",
+      "dynamic": true,
+      "raw": 2634,
+      "gzip": 1315
+    },
+    {
+      "key": "src/features/checkout/ConfirmationRoute.tsx",
+      "file": "assets/ConfirmationRoute-DPBSXbfG.js",
+      "dynamic": true,
+      "raw": 1695,
+      "gzip": 709
+    },
+    {
+      "key": "_StepForm-xq_PFz6Q.js",
+      "file": "assets/StepForm-xq_PFz6Q.js",
+      "dynamic": false,
+      "raw": 1324,
+      "gzip": 778
+    },
+    {
+      "key": "_OrderSummary-CG7GHVA5.js",
+      "file": "assets/OrderSummary-CG7GHVA5.js",
+      "dynamic": false,
+      "raw": 1153,
+      "gzip": 509
+    },
+    {
+      "key": "src/features/account/AccountLayout.tsx",
+      "file": "assets/AccountLayout-Yr-7nNH0.js",
+      "dynamic": true,
+      "raw": 1135,
+      "gzip": 602
+    },
+    {
+      "key": "src/features/errors/NotFoundRoute.tsx",
+      "file": "assets/NotFoundRoute-QLadGKfR.js",
+      "dynamic": true,
+      "raw": 785,
+      "gzip": 404
+    },
+    {
+      "key": "_Select-B6kZLmV_.js",
+      "file": "assets/Select-B6kZLmV_.js",
+      "dynamic": false,
+      "raw": 777,
+      "gzip": 464
+    },
+    {
+      "key": "src/app/PlannedRoutes.tsx",
+      "file": "assets/PlannedRoutes-DVBZa1uG.js",
+      "dynamic": true,
+      "raw": 692,
+      "gzip": 415
+    },
+    {
+      "key": "_Input-CaFhWyJb.js",
+      "file": "assets/Input-CaFhWyJb.js",
+      "dynamic": false,
+      "raw": 657,
+      "gzip": 417
+    },
+    {
+      "key": "_CheckoutContext-BvWCQYMe.js",
+      "file": "assets/CheckoutContext-BvWCQYMe.js",
+      "dynamic": false,
+      "raw": 480,
+      "gzip": 333
+    },
+    {
+      "key": "src/features/checkout/CheckoutIndex.tsx",
+      "file": "assets/CheckoutIndex-DtJj31sm.js",
+      "dynamic": true,
+      "raw": 250,
+      "gzip": 205
+    },
+    {
+      "key": "_orderStatus-5uM7wnAl.js",
+      "file": "assets/orderStatus-5uM7wnAl.js",
+      "dynamic": false,
+      "raw": 102,
+      "gzip": 103
+    }
+  ]
+}

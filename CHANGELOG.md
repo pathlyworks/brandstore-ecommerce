@@ -1,5 +1,18 @@
 # Changelog
 
+## Unreleased — Advanced Task 5: dashboard, TypeScript, performance and accessibility (branch `feature/admin-dashboard-perf-a11y`, PR #11)
+### Added
+- `/admin` store dashboard: sales, orders and average order value (sales ÷ orders not cancelled) from `GET /admin/summary`; sales by category and per month from all orders and the catalog, reconciled with the summary; hand-built HTML/SVG charts (`BarChart<Datum>`), each with a table of its numbers; the orders in a paged table.
+- `DataTable<Row>` with sorting and paging (`sortRows<Row>`, `pageOf<Row>`), `collectPages<T>`.
+- Search dialog in the header, toast live region, offline banner; service worker (cache-first hashed assets, network-first pages and catalog, never anything with a token) and `web/public/_headers`.
+- web-vitals reporting (LCP, INP, CLS) in `src/app/vitals.ts`; evidence scripts `web/scripts/{measure,bundle-report,field-vitals,a11y-scan,profile}.mjs` and the evidence pack `docs/evidence/task5/`.
+- Tests: dashboard model against the fixtures, table model, accessibility of shared components (focus trap and return, live region, badge contrast), admin route; Playwright `web/e2e/task5.spec.ts`.
+### Changed
+- Lazy routes for the non-landing screens; React/React Router in a `vendor` chunk; LCP image priority; `<main>` one screen tall (CLS 0.37–0.41 → 0); catalog grid remounts per result (field CLS 0.38 → 0); `memo(Footer)` after profiling; meta description, `robots.txt`, favicon.
+- `exactOptionalPropertyTypes` in `web/tsconfig.json`; muted badge contrast 4.0:1 → 6.4:1; catalog card headings `h2` under the page `h1`.
+### Fixed
+- The MSW `/admin/summary` handler returned numbers that matched no fixture; it now computes them like the API kit.
+
 ## Unreleased — Advanced Task 4: protected routes and sessions (branch `feature/protected-routes-session`, PR #10)
 ### Added
 - AuthContext as a pure reducer (signIn, signOut, expire): login, register (`/register`), logout; session in memory mirrored to sessionStorage; `exp` and `role` read from the token; expiry timer; sign-out reaches other tabs and removes the checkout draft, never the cart.

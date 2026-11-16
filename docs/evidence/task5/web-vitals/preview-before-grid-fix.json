@@ -1,0 +1,352 @@
+{
+  "label": "preview",
+  "base": "http://localhost:4191",
+  "sessions": {
+    "phone (Pixel 7 emulation, no throttling)": {
+      "reports": [
+        {
+          "name": "LCP",
+          "value": 248,
+          "rating": "good",
+          "path": "/products",
+          "navigationType": "navigate"
+        },
+        {
+          "name": "CLS",
+          "value": 0,
+          "rating": "good",
+          "path": "/products",
+          "navigationType": "navigate"
+        },
+        {
+          "name": "LCP",
+          "value": 544,
+          "rating": "good",
+          "path": "/products",
+          "navigationType": "navigate"
+        },
+        {
+          "name": "LCP",
+          "value": 564,
+          "rating": "good",
+          "path": "/products",
+          "navigationType": "navigate"
+        },
+        {
+          "name": "CLS",
+          "value": 0.379,
+          "rating": "poor",
+          "path": "/products",
+          "navigationType": "navigate"
+        },
+        {
+          "name": "INP",
+          "value": 24,
+          "rating": "good",
+          "path": "/products",
+          "navigationType": "navigate"
+        },
+        {
+          "name": "LCP",
+          "value": 132,
+          "rating": "good",
+          "path": "/products/p-003",
+          "navigationType": "navigate"
+        },
+        {
+          "name": "CLS",
+          "value": 0,
+          "rating": "good",
+          "path": "/products/p-003",
+          "navigationType": "navigate"
+        },
+        {
+          "name": "LCP",
+          "value": 448,
+          "rating": "good",
+          "path": "/products/p-003",
+          "navigationType": "navigate"
+        },
+        {
+          "name": "INP",
+          "value": 16,
+          "rating": "good",
+          "path": "/products/p-003",
+          "navigationType": "navigate"
+        },
+        {
+          "name": "LCP",
+          "value": 100,
+          "rating": "good",
+          "path": "/cart",
+          "navigationType": "navigate"
+        },
+        {
+          "name": "CLS",
+          "value": 0,
+          "rating": "good",
+          "path": "/cart",
+          "navigationType": "navigate"
+        },
+        {
+          "name": "LCP",
+          "value": 132,
+          "rating": "good",
+          "path": "/cart",
+          "navigationType": "navigate"
+        }
+      ],
+      "console": [
+        "[web-vitals] LCP 248 ms good /products",
+        "[web-vitals] CLS 0 good /products",
+        "[web-vitals] LCP 544 ms good /products",
+        "[web-vitals] LCP 564 ms good /products",
+        "[web-vitals] CLS 0.379 poor /products",
+        "[web-vitals] INP 24 ms good /products",
+        "[web-vitals] LCP 132 ms good /products/p-003",
+        "[web-vitals] CLS 0 good /products/p-003",
+        "[web-vitals] LCP 448 ms good /products/p-003",
+        "[web-vitals] INP 16 ms good /products/p-003",
+        "[web-vitals] LCP 100 ms good /cart",
+        "[web-vitals] CLS 0 good /cart",
+        "[web-vitals] LCP 132 ms good /cart"
+      ]
+    },
+    "desktop (1280x900, no throttling)": {
+      "reports": [
+        {
+          "name": "LCP",
+          "value": 172,
+          "rating": "good",
+          "path": "/products",
+          "navigationType": "navigate"
+        },
+        {
+          "name": "CLS",
+          "value": 0,
+          "rating": "good",
+          "path": "/products",
+          "navigationType": "navigate"
+        },
+        {
+          "name": "LCP",
+          "value": 472,
+          "rating": "good",
+          "path": "/products",
+          "navigationType": "navigate"
+        },
+        {
+          "name": "LCP",
+          "value": 508,
+          "rating": "good",
+          "path": "/products",
+          "navigationType": "navigate"
+        },
+        {
+          "name": "CLS",
+          "value": 0.161,
+          "rating": "needs-improvement",
+          "path": "/products",
+          "navigationType": "navigate"
+        },
+        {
+          "name": "INP",
+          "value": 24,
+          "rating": "good",
+          "path": "/products",
+          "navigationType": "navigate"
+        },
+        {
+          "name": "LCP",
+          "value": 116,
+          "rating": "good",
+          "path": "/products/p-003",
+          "navigationType": "navigate"
+        },
+        {
+          "name": "CLS",
+          "value": 0,
+          "rating": "good",
+          "path": "/products/p-003",
+          "navigationType": "navigate"
+        },
+        {
+          "name": "LCP",
+          "value": 436,
+          "rating": "good",
+          "path": "/products/p-003",
+          "navigationType": "navigate"
+        },
+        {
+          "name": "INP",
+          "value": 16,
+          "rating": "good",
+          "path": "/products/p-003",
+          "navigationType": "navigate"
+        },
+        {
+          "name": "LCP",
+          "value": 120,
+          "rating": "good",
+          "path": "/cart",
+          "navigationType": "navigate"
+        },
+        {
+          "name": "CLS",
+          "value": 0,
+          "rating": "good",
+          "path": "/cart",
+          "navigationType": "navigate"
+        },
+        {
+          "name": "CLS",
+          "value": 0,
+          "rating": "good",
+          "path": "/cart",
+          "navigationType": "navigate"
+        },
+        {
+          "name": "LCP",
+          "value": 172,
+          "rating": "good",
+          "path": "/cart",
+          "navigationType": "navigate"
+        }
+      ],
+      "console": [
+        "[web-vitals] LCP 172 ms good /products",
+        "[web-vitals] CLS 0 good /products",
+        "[web-vitals] LCP 472 ms good /products",
+        "[web-vitals] LCP 508 ms good /products",
+        "[web-vitals] CLS 0.161 needs-improvement /products",
+        "[web-vitals] INP 24 ms good /products",
+        "[web-vitals] LCP 116 ms good /products/p-003",
+        "[web-vitals] CLS 0 good /products/p-003",
+        "[web-vitals] LCP 436 ms good /products/p-003",
+        "[web-vitals] INP 16 ms good /products/p-003",
+        "[web-vitals] LCP 120 ms good /cart",
+        "[web-vitals] CLS 0 good /cart",
+        "[web-vitals] CLS 0 good /cart",
+        "[web-vitals] LCP 172 ms good /cart"
+      ]
+    }
+  },
+  "final": {
+    "phone (Pixel 7 emulation, no throttling)": {
+      "/products LCP": {
+        "name": "LCP",
+        "value": 564,
+        "rating": "good",
+        "path": "/products",
+        "navigationType": "navigate"
+      },
+      "/products CLS": {
+        "name": "CLS",
+        "value": 0.379,
+        "rating": "poor",
+        "path": "/products",
+        "navigationType": "navigate"
+      },
+      "/products INP": {
+        "name": "INP",
+        "value": 24,
+        "rating": "good",
+        "path": "/products",
+        "navigationType": "navigate"
+      },
+      "/products/p-003 LCP": {
+        "name": "LCP",
+        "value": 448,
+        "rating": "good",
+        "path": "/products/p-003",
+        "navigationType": "navigate"
+      },
+      "/products/p-003 CLS": {
+        "name": "CLS",
+        "value": 0,
+        "rating": "good",
+        "path": "/products/p-003",
+        "navigationType": "navigate"
+      },
+      "/products/p-003 INP": {
+        "name": "INP",
+        "value": 16,
+        "rating": "good",
+        "path": "/products/p-003",
+        "navigationType": "navigate"
+      },
+      "/cart LCP": {
+        "name": "LCP",
+        "value": 132,
+        "rating": "good",
+        "path": "/cart",
+        "navigationType": "navigate"
+      },
+      "/cart CLS": {
+        "name": "CLS",
+        "value": 0,
+        "rating": "good",
+        "path": "/cart",
+        "navigationType": "navigate"
+      }
+    },
+    "desktop (1280x900, no throttling)": {
+      "/products LCP": {
+        "name": "LCP",
+        "value": 508,
+        "rating": "good",
+        "path": "/products",
+        "navigationType": "navigate"
+      },
+      "/products CLS": {
+        "name": "CLS",
+        "value": 0.161,
+        "rating": "needs-improvement",
+        "path": "/products",
+        "navigationType": "navigate"
+      },
+      "/products INP": {
+        "name": "INP",
+        "value": 24,
+        "rating": "good",
+        "path": "/products",
+        "navigationType": "navigate"
+      },
+      "/products/p-003 LCP": {
+        "name": "LCP",
+        "value": 436,
+        "rating": "good",
+        "path": "/products/p-003",
+        "navigationType": "navigate"
+      },
+      "/products/p-003 CLS": {
+        "name": "CLS",
+        "value": 0,
+        "rating": "good",
+        "path": "/products/p-003",
+        "navigationType": "navigate"
+      },
+      "/products/p-003 INP": {
+        "name": "INP",
+        "value": 16,
+        "rating": "good",
+        "path": "/products/p-003",
+        "navigationType": "navigate"
+      },
+      "/cart LCP": {
+        "name": "LCP",
+        "value": 172,
+        "rating": "good",
+        "path": "/cart",
+        "navigationType": "navigate"
+      },
+      "/cart CLS": {
+        "name": "CLS",
+        "value": 0,
+        "rating": "good",
+        "path": "/cart",
+        "navigationType": "navigate"
+      }
+    }
+  }
+}
