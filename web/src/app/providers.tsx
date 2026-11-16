@@ -2,11 +2,14 @@
 import type { ReactNode } from 'react';
 import { AuthProvider } from '../features/auth/AuthContext';
 import { CartProvider } from '../features/cart/CartContext';
+import { ToastProvider } from '../components/Toast';
 
 export function Providers({ children }: { children: ReactNode }) {
   return (
     <AuthProvider>
-      <CartProvider>{children}</CartProvider>
+      <CartProvider>
+        <ToastProvider>{children}</ToastProvider>
+      </CartProvider>
     </AuthProvider>
   );
 }

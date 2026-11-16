@@ -140,7 +140,11 @@ export function CartRoute() {
           <div className="flex flex-wrap items-start justify-between gap-sm">
             <OrderSummary totals={totals} />
             <div className="flex gap-xs">
-              <Button variant="secondary" onClick={() => setConfirming(true)}>
+              <Button
+                variant="secondary"
+                aria-haspopup="dialog"
+                onClick={() => setConfirming(true)}
+              >
                 Empty the cart
               </Button>
               <Link

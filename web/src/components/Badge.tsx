@@ -44,7 +44,8 @@ export function Badge({
     <span
       className={cn(
         'inline-flex items-center rounded-pill border px-xs py-3xs text-xs font-semibold tracking-wide',
-        muted ? 'border-disabled-bg bg-disabled-bg text-disabled-text' : TONES[tone],
+        // text-muted on the grey (6.4:1); disabled-text there was 4.0:1, under WCAG AA's 4.5:1 (Task 5).
+        muted ? 'border-disabled-bg bg-disabled-bg text-text-muted' : TONES[tone],
         className,
       )}
     >
