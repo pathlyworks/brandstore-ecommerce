@@ -37,6 +37,19 @@ describe('ProtectedRoute', () => {
     },
   );
 
+  it('announces what to fix when the form is sent empty', async () => {
+    const user = userEvent.setup();
+    const { container } = renderApp('/login');
+    const live = await waitFor(() => {
+      const el = container.querySelector('p[aria-live="assertive"]');
+      expect(el).not.toBeNull();
+      return el as HTMLElement;
+    });
+    expect(live).toBeEmptyDOMElement();
+    await user.click(screen.getByRole('button', { name: 'Sign in' }));
+    expect(live).toHaveTextContent('2 fields need fixing: Email, Password.');
+  });
+
   it('treats an expired stored session as no session', async () => {
     signInForTest({ ttlSeconds: -60 });
     const { router } = renderApp('/account/orders');
