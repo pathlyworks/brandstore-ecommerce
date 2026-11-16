@@ -1,8 +1,10 @@
 # Advanced Task 5: Admin Dashboard, TypeScript Hardening, Performance, and Accessibility
 
 Advanced Task 5 deliverable. Date: 2026-11-16.
-Repository: https://github.com/pathlyworks/brandstore-ecommerce · Pull request: **#11**
-(`feature/admin-dashboard-perf-a11y` → `main`). Evidence pack: [`docs/evidence/task5/`](docs/evidence/task5/README.md).
+Repository: https://github.com/pathlyworks/brandstore-ecommerce · Pull requests: **#11**
+(`feature/admin-dashboard-perf-a11y` → `main`) and **#12** (review fixes, deployed preview).
+**Deployed preview: https://pathlyworks.github.io/brandstore-ecommerce/** (GitHub Pages, §5.1).
+Evidence pack: [`docs/evidence/task5/`](docs/evidence/task5/README.md).
 
 The app runs against the TechSphere API at `VITE_API_BASE` (`import.meta.env.VITE_API_BASE`, default
 `http://localhost:4010`). `npm run dev -- --port 4000 --strictPort --host 0.0.0.0` starts it as the grader does.
@@ -224,6 +226,33 @@ our own scripted sessions on one fast machine (that is why LCP is ten times lowe
 data needs the React app deployed and the same reports sent from shoppers' browsers to an analytics endpoint,
 then read at the 75th percentile (as the Chrome UX Report does).
 
+### 5.1 On the deployed preview (GitHub Pages)
+
+The React app is published at **https://pathlyworks.github.io/brandstore-ecommerce/** by
+`.github/workflows/pages.yml` on every push to `main`. GitHub Pages has no backend, so that build answers the
+API in the browser with the same MSW handlers the tests use (`src/demo/installDemoApi.ts`, included only when
+`VITE_DEMO_API=1`): the numbers on its dashboard are the fixtures' (EGP 20,093.00 sales, 9 orders, EGP 2,870.43
+average order value). Deep links load through `404.html`, so the browser logs one 404 for the page itself
+before the app takes over; that is how GitHub Pages serves single-page apps.
+
+The web-vitals library logged these in that deployed preview (`web-vitals/deployed.json`, measured on
+16 Nov with `field-vitals.mjs`, real clicks, no throttling):
+
+| Page (deployed)   | Metric | Phone (Pixel 7 emulation) |       Desktop |
+| :---------------- | :----- | ------------------------: | ------------: |
+| `/products`       | LCP    |             876 ms (good) | 832 ms (good) |
+|                   | INP    |              32 ms (good) |  24 ms (good) |
+|                   | CLS    |                  0 (good) |      0 (good) |
+| `/products/p-003` | LCP    |             340 ms (good) | 332 ms (good) |
+|                   | INP    |              16 ms (good) |  16 ms (good) |
+|                   | CLS    |                  0 (good) |      0 (good) |
+| `/cart`           | LCP    |             188 ms (good) | 188 ms (good) |
+|                   | CLS    |                  0 (good) |      0 (good) |
+
+The measured LCP on `/products` is higher than on the local preview (876 vs 280 ms) for two reasons: the files
+come over the internet from GitHub's servers, and the preview build loads its in-browser API (fixtures and
+MSW, 72 kB gzip) before the first render. A real deployment calls a real API instead.
+
 **What only the field measurement found.** The first field run measured **CLS 0.379 on `/products` on a phone**
 (0.161 on desktop, `web-vitals/preview-before-grid-fix.json`) although Lighthouse said 0: after choosing a
 category, cards that stayed in the result moved up the page when the new list arrived, more than 500 ms
@@ -306,9 +335,10 @@ Set `CHROME_PATH` if Playwright's Chromium is not where `playwright` expects it.
 
 ## 10. Limits and next steps
 
-- The Netlify site still deploys the legacy pages (`netlify.toml` publishes `dist/`), so the "deployed
-  preview" here is the production build served by `vite preview`, locally and in CI. Deploying `web/dist`
-  (with `_headers`) and sending the web-vitals reports to an endpoint would give real-user field data.
+- The deployed preview (GitHub Pages) has no real API and no real visitors, so its numbers are field-style
+  measurements from our own sessions. GitHub Pages also ignores `_headers`; the cache headers apply where the
+  app is deployed on Netlify. Sending the web-vitals reports to an endpoint from a real deployment would give
+  real-user field data.
 - Lighthouse's simulated throttling varies by tens of milliseconds between runs; the median of 3 runs is
   kept, and differences of that size (TBT, the home page LCP) are not claimed as gains or losses.
 - With 9 orders, every dashboard calculation is instant. With thousands, the totals per category and month

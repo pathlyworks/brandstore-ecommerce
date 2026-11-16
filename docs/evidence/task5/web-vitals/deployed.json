@@ -1,0 +1,296 @@
+{
+  "label": "deployed",
+  "base": "https://pathlyworks.github.io/brandstore-ecommerce",
+  "sessions": {
+    "phone (Pixel 7 emulation, no throttling)": {
+      "reports": [
+        {
+          "name": "LCP",
+          "value": 704,
+          "rating": "good",
+          "path": "/brandstore-ecommerce/products",
+          "navigationType": "navigate"
+        },
+        {
+          "name": "CLS",
+          "value": 0,
+          "rating": "good",
+          "path": "/brandstore-ecommerce/products",
+          "navigationType": "navigate"
+        },
+        {
+          "name": "LCP",
+          "value": 876,
+          "rating": "good",
+          "path": "/brandstore-ecommerce/products",
+          "navigationType": "navigate"
+        },
+        {
+          "name": "INP",
+          "value": 32,
+          "rating": "good",
+          "path": "/brandstore-ecommerce/products",
+          "navigationType": "navigate"
+        },
+        {
+          "name": "LCP",
+          "value": 204,
+          "rating": "good",
+          "path": "/brandstore-ecommerce/products/p-003",
+          "navigationType": "navigate"
+        },
+        {
+          "name": "CLS",
+          "value": 0,
+          "rating": "good",
+          "path": "/brandstore-ecommerce/products/p-003",
+          "navigationType": "navigate"
+        },
+        {
+          "name": "LCP",
+          "value": 340,
+          "rating": "good",
+          "path": "/brandstore-ecommerce/products/p-003",
+          "navigationType": "navigate"
+        },
+        {
+          "name": "INP",
+          "value": 16,
+          "rating": "good",
+          "path": "/brandstore-ecommerce/products/p-003",
+          "navigationType": "navigate"
+        },
+        {
+          "name": "LCP",
+          "value": 188,
+          "rating": "good",
+          "path": "/brandstore-ecommerce/cart",
+          "navigationType": "navigate"
+        },
+        {
+          "name": "CLS",
+          "value": 0,
+          "rating": "good",
+          "path": "/brandstore-ecommerce/cart",
+          "navigationType": "navigate"
+        }
+      ],
+      "console": [
+        "[web-vitals] LCP 704 ms good /brandstore-ecommerce/products",
+        "[web-vitals] CLS 0 good /brandstore-ecommerce/products",
+        "[web-vitals] LCP 876 ms good /brandstore-ecommerce/products",
+        "[web-vitals] INP 32 ms good /brandstore-ecommerce/products",
+        "[web-vitals] LCP 204 ms good /brandstore-ecommerce/products/p-003",
+        "[web-vitals] CLS 0 good /brandstore-ecommerce/products/p-003",
+        "[web-vitals] LCP 340 ms good /brandstore-ecommerce/products/p-003",
+        "[web-vitals] INP 16 ms good /brandstore-ecommerce/products/p-003",
+        "[web-vitals] LCP 188 ms good /brandstore-ecommerce/cart",
+        "[web-vitals] CLS 0 good /brandstore-ecommerce/cart"
+      ]
+    },
+    "desktop (1280x900, no throttling)": {
+      "reports": [
+        {
+          "name": "LCP",
+          "value": 656,
+          "rating": "good",
+          "path": "/brandstore-ecommerce/products",
+          "navigationType": "navigate"
+        },
+        {
+          "name": "CLS",
+          "value": 0,
+          "rating": "good",
+          "path": "/brandstore-ecommerce/products",
+          "navigationType": "navigate"
+        },
+        {
+          "name": "LCP",
+          "value": 832,
+          "rating": "good",
+          "path": "/brandstore-ecommerce/products",
+          "navigationType": "navigate"
+        },
+        {
+          "name": "INP",
+          "value": 24,
+          "rating": "good",
+          "path": "/brandstore-ecommerce/products",
+          "navigationType": "navigate"
+        },
+        {
+          "name": "LCP",
+          "value": 188,
+          "rating": "good",
+          "path": "/brandstore-ecommerce/products/p-003",
+          "navigationType": "navigate"
+        },
+        {
+          "name": "CLS",
+          "value": 0,
+          "rating": "good",
+          "path": "/brandstore-ecommerce/products/p-003",
+          "navigationType": "navigate"
+        },
+        {
+          "name": "LCP",
+          "value": 332,
+          "rating": "good",
+          "path": "/brandstore-ecommerce/products/p-003",
+          "navigationType": "navigate"
+        },
+        {
+          "name": "INP",
+          "value": 16,
+          "rating": "good",
+          "path": "/brandstore-ecommerce/products/p-003",
+          "navigationType": "navigate"
+        },
+        {
+          "name": "LCP",
+          "value": 188,
+          "rating": "good",
+          "path": "/brandstore-ecommerce/cart",
+          "navigationType": "navigate"
+        },
+        {
+          "name": "CLS",
+          "value": 0,
+          "rating": "good",
+          "path": "/brandstore-ecommerce/cart",
+          "navigationType": "navigate"
+        }
+      ],
+      "console": [
+        "[web-vitals] LCP 656 ms good /brandstore-ecommerce/products",
+        "[web-vitals] CLS 0 good /brandstore-ecommerce/products",
+        "[web-vitals] LCP 832 ms good /brandstore-ecommerce/products",
+        "[web-vitals] INP 24 ms good /brandstore-ecommerce/products",
+        "[web-vitals] LCP 188 ms good /brandstore-ecommerce/products/p-003",
+        "[web-vitals] CLS 0 good /brandstore-ecommerce/products/p-003",
+        "[web-vitals] LCP 332 ms good /brandstore-ecommerce/products/p-003",
+        "[web-vitals] INP 16 ms good /brandstore-ecommerce/products/p-003",
+        "[web-vitals] LCP 188 ms good /brandstore-ecommerce/cart",
+        "[web-vitals] CLS 0 good /brandstore-ecommerce/cart"
+      ]
+    }
+  },
+  "final": {
+    "phone (Pixel 7 emulation, no throttling)": {
+      "/brandstore-ecommerce/products LCP": {
+        "name": "LCP",
+        "value": 876,
+        "rating": "good",
+        "path": "/brandstore-ecommerce/products",
+        "navigationType": "navigate"
+      },
+      "/brandstore-ecommerce/products CLS": {
+        "name": "CLS",
+        "value": 0,
+        "rating": "good",
+        "path": "/brandstore-ecommerce/products",
+        "navigationType": "navigate"
+      },
+      "/brandstore-ecommerce/products INP": {
+        "name": "INP",
+        "value": 32,
+        "rating": "good",
+        "path": "/brandstore-ecommerce/products",
+        "navigationType": "navigate"
+      },
+      "/brandstore-ecommerce/products/p-003 LCP": {
+        "name": "LCP",
+        "value": 340,
+        "rating": "good",
+        "path": "/brandstore-ecommerce/products/p-003",
+        "navigationType": "navigate"
+      },
+      "/brandstore-ecommerce/products/p-003 CLS": {
+        "name": "CLS",
+        "value": 0,
+        "rating": "good",
+        "path": "/brandstore-ecommerce/products/p-003",
+        "navigationType": "navigate"
+      },
+      "/brandstore-ecommerce/products/p-003 INP": {
+        "name": "INP",
+        "value": 16,
+        "rating": "good",
+        "path": "/brandstore-ecommerce/products/p-003",
+        "navigationType": "navigate"
+      },
+      "/brandstore-ecommerce/cart LCP": {
+        "name": "LCP",
+        "value": 188,
+        "rating": "good",
+        "path": "/brandstore-ecommerce/cart",
+        "navigationType": "navigate"
+      },
+      "/brandstore-ecommerce/cart CLS": {
+        "name": "CLS",
+        "value": 0,
+        "rating": "good",
+        "path": "/brandstore-ecommerce/cart",
+        "navigationType": "navigate"
+      }
+    },
+    "desktop (1280x900, no throttling)": {
+      "/brandstore-ecommerce/products LCP": {
+        "name": "LCP",
+        "value": 832,
+        "rating": "good",
+        "path": "/brandstore-ecommerce/products",
+        "navigationType": "navigate"
+      },
+      "/brandstore-ecommerce/products CLS": {
+        "name": "CLS",
+        "value": 0,
+        "rating": "good",
+        "path": "/brandstore-ecommerce/products",
+        "navigationType": "navigate"
+      },
+      "/brandstore-ecommerce/products INP": {
+        "name": "INP",
+        "value": 24,
+        "rating": "good",
+        "path": "/brandstore-ecommerce/products",
+        "navigationType": "navigate"
+      },
+      "/brandstore-ecommerce/products/p-003 LCP": {
+        "name": "LCP",
+        "value": 332,
+        "rating": "good",
+        "path": "/brandstore-ecommerce/products/p-003",
+        "navigationType": "navigate"
+      },
+      "/brandstore-ecommerce/products/p-003 CLS": {
+        "name": "CLS",
+        "value": 0,
+        "rating": "good",
+        "path": "/brandstore-ecommerce/products/p-003",
+        "navigationType": "navigate"
+      },
+      "/brandstore-ecommerce/products/p-003 INP": {
+        "name": "INP",
+        "value": 16,
+        "rating": "good",
+        "path": "/brandstore-ecommerce/products/p-003",
+        "navigationType": "navigate"
+      },
+      "/brandstore-ecommerce/cart LCP": {
+        "name": "LCP",
+        "value": 188,
+        "rating": "good",
+        "path": "/brandstore-ecommerce/cart",
+        "navigationType": "navigate"
+      },
+      "/brandstore-ecommerce/cart CLS": {
+        "name": "CLS",
+        "value": 0,
+        "rating": "good",
+        "path": "/brandstore-ecommerce/cart",
+        "navigationType": "navigate"
+      }
+    }
+  }
+}
