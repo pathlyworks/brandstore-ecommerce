@@ -70,6 +70,18 @@ describe('/products', () => {
     expect(screen.getByLabelText('Search')).toHaveValue('');
   });
 
+  it('keeps a search typed just before a filter is chosen (filters compose)', async () => {
+    const { router } = renderApp('/products');
+    await screen.findByRole('list', { name: 'Products' });
+    await userEvent.type(screen.getByLabelText('Search'), 'orbit');
+    // Chosen at once, before the 350 ms debounce has written the search to the URL.
+    await userEvent.selectOptions(screen.getByLabelText('Category'), 'Audio');
+    await waitFor(() =>
+      expect(new URLSearchParams(router.state.location.search).get('search')).toBe('orbit'),
+    );
+    expect(new URLSearchParams(router.state.location.search).get('category')).toBe('audio');
+  });
+
   it('shows the error state with a retry that works', async () => {
     server.use(
       http.get(

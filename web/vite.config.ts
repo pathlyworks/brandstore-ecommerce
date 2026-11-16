@@ -11,6 +11,8 @@ import tailwindcss from '@tailwindcss/vite';
 const at = (path: string) => fileURLToPath(new URL(path, import.meta.url));
 
 export default defineConfig({
+  // "/" normally; "/brandstore-ecommerce/" for the GitHub Pages preview (.github/workflows/pages.yml).
+  base: process.env.VITE_BASE ?? '/',
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {

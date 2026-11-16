@@ -36,8 +36,10 @@ export function ProductsRoute() {
   }
 
   function update(next: Partial<CatalogFilters>) {
-    // Any filter change goes back to page 1, unless the change is the page itself.
-    setParams(writeFilters({ ...filters, page: 1, ...next }));
+    // Any filter change goes back to page 1, unless the change is the page itself. The search box's text goes
+    // with it even if the debounce has not written it to the URL yet: typing a search and choosing a category
+    // within 350 ms used to drop the search (Task 5 review).
+    setParams(writeFilters({ ...filters, search: searchText.trim(), page: 1, ...next }));
   }
 
   // Once typing pauses (the debounced value has caught up with the box), the search goes into the URL, as one

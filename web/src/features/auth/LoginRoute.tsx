@@ -49,6 +49,7 @@ export function LoginRoute() {
   const [errors, setErrors] = useState<LoginErrors>({});
   const [submitted, setSubmitted] = useState(false);
   const [pending, setPending] = useState(false);
+  const [summary, setSummary] = useState('');
   const [formError, setFormError] = useState('');
   const next = safeNext(params.get('next'));
   const notice = signInReason(params.get('reason'), next, ended);
@@ -68,7 +69,16 @@ export function LoginRoute() {
     const found = validateLogin(values);
     setErrors(found);
     setFormError('');
-    if (Object.keys(found).length > 0) return;
+    const fields = Object.keys(found);
+    // One sentence for screen readers (the field messages are linked to their fields but not announced).
+    setSummary(
+      fields.length === 0
+        ? ''
+        : `${fields.length === 1 ? '1 field needs' : `${fields.length} fields need`} fixing: ${fields
+            .map((f) => (f === 'email' ? 'Email' : 'Password'))
+            .join(', ')}.`,
+    );
+    if (fields.length > 0) return;
     setPending(true);
     try {
       signIn(await login(values.email.trim(), values.password));
@@ -97,6 +107,10 @@ export function LoginRoute() {
           {notice}
         </p>
       )}
+      {/* Always in the page (empty until a submit finds problems), so screen readers announce its text. */}
+      <p aria-live="assertive" className="sr-only">
+        {summary}
+      </p>
       {formError && (
         <p role="alert" className="rounded-md border-2 border-danger bg-surface p-sm text-danger">
           {formError}

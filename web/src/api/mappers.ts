@@ -25,7 +25,7 @@ import { ORDERS_PAGE_SIZE, PRODUCTS_PAGE_SIZE } from '../config';
 import { parseOrderDate } from '../lib/dates';
 import { priceToCents } from '../lib/money';
 
-export const PLACEHOLDER_IMAGE = '/product-placeholder.svg';
+export const PLACEHOLDER_IMAGE = `${import.meta.env.BASE_URL}product-placeholder.svg`;
 
 /** The cart limits per stock status (the API sends no quantity; docs/HANDOFF.md gap 2). */
 const AVAILABLE: Record<StockStatus, number> = { in_stock: 25, low: 3, out_of_stock: 0 };
