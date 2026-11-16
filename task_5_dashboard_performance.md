@@ -77,8 +77,8 @@ computes the summary from its own orders and products, like `server.py`, so the 
 
 `DataTable<Row>` (`components/Table.tsx`) is the only table in the app: cart, order history, the admin
 category, month and order tables. Columns are typed by the row (`Column<Row>`), so a column cannot read a
-field the row does not have. Sorting is a header button with `aria-sort`; `pageSize` adds Previous/Next and a
-polite "Rows 1–5 of 9 · page 1 of 2" status; changing the sort goes back to page 1. Sorting and paging are
+field the row does not have. Sorting is a header button with `aria-sort`; `pageSize` adds buttons that move one page
+back or forward and a polite "Rows 1–5 of 9 · page 1 of 2" status; changing the sort goes back to page 1. Sorting and paging are
 pure functions (`sortRows<Row>`, `pageOf<Row>` in `table.model.ts`, stable sort, page clamping) with their
 own tests. The old `Table` name is kept as an alias, so the cart and orders screens did not change.
 
@@ -184,7 +184,7 @@ consumer does not re-render.
 
 - **CLS** was the real problem: while a page loaded, the footer sat inside the first screen and was pushed
   down when the content arrived (0.37 and 0.41). `<main>` is now at least one screen tall, so the footer starts
-  below the fold. CLS is 0 on every page.
+  below the fold. Measured CLS is 0 on every page.
 - **\*LCP on the product page got "worse" because it is now measured correctly.** Before, the largest thing on
   the first screen was the footer's small print (the bug above), painted at once. Now it is the product's own
   heading, which appears when `GET /products/p-001` answers. The lab LCP of the home and catalog pages is set
@@ -201,7 +201,7 @@ consumer does not re-render.
 
 `web/src/app/vitals.ts` uses the **web-vitals** library (5.1) to report **Largest Contentful Paint (LCP)**,
 **Interaction to Next Paint (INP)** and **Cumulative Layout Shift (CLS)**. Each value is logged to the console
-(`[web-vitals] LCP 280 ms good /products`) and kept in `window.__webVitals`. `web/scripts/field-vitals.mjs`
+(for example `[web-vitals] LCP 280 ms good /products`, as measured) and kept in `window.__webVitals`. `web/scripts/field-vitals.mjs`
 opens the deployed preview (the production build served by `vite preview`), clicks and types as a shopper
 would, and saves every report (`web-vitals/preview.json`).
 
@@ -224,7 +224,7 @@ our own scripted sessions on one fast machine (that is why LCP is ten times lowe
 data needs the React app deployed and the same reports sent from shoppers' browsers to an analytics endpoint,
 then read at the 75th percentile (as the Chrome UX Report does).
 
-**What only the field measurement found.** The first field run showed **CLS 0.379 on `/products` on a phone**
+**What only the field measurement found.** The first field run measured **CLS 0.379 on `/products` on a phone**
 (0.161 on desktop, `web-vitals/preview-before-grid-fix.json`) although Lighthouse said 0: after choosing a
 category, cards that stayed in the result moved up the page when the new list arrived, more than 500 ms
 after the click, so CLS counted it. The product grid now remounts for each new result (new elements do not
@@ -277,8 +277,8 @@ why those have their own tests.
 
 ## 8. Bugs found and fixed in this task
 
-1. Footer inside the first screen during loading: CLS 0.37–0.41 on the catalog and product pages (Lighthouse).
-2. Cards moving after a filter: CLS 0.38 on a phone, seen only in field data (web-vitals).
+1. Footer inside the first screen during loading: CLS 0.37–0.41 measured by Lighthouse on the catalog and product pages.
+2. Cards moving after a filter: CLS 0.38 measured on a phone, seen only in field data (web-vitals).
 3. Muted badge text at 4.0:1 contrast (computed from the tokens).
 4. LCP image loaded lazily on the home and catalog pages (Lighthouse LCP breakdown).
 5. Missing meta description; `/robots.txt` answered with HTML (SEO 83 → 100).
