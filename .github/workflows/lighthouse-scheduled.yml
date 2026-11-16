@@ -33,6 +33,7 @@ jobs:
       - name: Lighthouse CI on the production URLs (median of 3 runs per page)
         id: lhci
         continue-on-error: true
+        shell: bash # -eo pipefail: the step fails when lhci fails, not only when tee does
         run: npx lhci autorun --config=lighthouserc.production.json 2>&1 | tee lhci.log
       - name: Summary
         if: always()

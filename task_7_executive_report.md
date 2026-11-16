@@ -116,7 +116,10 @@ new front end beside them, not their replacement yet (§6).
   legacy pages keep a development default in `src/config.js`, because they also run unbundled.
 - **Found by this task:** GitHub Pages answered every deep link with HTTP 404 (served by `404.html`), so search
   engines would have treated product pages as missing. Fixed: the app shell is now written at every public route
-  (`web/scripts/pages-routes.mjs`).
+  (`web/scripts/pages-routes.mjs`). The first scheduled run on production then found two more things: the
+  preview ships 73 KB more JavaScript than the budget allows (its in-browser demo API, not part of a real
+  production build; the preview has its own budget), and the alert had a bug that hid failures (fixed). See
+  `monitoring_plan.md` §3.
 
 ## 6. Trade-offs made, and deferred work
 
