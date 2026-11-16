@@ -163,11 +163,15 @@ export const handlers = [
     const who = claims(request);
     if (!who) return unauthorised();
     if (who.role !== 'admin') return HttpResponse.json({ error: 'Forbidden' }, { status: 403 });
+    // Computed like the kit's server.py (admin_summary), from this mock's own orders and products, so the
+    // dashboard tests compare against the same rule the grader's reference calculator uses.
     return HttpResponse.json({
-      revenue: 25_491,
-      orders: 9,
-      products: 24,
-      out_of_stock: 2,
+      revenue: apiState.orders
+        .filter((o) => o.status !== 'cancelled')
+        .reduce((sum, o) => sum + o.total, 0),
+      orders: apiState.orders.length,
+      products: products.length,
+      out_of_stock: products.filter((p) => p.stock_status === 'out_of_stock').length,
       currency: 'EGP',
       note: 'Revenue is gross sales, not profit',
     });

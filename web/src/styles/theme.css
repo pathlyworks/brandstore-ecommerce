@@ -83,6 +83,10 @@
 /* Tokens outside Tailwind's namespaces stay CSS variables (use them as w-(--size-sidebar)). */
 :root {
   --size-page-min: 100vh;
+  /* <main> is at least one screen tall, so the footer starts below the fold and cannot shift into view
+     while a page's data loads (CLS 0.37–0.41 on /products and /products/:id before, Task 5). */
+  --size-main-min: 100vh;
+  --size-chart-max: 40rem;
   --size-tap-target: 2.75rem;
   --size-header: 4.25rem;
   --size-form-max: 32rem;

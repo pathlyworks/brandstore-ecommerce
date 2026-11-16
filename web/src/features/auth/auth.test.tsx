@@ -104,9 +104,11 @@ describe('ProtectedRoute', () => {
     const { router } = renderApp('/admin');
     await signInWith(user, ADMIN);
     expect(
-      await screen.findByRole('heading', { level: 1, name: 'Admin summary' }),
+      await screen.findByRole('heading', { level: 1, name: 'Store dashboard' }),
     ).toBeInTheDocument();
-    expect(await screen.findByText(/^EGP\s25,491\.00$/)).toBeInTheDocument();
+    // The mock computes revenue like the API kit: the 7 orders that are not cancelled, EGP 20,093.
+    const sales = await screen.findByText('Sales', { selector: 'dt' });
+    await waitFor(() => expect(sales.nextElementSibling).toHaveTextContent(/^EGP\s20,093\.00$/));
     expect(router.state.location.pathname).toBe('/admin');
     expect(
       within(screen.getByRole('navigation', { name: 'Main' })).getByRole('link', { name: 'Admin' }),
