@@ -17,3 +17,4 @@ test-results/
 
 # Storybook build (npm run build-storybook -w web)
 storybook-static/
+dist-profile/
